@@ -35,4 +35,5 @@ public class ObjectJson extends AbstractJsonType {
 		result = result +JSON_OBJECT_END;
 		return result;
 	}
+
 }

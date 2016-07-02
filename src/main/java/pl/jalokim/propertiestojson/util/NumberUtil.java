@@ -2,7 +2,7 @@ package pl.jalokim.propertiestojson.util;
 
 public class NumberUtil {
 
-    protected static boolean isInteger(String toParse){
+    public static boolean isInteger(String toParse){
         try {
             Integer.valueOf(toParse);
             return true;
@@ -10,7 +10,7 @@ public class NumberUtil {
         return false;
     }
 
-    protected static Integer getInt(String toParse){
+    public static Integer getInt(String toParse){
         return Integer.valueOf(toParse);
     }
 }
