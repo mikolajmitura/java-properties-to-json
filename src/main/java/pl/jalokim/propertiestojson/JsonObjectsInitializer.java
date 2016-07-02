@@ -4,13 +4,12 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.IntegerJson;
 import pl.jalokim.propertiestojson.object.ObjectJson;
 import pl.jalokim.propertiestojson.object.StringJson;
-import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.util.Map;
 
 import static pl.jalokim.propertiestojson.util.NumberUtil.getInt;
 import static pl.jalokim.propertiestojson.util.NumberUtil.isInteger;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.UNEXPECTED_JSON_OBJECT;
+
 
 public class JsonObjectsInitializer {
 
@@ -54,13 +53,13 @@ public class JsonObjectsInitializer {
         return currentObjectJson;
     }
 
-    private  ObjectJson fetchJsonObjectWhenIsNotPrimitive(String field) {
+    private ObjectJson fetchJsonObjectWhenIsNotPrimitive(String field) {
         AbstractJsonType jsonType = currentObjectJson.getJsonTypeByFieldName(field);
         JsonObjectFieldsValidator.checkIsJsonObject(propertiesKey, jsonType);
         return (ObjectJson) jsonType;
     }
 
-    private  void addPrimitiveFieldWhenIsValid(String field) {
+    private void addPrimitiveFieldWhenIsValid(String field) {
         JsonObjectFieldsValidator.checkThatFieldNotExistYet(currentObjectJson, field, propertiesKey);
         addPrimitiveFieldToCurrentJsonObject(field);
     }
