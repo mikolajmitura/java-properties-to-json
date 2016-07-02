@@ -14,17 +14,20 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.UNEXPECTED_JSON_OBJECT;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.UNEXPECTED_PRIMITIVE_TYPE;
+
 public class PropertiesToJsonParserTest {
 
-    public static final String FIELD2_VALUE = "die3";
-    public static final String FIELD1_VALUE = "die2";
-    public static final String COST_STRING_VALUE = "123";
+    private static final String FIELD2_VALUE = "die3";
+    private static final String FIELD1_VALUE = "die2";
+    private static final String COST_STRING_VALUE = "123";
     private static final Integer COST_INT_VALUE = 123;
-    public static final String INSRANCE_TYPE = "Medical";
-    public static final String STREET = "Jp2";
-    public static final String CITY = "Waraw";
-    public static final String SURNAME = "Surname";
-    public static final String NAME = "John";
+    private static final String INSRANCE_TYPE = "Medical";
+    private static final String STREET = "Jp2";
+    private static final String CITY = "Waraw";
+    private static final String SURNAME = "Surname";
+    private static final String NAME = "John";
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -60,7 +63,7 @@ public class PropertiesToJsonParserTest {
     public void ThrowWhenUnexpectedPrimitiveType(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage("already key is resonable as object not as primitive Type, error propertieskey: man");
+        expectedEx.expectMessage(String.format(UNEXPECTED_PRIMITIVE_TYPE, "man"));
         //when
         //given
         PropertiesToJsonParser.parseToJson(addWrongParams(initProperlyProperties(), "man"));
@@ -70,7 +73,7 @@ public class PropertiesToJsonParserTest {
     public void ThrowWhenUnexpectedJsonObject(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage("already given key is resonale as primitive type not as Object, error key: field1.prop2");
+        expectedEx.expectMessage(String.format(UNEXPECTED_JSON_OBJECT, "field1.prop2"));
         //when
         //given
         PropertiesToJsonParser.parseToJson(addWrongParams(initProperlyProperties(), "field1.prop2"));
