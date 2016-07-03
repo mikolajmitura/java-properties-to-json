@@ -7,9 +7,10 @@ import pl.jalokim.propertiestojson.object.ObjectJson;
 import java.util.Map;
 import java.util.Set;
 
-public class PropertiesToJsonParser {
+import static pl.jalokim.propertiestojson.Constants.DOT;
 
-    public static final String DOT = "\\.";
+
+public class PropertiesToJsonParser {
 
     public static String parseToJson(Map<String, String> properties) {
         ObjectJson coreObjectJson = new ObjectJson();
