@@ -12,6 +12,7 @@ import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.UNEXPECTED_JSON_OBJECT;
@@ -28,6 +29,10 @@ public class PropertiesToJsonParserTest {
     private static final String CITY = "Waraw";
     private static final String SURNAME = "Surname";
     private static final String NAME = "John";
+    private static final String EMAIL_1 = "example@gg.com";
+    private static final String EMAIL_2 = "example2@cc.com";
+    private static final String EMAIL_3 = "example3@gg.com";
+    private static final String EMAILS = String.format(" %s ,%s, %s,%s",EMAIL_1, EMAIL_2, EMAIL_3, EMAIL_3);
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -42,6 +47,7 @@ public class PropertiesToJsonParserTest {
         properties.put("insurance.cost", COST_STRING_VALUE);
         properties.put("field1", FIELD1_VALUE);
         properties.put("field2", FIELD2_VALUE);
+        properties.put("man.emails", EMAILS);
         return properties;
     }
 
@@ -90,5 +96,15 @@ public class PropertiesToJsonParserTest {
         Assertions.assertThat(mainObject.getMan().getAdress().getStreet()).isEqualTo(STREET);
         Assertions.assertThat(mainObject.getMan().getName()).isEqualTo(NAME);
         Assertions.assertThat(mainObject.getMan().getSurname()).isEqualTo(SURNAME);
+        assertEmailList(mainObject);
     }
+
+    private void assertEmailList(MainObject mainObject) {
+        List<String> emails = mainObject.getMan().getEmails();
+        Assertions.assertThat(emails.get(0)).isEqualTo(EMAIL_1);
+        Assertions.assertThat(emails.get(1)).isEqualTo(EMAIL_2);
+        Assertions.assertThat(emails.get(2)).isEqualTo(EMAIL_3);
+        Assertions.assertThat(emails.get(3)).isEqualTo(EMAIL_3);
+    }
+
 }

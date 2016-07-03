@@ -1,15 +1,24 @@
 package pl.jalokim.propertiestojson.domain;
 
-/**
- * Created by mikolaj on 7/1/16.
- */
+import java.util.List;
+
 public class Man {
     private String name;
     private String surname;
     private Adress adress;
+    private List<String> emails;
+    private List<String> children;
 
     public String getName() {
         return name;
+    }
+
+    public List<String> getEmails() {
+        return emails;
+    }
+
+    public void setEmails(List<String> emails) {
+        this.emails = emails;
     }
 
     public void setName(String name) {
@@ -30,5 +39,13 @@ public class Man {
 
     public void setAdress(Adress adress) {
         this.adress = adress;
+    }
+
+    public List<String> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<String> children) {
+        this.children = children;
     }
 }

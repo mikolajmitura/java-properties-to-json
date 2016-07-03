@@ -1,9 +1,6 @@
 package pl.jalokim.propertiestojson;
 
-import pl.jalokim.propertiestojson.object.AbstractJsonType;
-import pl.jalokim.propertiestojson.object.IntegerJson;
-import pl.jalokim.propertiestojson.object.ObjectJson;
-import pl.jalokim.propertiestojson.object.StringJson;
+import pl.jalokim.propertiestojson.object.*;
 
 import java.util.Map;
 
@@ -17,6 +14,7 @@ public class JsonObjectsInitializer {
     private String propertiesKey;
     private String[] fields;
     private ObjectJson currentObjectJson;
+    private String arrayDelimeter=",";
 
     public JsonObjectsInitializer(Map<String, String> properties, String propertiesKey, String[] fields, ObjectJson coreObjectJson) {
         this.properties = properties;
@@ -66,11 +64,17 @@ public class JsonObjectsInitializer {
 
     private void addPrimitiveFieldToCurrentJsonObject(String field) {
         String propValue = properties.get(propertiesKey);
-        if (isInteger(propValue)) {
+        if (isArray(propValue)){
+            currentObjectJson.addField(field, new ArrayJson(propValue.split(arrayDelimeter)));
+        } else if (isInteger(propValue)) {
             currentObjectJson.addField(field, new IntegerJson(getInt(propValue)));
         } else {
             currentObjectJson.addField(field, new StringJson(propValue));
         }
+    }
+
+    private boolean isArray(String propValue) {
+        return propValue.contains(arrayDelimeter);
     }
 
     private boolean isPrimitiveType(int index) {

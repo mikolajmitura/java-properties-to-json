@@ -1,8 +1,5 @@
 package pl.jalokim.propertiestojson.domain;
 
-/**
- * Created by mikolaj on 7/1/16.
- */
 public class Adress {
     String city;
     String street;
