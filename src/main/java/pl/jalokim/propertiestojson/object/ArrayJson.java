@@ -14,19 +14,24 @@ import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 
 public class ArrayJson extends AbstractJsonType{
 
-    public List<AbstractJsonType> elements = new ArrayList<>();
+    public AbstractJsonType[] elements = new AbstractJsonType[100];
 
-    public void addElement(AbstractJsonType element){
-        elements.add(element);
+    public void addElement(int index, AbstractJsonType element){
+        elements[index] = element;
     }
 
     public ArrayJson(){
 
     }
 
+    public AbstractJsonType getElement(int index){
+        return elements[index];
+    }
+
     public ArrayJson(String[] elements){
-        for (String element : elements){
-            addElement(new StringJson(element.trim()));
+        for (int index = 0; index < elements.length; index++){
+            String element = elements[index];
+            addElement(index, new StringJson(element.trim()));
         }
     }
 
@@ -34,13 +39,24 @@ public class ArrayJson extends AbstractJsonType{
     public String toStringJson() {
         StringBuilder result = new StringBuilder().append(ARRAY_START_SIGN);
         int index = 0;
-        int lastIndex = elements.size() - 1;
-        for (AbstractJsonType element : elements) {
+        List<AbstractJsonType> elementsAsList = convertToList();
+        int lastIndex = elementsAsList.size() - 1;
+        for (AbstractJsonType element : elementsAsList) {
             String lastSign = index == lastIndex ? EMPTY_STRING : NEW_LINE_SIGN;
             result.append(element.toStringJson())
                     .append(lastSign);
             index++;
         }
         return result.append(ARRAY_END_SIGN).toString();
+    }
+
+    private List<AbstractJsonType> convertToList(){
+        List<AbstractJsonType> elementsList = new ArrayList<>();
+        for (AbstractJsonType element : elements) {
+            if (element!=null){
+                elementsList.add(element);
+            }
+        }
+        return elementsList;
     }
 }
