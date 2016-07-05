@@ -1,6 +1,6 @@
 package pl.jalokim.propertiestojson.object;
 
-import pl.jalokim.propertiestojson.util.JsonStringWrapper;
+import pl.jalokim.propertiestojson.util.StringToJsonStringWrapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class ObjectJson extends AbstractJsonType {
         for (String fieldName : fields.keySet()) {
             AbstractJsonType object = fields.get(fieldName);
             String lastSign = index == lastIndex ? EMPTY_STRING : NEW_LINE_SIGN;
-            result.append(JsonStringWrapper.wrap(fieldName))
+            result.append(StringToJsonStringWrapper.wrap(fieldName))
                     .append(":")
                     .append(object.toStringJson())
                     .append(lastSign);

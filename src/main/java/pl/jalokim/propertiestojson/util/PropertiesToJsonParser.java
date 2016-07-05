@@ -1,20 +1,24 @@
 package pl.jalokim.propertiestojson.util;
 
-import pl.jalokim.propertiestojson.JsonObjectsInitializer;
+import org.assertj.core.util.VisibleForTesting;
+import pl.jalokim.propertiestojson.JsonObjectsTraverseResolver;
+import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
 import pl.jalokim.propertiestojson.object.ObjectJson;
 
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static pl.jalokim.propertiestojson.Constants.DOT;
 
 
 public class PropertiesToJsonParser {
 
+    private static PropertyKeysPickup propertyKeysPickup = new PropertyKeysPickup();
+
     public static String parseToJson(Map<String, String> properties) {
         ObjectJson coreObjectJson = new ObjectJson();
-        for (String propertiesKey : getAllKeysFromMap(properties)) {
+        for (String propertiesKey : getAllKeysFromProperties(properties)) {
             addFieldsToJsonObject(properties, coreObjectJson, propertiesKey);
         }
         return coreObjectJson.toStringJson();
@@ -22,12 +26,17 @@ public class PropertiesToJsonParser {
 
     private static void addFieldsToJsonObject(Map<String, String> properties, ObjectJson coreObjectJson, String propertiesKey) {
         String[] fields = propertiesKey.split(DOT);
-        new JsonObjectsInitializer(properties, propertiesKey, fields, coreObjectJson).addFieldForCurrentJsonObject();
+        new JsonObjectsTraverseResolver(properties, propertiesKey, fields, coreObjectJson).initializeFieldsInJson();
     }
 
 
-    private static Set<String> getAllKeysFromMap(Map<String, String> properties) {
-        return properties.keySet();
+    private static List<String> getAllKeysFromProperties(Map<String, String> properties) {
+        return propertyKeysPickup.getAllKeysFromProperties(properties);
+    }
+
+    @VisibleForTesting
+    protected static void setPropertyKeysPickup(PropertyKeysPickup propertyKeysPickup){
+        PropertiesToJsonParser.propertyKeysPickup = propertyKeysPickup;
     }
 
 

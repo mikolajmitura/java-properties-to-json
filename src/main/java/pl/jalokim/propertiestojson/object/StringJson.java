@@ -1,6 +1,6 @@
 package pl.jalokim.propertiestojson.object;
 
-import pl.jalokim.propertiestojson.util.JsonStringWrapper;
+import pl.jalokim.propertiestojson.util.StringToJsonStringWrapper;
 
 public class StringJson extends AbstractJsonType{
 
@@ -12,6 +12,6 @@ public class StringJson extends AbstractJsonType{
 
 	@Override
 	public String toStringJson() {
-		return JsonStringWrapper.wrap(value);
+		return StringToJsonStringWrapper.wrap(value);
 	}
 }

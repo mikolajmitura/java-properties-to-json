@@ -1,27 +1,74 @@
 package pl.jalokim.propertiestojson;
 
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
+import pl.jalokim.propertiestojson.object.ArrayJson;
 import pl.jalokim.propertiestojson.object.ObjectJson;
+import pl.jalokim.propertiestojson.object.StringJson;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.UNEXPECTED_JSON_OBJECT;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.UNEXPECTED_PRIMITIVE_TYPE;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.*;
+
 
 public class JsonObjectFieldsValidator {
 
-    public static void checkThatFieldNotExistYet(ObjectJson currentObjectJson, String field, String propertiesKey) {
-        if (currentObjectJson.containsField(field)) {
-            throw new ParsePropertiesException(String.format(UNEXPECTED_PRIMITIVE_TYPE, propertiesKey));
+
+    public static void checkEarlierWasJsonString(ObjectJson currentObjectJson, String field, String propertiesKey) {
+
+        if (currentObjectJson.containsField(field)){
+        AbstractJsonType jsonType = currentObjectJson.getJsonTypeByFieldName(field);
+            whenWasArrayTypeThenThrowException(currentObjectJson, field, propertiesKey, jsonType);
+            whenWasObjectTypeThenThrowException(propertiesKey, field, jsonType);
         }
     }
 
-    public static void checkIsJsonObject(String key, AbstractJsonType jsonType) {
-        if (isNotJsonPrimitiveType(jsonType)) {
-            throw new ParsePropertiesException(String.format(UNEXPECTED_JSON_OBJECT, key));
+    public static void checkEalierWasArrayJson(String propertiesKey, String field, AbstractJsonType jsonType){
+
+        whenWasStringTypeThenThrowException(propertiesKey, field, jsonType);
+        whenWasObjectTypeThenThrowException(propertiesKey, field, jsonType);
+
+    }
+
+    public static void checkEarlierWasJsonObject(String propertiesKey, String field, AbstractJsonType jsonType) {
+
+        whenWasStringTypeThenThrowException(propertiesKey, field, jsonType);
+    }
+
+    public static void checkIsListOnlyForPrimitive(String propertiesKey, String field, ArrayJson arrayJson, int index){
+
+        if (arrayJson.getElement(index) != null && !(arrayJson.getElement(index) instanceof StringJson)){
+            throwException(EXPECTED_ARRAY_WITH_JSON_OBJECT_TYPES, field, propertiesKey, arrayJson);
         }
     }
 
-    private static boolean isNotJsonPrimitiveType(AbstractJsonType jsonType) {
-        return !jsonType.getClass().equals(ObjectJson.class);
+    public static void checkIsArrayOnlyForObjects(String field, ArrayJson arrayJson, AbstractJsonType element, String propertiesKey) {
+        if (!(element instanceof ObjectJson)){
+            throwException(EXPECTED_ARRAY_WITH_PRIMITIVE_TYPES, field, propertiesKey, arrayJson);
+        }
+    }
+
+    private static void throwException(String message, String field, String propertiesKey, AbstractJsonType jsonType) {
+        throw new ParsePropertiesException(String.format(message, field, propertiesKey, jsonType.toStringJson()));
+    }
+
+    private static void whenWasStringTypeThenThrowException(String propertiesKey, String field, AbstractJsonType jsonType) {
+        if (isExpectedType(jsonType, StringJson.class)){
+            throwException(EXPECTED_PRIMITIVE_JSON_TYPE, field, propertiesKey, jsonType);
+        }
+    }
+
+    private static void whenWasObjectTypeThenThrowException(String propertiesKey, String field, AbstractJsonType jsonType) {
+        if (isExpectedType(jsonType,ObjectJson.class)){
+            throwException(EXPECTED_OBJECT_JSON_TYPE, field, propertiesKey, jsonType);
+        }
+    }
+
+    private static void whenWasArrayTypeThenThrowException(ObjectJson currentObjectJson, String field, String propertiesKey, AbstractJsonType jsonType) {
+        if (isExpectedType(jsonType,ArrayJson.class)) {
+            throwException(EXPECTED_ARRAY_JSON_TYPE, field, propertiesKey, currentObjectJson.getJsonTypeByFieldName(field));
+        }
+    }
+
+    private static boolean isExpectedType(AbstractJsonType object, Class<?> type){
+        return object.getClass().equals(type);
     }
 }

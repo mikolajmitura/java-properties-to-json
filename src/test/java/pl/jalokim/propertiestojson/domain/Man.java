@@ -8,6 +8,8 @@ public class Man {
     private Adress adress;
     private List<String> emails;
     private List<String> children;
+    private List<Group> groups;
+    private List<String> hoobies;
 
     public String getName() {
         return name;
@@ -47,5 +49,21 @@ public class Man {
 
     public void setChildren(List<String> children) {
         this.children = children;
+    }
+
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<Group> groups) {
+        this.groups = groups;
+    }
+
+    public List<String> getHoobies() {
+        return hoobies;
+    }
+
+    public void setHoobies(List<String> hoobies) {
+        this.hoobies = hoobies;
     }
 }
