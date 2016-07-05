@@ -1,7 +1,7 @@
 package pl.jalokim.propertiestojson.util;
 
 import org.assertj.core.util.VisibleForTesting;
-import pl.jalokim.propertiestojson.JsonObjectsInitializer;
+import pl.jalokim.propertiestojson.JsonObjectsTraverseResolver;
 import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
 import pl.jalokim.propertiestojson.object.ObjectJson;
 
@@ -26,7 +26,7 @@ public class PropertiesToJsonParser {
 
     private static void addFieldsToJsonObject(Map<String, String> properties, ObjectJson coreObjectJson, String propertiesKey) {
         String[] fields = propertiesKey.split(DOT);
-        new JsonObjectsInitializer(properties, propertiesKey, fields, coreObjectJson).addFieldForCurrentJsonObject();
+        new JsonObjectsTraverseResolver(properties, propertiesKey, fields, coreObjectJson).initializeFieldsInJson();
     }
 
 

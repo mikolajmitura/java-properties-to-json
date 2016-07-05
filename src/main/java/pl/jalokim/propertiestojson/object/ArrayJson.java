@@ -1,8 +1,6 @@
 package pl.jalokim.propertiestojson.object;
 
 
-import pl.jalokim.propertiestojson.util.JsonStringWrapper;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +12,26 @@ import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 
 public class ArrayJson extends AbstractJsonType{
 
-    public AbstractJsonType[] elements = new AbstractJsonType[100];
+    public static final int INIT_SIZE = 100;
+    private AbstractJsonType[] elements = new AbstractJsonType[INIT_SIZE];
 
     public void addElement(int index, AbstractJsonType element){
+        rewriteArrayWhenIsFull(index);
         elements[index] = element;
+    }
+
+    private void rewriteArrayWhenIsFull(int index) {
+        if (indexHigherThanArraySize(index)){
+            AbstractJsonType[] elementsTemp = new AbstractJsonType[elements.length+INIT_SIZE];
+            for (int i = 0; i < elements.length; i++){
+                elementsTemp[i]=elements[i];
+            }
+            elements = elementsTemp;
+        }
+    }
+
+    private boolean indexHigherThanArraySize(int index) {
+        return index > elements.length-1;
     }
 
     public ArrayJson(){
