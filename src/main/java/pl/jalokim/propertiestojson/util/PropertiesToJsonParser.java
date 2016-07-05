@@ -6,8 +6,10 @@ import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
 import pl.jalokim.propertiestojson.object.ObjectJson;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import static pl.jalokim.propertiestojson.Constants.DOT;
 
@@ -15,6 +17,12 @@ import static pl.jalokim.propertiestojson.Constants.DOT;
 public class PropertiesToJsonParser {
 
     private static PropertyKeysPickup propertyKeysPickup = new PropertyKeysPickup();
+
+    public static String parseToJson(Properties properties){
+        Map<String, String> map = new HashMap<>();
+        properties.stringPropertyNames().stream().forEach((name)->map.put(name,properties.getProperty(name)));
+        return parseToJson(map);
+    }
 
     public static String parseToJson(Map<String, String> properties) {
         ObjectJson coreObjectJson = new ObjectJson();
