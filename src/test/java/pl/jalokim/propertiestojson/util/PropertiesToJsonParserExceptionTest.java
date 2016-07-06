@@ -20,7 +20,7 @@ public class PropertiesToJsonParserExceptionTest {
     public void ThrowWhenExpectedObjectNotPrimitiveType(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage(String.format(EXPECTED_OBJECT_JSON_TYPE, "man", "man","{'someField':'test'}"));
+        expectedEx.expectMessage(String.format(EXPECTED_OBJECT_JSON_TYPE, "man", "man","{\"someField\":\"test\"}"));
         //when
         //given
         setUpMockPickupKeysOrder("man.someField","man");
@@ -31,7 +31,7 @@ public class PropertiesToJsonParserExceptionTest {
     public void ThrowWhenExpectedPrimitiveNotJsonObject(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage(String.format(EXPECTED_PRIMITIVE_JSON_TYPE,"field1","field1.prop2","'test'"));
+        expectedEx.expectMessage(String.format(EXPECTED_PRIMITIVE_JSON_TYPE,"field1","field1.prop2","\"test\""));
         //when
         //given
         setUpMockPickupKeysOrder("field1","field1.prop2");
@@ -43,7 +43,7 @@ public class PropertiesToJsonParserExceptionTest {
     public void ThrowWhenExpectedJsonArrayNotPrimitiveType(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage(String.format(EXPECTED_ARRAY_JSON_TYPE, "groups","groups","['test']"));
+        expectedEx.expectMessage(String.format(EXPECTED_ARRAY_JSON_TYPE, "groups","groups","[\"test\"]"));
         //when
         //given
         setUpMockPickupKeysOrder("groups[0]","groups");
@@ -54,7 +54,7 @@ public class PropertiesToJsonParserExceptionTest {
     public void ThrowWhenExpectedPrimitiveTypeNotArray(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage(String.format(EXPECTED_PRIMITIVE_JSON_TYPE, "groups", "groups[0]","'groupsVALUE'"));
+        expectedEx.expectMessage(String.format(EXPECTED_PRIMITIVE_JSON_TYPE, "groups", "groups[0]","\"groupsVALUE\""));
         //when
         //given
         setUpMockPickupKeysOrder("groups","groups[0]");
@@ -65,7 +65,7 @@ public class PropertiesToJsonParserExceptionTest {
     public void ThrowWhenExpectedPrimitiveArrayNotObjectInArray(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage(String.format(EXPECTED_ARRAY_WITH_PRIMITIVE_TYPES, "array", "array[0].name","['valueOfArray0']"));
+        expectedEx.expectMessage(String.format(EXPECTED_ARRAY_WITH_PRIMITIVE_TYPES, "array", "array[0].name","[\"valueOfArray0\"]"));
         //when
         //given
         setUpMockPickupKeysOrder("array[0]","array[0].name");
@@ -76,7 +76,7 @@ public class PropertiesToJsonParserExceptionTest {
     public void ThrowWhenExpectedJsonObjectArrayNotPrimitiveArray(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage(String.format(EXPECTED_ARRAY_WITH_JSON_OBJECT_TYPES, "array","array[0]","[{'name':'array[0].nameVALUE'}]"));
+        expectedEx.expectMessage(String.format(EXPECTED_ARRAY_WITH_JSON_OBJECT_TYPES, "array","array[0]","[{\"name\":\"array[0].nameVALUE\"}]"));
         //when
         //given
         setUpMockPickupKeysOrder("array[0].name","array[0]");

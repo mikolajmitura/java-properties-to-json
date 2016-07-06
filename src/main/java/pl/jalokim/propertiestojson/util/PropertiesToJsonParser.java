@@ -4,8 +4,11 @@ import org.assertj.core.util.VisibleForTesting;
 import pl.jalokim.propertiestojson.JsonObjectsTraverseResolver;
 import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
 import pl.jalokim.propertiestojson.object.ObjectJson;
+import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +21,39 @@ public class PropertiesToJsonParser {
 
     private static PropertyKeysPickup propertyKeysPickup = new PropertyKeysPickup();
 
-    public static String parseToJson(Properties properties){
+    /**
+     * generate String with Json by given InputStream
+     * @param inputStream
+     * @return simple String with json
+     * @throws IOException
+     */
+    public static String parseToJson(InputStream inputStream) throws IOException, ParsePropertiesException {
+        Properties properties = new Properties();
+        properties.load(inputStream);
+        return parseToJson(properties);
+    }
+
+
+    /**
+     * generate String with Json by given Java Properties
+     * @param properties
+     * @return simple String with json
+     * @throws ParsePropertiesException
+     */
+    public static String parseToJson(Properties properties) throws ParsePropertiesException{
         Map<String, String> map = new HashMap<>();
         properties.stringPropertyNames().stream().forEach((name)->map.put(name,properties.getProperty(name)));
         return parseToJson(map);
     }
 
-    public static String parseToJson(Map<String, String> properties) {
+
+    /**
+     * generate String with Json by given Map<String,String>
+     * @param properties
+     * @return simple String with json
+     * @throws ParsePropertiesException
+     */
+    public static String parseToJson(Map<String, String> properties) throws ParsePropertiesException {
         ObjectJson coreObjectJson = new ObjectJson();
         for (String propertiesKey : getAllKeysFromProperties(properties)) {
             addFieldsToJsonObject(properties, coreObjectJson, propertiesKey);
