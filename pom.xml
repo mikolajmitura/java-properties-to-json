@@ -27,6 +27,18 @@
 
     </dependencies>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>http://dl.bintray.com/mituramikolaj/maven</url>
+    </scm>
+
     <build>
         <plugins>
             <plugin>
