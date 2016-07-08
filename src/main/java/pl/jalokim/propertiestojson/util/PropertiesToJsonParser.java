@@ -1,20 +1,61 @@
 package pl.jalokim.propertiestojson.util;
 
-import pl.jalokim.propertiestojson.JsonObjectsInitializer;
+import org.assertj.core.util.VisibleForTesting;
+import pl.jalokim.propertiestojson.JsonObjectsTraverseResolver;
+import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
 import pl.jalokim.propertiestojson.object.ObjectJson;
+import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Properties;
 
 import static pl.jalokim.propertiestojson.Constants.DOT;
 
 
 public class PropertiesToJsonParser {
 
-    public static String parseToJson(Map<String, String> properties) {
+    private static PropertyKeysPickup propertyKeysPickup = new PropertyKeysPickup();
+
+    /**
+     * generate String with Json by given InputStream
+     * @param inputStream
+     * @return simple String with json
+     * @throws IOException
+     */
+    public static String parseToJson(InputStream inputStream) throws IOException, ParsePropertiesException {
+        Properties properties = new Properties();
+        properties.load(inputStream);
+        return parseToJson(properties);
+    }
+
+
+    /**
+     * generate String with Json by given Java Properties
+     * @param properties
+     * @return simple String with json
+     * @throws ParsePropertiesException
+     */
+    public static String parseToJson(Properties properties) throws ParsePropertiesException{
+        Map<String, String> map = new HashMap<>();
+        properties.stringPropertyNames().stream().forEach((name)->map.put(name,properties.getProperty(name)));
+        return parseToJson(map);
+    }
+
+
+    /**
+     * generate String with Json by given Map<String,String>
+     * @param properties
+     * @return simple String with json
+     * @throws ParsePropertiesException
+     */
+    public static String parseToJson(Map<String, String> properties) throws ParsePropertiesException {
         ObjectJson coreObjectJson = new ObjectJson();
-        for (String propertiesKey : getAllKeysFromMap(properties)) {
+        for (String propertiesKey : getAllKeysFromProperties(properties)) {
             addFieldsToJsonObject(properties, coreObjectJson, propertiesKey);
         }
         return coreObjectJson.toStringJson();
@@ -22,12 +63,17 @@ public class PropertiesToJsonParser {
 
     private static void addFieldsToJsonObject(Map<String, String> properties, ObjectJson coreObjectJson, String propertiesKey) {
         String[] fields = propertiesKey.split(DOT);
-        new JsonObjectsInitializer(properties, propertiesKey, fields, coreObjectJson).addFieldForCurrentJsonObject();
+        new JsonObjectsTraverseResolver(properties, propertiesKey, fields, coreObjectJson).initializeFieldsInJson();
     }
 
 
-    private static Set<String> getAllKeysFromMap(Map<String, String> properties) {
-        return properties.keySet();
+    private static List<String> getAllKeysFromProperties(Map<String, String> properties) {
+        return propertyKeysPickup.getAllKeysFromProperties(properties);
+    }
+
+    @VisibleForTesting
+    protected static void setPropertyKeysPickup(PropertyKeysPickup propertyKeysPickup){
+        PropertiesToJsonParser.propertyKeysPickup = propertyKeysPickup;
     }
 
 

@@ -1,10 +1,11 @@
 package pl.jalokim.propertiestojson.domain;
 
-import java.util.List;
-
-public class Insurance {
+/**
+ * Created by mikolaj on 7/3/16.
+ */
+public class Group {
     private String type;
-    private Integer cost;
+    private String name;
 
     public String getType() {
         return type;
@@ -14,12 +15,11 @@ public class Insurance {
         this.type = type;
     }
 
-    public Integer getCost() {
-        return cost;
+    public String getName() {
+        return name;
     }
 
-    public void setCost(Integer cost) {
-        this.cost = cost;
+    public void setName(String name) {
+        this.name = name;
     }
-
 }

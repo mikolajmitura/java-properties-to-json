@@ -1,22 +1,17 @@
-package pl.jalokim.propertiestojson;
+package pl.jalokim.propertiestojson.util;
 
 import com.google.gson.Gson;
-import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import pl.jalokim.propertiestojson.domain.MainObject;
-import pl.jalokim.propertiestojson.util.PropertiesToJsonParser;
-import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
-import java.text.ParseException;
+import org.junit.Test;
+import pl.jalokim.propertiestojson.domain.MainObject;
+import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
+import pl.jalokim.propertiestojson.util.PropertiesToJsonParser;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.UNEXPECTED_JSON_OBJECT;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.UNEXPECTED_PRIMITIVE_TYPE;
 
 public class PropertiesToJsonParserTest {
 
@@ -33,9 +28,15 @@ public class PropertiesToJsonParserTest {
     private static final String EMAIL_2 = "example2@cc.com";
     private static final String EMAIL_3 = "example3@gg.com";
     private static final String EMAILS = String.format(" %s ,%s, %s,%s",EMAIL_1, EMAIL_2, EMAIL_3, EMAIL_3);
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
+    public static final String GROUP_1 = "group1";
+    public static final String COMMERCIAL = "Commercial";
+    public static final String GROUP_3 = "group3";
+    public static final String GROUP_2 = "group2";
+    public static final String FREE = "Free";
+    public static final String CARS = "cars";
+    public static final String COMPUTERS = "computers";
+    public static final String WOMEN = "women";
+    public static final String SCIENCE = "science";
 
     private Map<String,String> initProperlyProperties(){
         Map<String,String> properties = new HashMap<>();
@@ -48,11 +49,16 @@ public class PropertiesToJsonParserTest {
         properties.put("field1", FIELD1_VALUE);
         properties.put("field2", FIELD2_VALUE);
         properties.put("man.emails", EMAILS);
-        return properties;
-    }
-
-    private Map<String,String> addWrongParams(Map<String, String> properties, String wrongKey){
-        properties.put(wrongKey,wrongKey);
+        properties.put("man.groups[0].name", GROUP_1);
+        properties.put("man.groups[0].type",COMMERCIAL);
+        properties.put("man.groups[2].name", GROUP_3);
+        properties.put("man.groups[2].type",COMMERCIAL);
+        properties.put("man.groups[1].name", GROUP_2);
+        properties.put("man.groups[1].type", FREE);
+        properties.put("man.hoobies[0]", CARS);
+        properties.put("man.hoobies[3]", COMPUTERS);
+        properties.put("man.hoobies[2]", WOMEN);
+        properties.put("man.hoobies[1]", SCIENCE);
         return properties;
     }
 
@@ -60,29 +66,10 @@ public class PropertiesToJsonParserTest {
     public void returnExpectedJson(){
         //when
         //given
+        PropertiesToJsonParser.setPropertyKeysPickup(new PropertyKeysPickup());
         String json = PropertiesToJsonParser.parseToJson(initProperlyProperties());
         //then
         assertJsonIsAsExpected(json);
-    }
-
-    @Test
-    public void ThrowWhenUnexpectedPrimitiveType(){
-        //then
-        expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage(String.format(UNEXPECTED_PRIMITIVE_TYPE, "man"));
-        //when
-        //given
-        PropertiesToJsonParser.parseToJson(addWrongParams(initProperlyProperties(), "man"));
-      }
-
-    @Test
-    public void ThrowWhenUnexpectedJsonObject(){
-        //then
-        expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage(String.format(UNEXPECTED_JSON_OBJECT, "field1.prop2"));
-        //when
-        //given
-        PropertiesToJsonParser.parseToJson(addWrongParams(initProperlyProperties(), "field1.prop2"));
     }
 
     private void assertJsonIsAsExpected(String json) {
@@ -97,6 +84,15 @@ public class PropertiesToJsonParserTest {
         Assertions.assertThat(mainObject.getMan().getName()).isEqualTo(NAME);
         Assertions.assertThat(mainObject.getMan().getSurname()).isEqualTo(SURNAME);
         assertEmailList(mainObject);
+        assertGroupByIdAndExpectedValues(mainObject,0,GROUP_1, COMMERCIAL);
+        assertGroupByIdAndExpectedValues(mainObject,1,GROUP_2, FREE);
+        assertGroupByIdAndExpectedValues(mainObject,2,GROUP_3, COMMERCIAL);
+        assertHobbiesList(mainObject);
+    }
+
+    private void assertGroupByIdAndExpectedValues(MainObject mainObject, int index, String name, String type) {
+        Assertions.assertThat(mainObject.getMan().getGroups().get(index).getName()).isEqualTo(name);
+        Assertions.assertThat(mainObject.getMan().getGroups().get(index).getType()).isEqualTo(type);
     }
 
     private void assertEmailList(MainObject mainObject) {
@@ -107,4 +103,13 @@ public class PropertiesToJsonParserTest {
         Assertions.assertThat(emails.get(3)).isEqualTo(EMAIL_3);
     }
 
+    private void assertHobbiesList(MainObject mainObject){
+        List<String> hobbies = mainObject.getMan().getHoobies();
+        Assertions.assertThat(hobbies.get(0)).isEqualTo(CARS);
+        Assertions.assertThat(hobbies.get(1)).isEqualTo(SCIENCE);
+        Assertions.assertThat(hobbies.get(2)).isEqualTo(WOMEN);
+        Assertions.assertThat(hobbies.get(3)).isEqualTo(COMPUTERS);
+    }
+
 }
+

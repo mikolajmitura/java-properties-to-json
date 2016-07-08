@@ -2,15 +2,15 @@ package pl.jalokim.propertiestojson.util;
 
 public class NumberUtil {
 
-    public static boolean isInteger(String toParse){
+    public static boolean isNumber(String toParse){
         try {
-            Integer.valueOf(toParse);
+            Double.valueOf(toParse);
             return true;
         } catch (Exception exc){}
         return false;
     }
 
-    public static Integer getInt(String toParse){
-        return Integer.valueOf(toParse);
+    public static Double getNumber(String toParse){
+        return Double.valueOf(toParse);
     }
 }
