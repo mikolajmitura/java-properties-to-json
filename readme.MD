@@ -11,10 +11,11 @@ You can generate Json from:
 below variable properties as one of the above types:
 
 code snippet:
-```bash
+```java
 
 import pl.jalokim.propertiestojson.util.PropertiesToJsonParser;
----
+
+...
 String json = PropertiesToJsonParser.parseToJson(properties);
 
 ```
@@ -38,7 +39,7 @@ object3.simpleString=stringValue
 
 Will result:
 
-```bash
+```json
 {
    "object2":{
       "simpleArray":[
@@ -82,17 +83,17 @@ Requirements
 - properties structure must have structure compatible with json
 
 For example properties from below will throws ParsePropertiesException!
-```bash
+```properties
 object.man.name=John
 object.man=simpleValue
 
-explain: in first key 'man' is consider as json object type and so on.
+## reason: in first key 'man' is consider as json object type and so on.
 
 object.array[0]=simpleValue
 object.array[1].someField=someObjectSomeFieldValue
 object.array[1].someField2=someObjectSomeFieldValue2
 
-explain: in first key 'array' is consider as array for primitive type not for objects and so on.
+## reason: in first key 'array' is consider as array for primitive type not for objects and so on.
 
 
 ```
