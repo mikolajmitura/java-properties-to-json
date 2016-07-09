@@ -10,6 +10,7 @@ public class Man {
     private List<String> children;
     private List<Group> groups;
     private List<String> hoobies;
+    private Insurance insurance;
 
     public String getName() {
         return name;
@@ -65,5 +66,13 @@ public class Man {
 
     public void setHoobies(List<String> hoobies) {
         this.hoobies = hoobies;
+    }
+
+    public Insurance getInsurance() {
+        return insurance;
+    }
+
+    public void setInsurance(Insurance insurance) {
+        this.insurance = insurance;
     }
 }

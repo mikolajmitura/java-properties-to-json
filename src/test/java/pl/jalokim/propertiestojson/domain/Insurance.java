@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Insurance {
     private String type;
-    private Integer cost;
+    private Double cost;
 
     public String getType() {
         return type;
@@ -14,11 +14,11 @@ public class Insurance {
         this.type = type;
     }
 
-    public Integer getCost() {
+    public Double getCost() {
         return cost;
     }
 
-    public void setCost(Integer cost) {
+    public void setCost(Double cost) {
         this.cost = cost;
     }
 
