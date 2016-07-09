@@ -8,8 +8,10 @@ You can generate Json from:
 - from Map<String,String> (import java.util.Map)
 - from InputStream with properties (java.io.InputStream)
 
-below variable properties as one of the above types:
+below variable "properties" as one of the above types:
 
+Simple Example
+---------------------------------------------
 code snippet:
 ```java
 
@@ -74,6 +76,73 @@ Will result:
    }
 }
 ```
+Example of use filters:
+---------------------------------------------
+
+code snippet:
+```java
+
+import pl.jalokim.propertiestojson.util.PropertiesToJsonParser;
+
+...
+String json = PropertiesToJsonParser.parseToJson(properties, "man.groups", "man.hoobies", "insurance.cost");
+```
+
+example properties:
+```bash
+man.groups[0].type=Commercial
+man.groups[0].name=group1
+man.groups[1].type=Free
+man.groups[1].name=group2
+man.groups[2].type=Commercial
+man.groups[2].name=group3
+man.hoobies[0]=cars
+man.hoobies[1]=science
+man.hoobies[2]=women
+man.hoobies[3]=computers
+man.insurance.cost=126.543
+man.adress.street=Jp2
+man.adress.city=Waraw
+man.emails= example@gg.com ,example2@cc.com, example3@gg.com,example3@gg.com
+man.name=John
+man.surname=Surname
+insurance.type=Medical
+insurance.cost=123
+field1=someValue2
+field2=someValue3
+
+```
+
+Will result
+```json
+{
+   "insurance":{
+      "cost":123.0
+   },
+   "man":{
+      "hoobies":[
+         "cars",
+         "science",
+         "women",
+         "computers"
+      ],
+      "groups":[
+         {
+            "name":"group1",
+            "type":"Commercial"
+         },
+         {
+            "name":"group2",
+            "type":"Free"
+         },
+         {
+            "name":"group3",
+            "type":"Commercial"
+         }
+      ]
+   }
+}
+```
 
 Requirements
 ---------------------------------------------
@@ -95,13 +164,11 @@ object.array[1].someField2=someObjectSomeFieldValue2
 
 ## reason: in first key 'array' is consider as array for primitive type not for objects and so on.
 
-
 ```
 
 
 Build from sources
 ---------------------------------------------
-
 
 How to build from sources
 ```bash

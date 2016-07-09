@@ -24,6 +24,7 @@ public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonPa
         InputStream inputStream = getPropertiesFromFile();
         // when
         String json = PropertiesToJsonParser.parseToJson(inputStream, "man.groups","man.hoobies","insurance.cost");
+        System.out.println(json);
         // then
         assertJsonIsAsExpected(json);
     }
