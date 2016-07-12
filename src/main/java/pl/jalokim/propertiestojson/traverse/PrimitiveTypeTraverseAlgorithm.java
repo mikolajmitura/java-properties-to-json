@@ -43,15 +43,27 @@ public class PrimitiveTypeTraverseAlgorithm extends TraverseAlgorithm{
     protected void addFieldToArray(String field, String propertyValue) {
         PropertyArrayHelper propertyArrayHelper = new PropertyArrayHelper(field);
         field = propertyArrayHelper.getArrayfieldName();
-        if (currentObjectJson.containsField(field)){
-            ArrayJson arrayJson = getArrayJsonWhenIsValid(field);
-            checkIsListOnlyForPrimitive( propertiesKey, field, arrayJson,propertyArrayHelper.getIndexArray());
-            arrayJson.addElement(propertyArrayHelper.getIndexArray(),new StringJson(propertyValue));
+        if (arrayWithGivenFieldNameExist(field)){
+            fetchArrayAndAddElement(field, propertyValue, propertyArrayHelper);
         } else {
-            ArrayJson arrayJsonObject = new ArrayJson();
-            arrayJsonObject.addElement(propertyArrayHelper.getIndexArray(), new StringJson(propertyValue));
-            currentObjectJson.addField(field, arrayJsonObject);
+            createArrayAndAddElement(field, propertyValue, propertyArrayHelper);
         }
+    }
+
+    private void createArrayAndAddElement(String field, String propertyValue, PropertyArrayHelper propertyArrayHelper) {
+        ArrayJson arrayJsonObject = new ArrayJson();
+        arrayJsonObject.addElement(propertyArrayHelper.getIndexArray(), new StringJson(propertyValue));
+        currentObjectJson.addField(field, arrayJsonObject);
+    }
+
+    private void fetchArrayAndAddElement(String field, String propertyValue, PropertyArrayHelper propertyArrayHelper) {
+        ArrayJson arrayJson = getArrayJsonWhenIsValid(field);
+        checkIsListOnlyForPrimitive( propertiesKey, field, arrayJson,propertyArrayHelper.getIndexArray());
+        arrayJson.addElement(propertyArrayHelper.getIndexArray(),new StringJson(propertyValue));
+    }
+
+    private boolean arrayWithGivenFieldNameExist(String field) {
+        return currentObjectJson.containsField(field);
     }
 
     private boolean isSimpleArray(String propValue) {

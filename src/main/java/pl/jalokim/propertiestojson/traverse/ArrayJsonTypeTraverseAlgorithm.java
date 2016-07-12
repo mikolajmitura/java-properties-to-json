@@ -30,15 +30,27 @@ public class ArrayJsonTypeTraverseAlgorithm extends  TraverseAlgorithm{
 
     private void fetchArrayAndAddElement(String field, PropertyArrayHelper propertyArrayHelper) {
         ArrayJson arrayJson = getArrayJsonWhenIsValid(field);
-        if (arrayJson.getElement(propertyArrayHelper.getIndexArray()) == null){
-            ObjectJson nextObjectJson = new ObjectJson();
-            arrayJson.addElement(propertyArrayHelper.getIndexArray(), nextObjectJson);
-            currentObjectJson = nextObjectJson;
+        if (existElementInArrayByGivenIdex(arrayJson, propertyArrayHelper.getIndexArray())){
+            fetchJsonObjectWhenIsValid(field, propertyArrayHelper, arrayJson);
         } else {
-            AbstractJsonType element = arrayJson.getElement(propertyArrayHelper.getIndexArray());
-            JsonObjectFieldsValidator.checkIsArrayOnlyForObjects(field, arrayJson, element, propertiesKey);
-            currentObjectJson = (ObjectJson) element;
+            createJsonObjectAndAddToArray(propertyArrayHelper, arrayJson);
         }
+    }
+
+    private boolean existElementInArrayByGivenIdex(ArrayJson arrayJson, int index) {
+        return arrayJson.getElement(index) != null;
+    }
+
+    private void createJsonObjectAndAddToArray(PropertyArrayHelper propertyArrayHelper, ArrayJson arrayJson) {
+        ObjectJson nextObjectJson = new ObjectJson();
+        arrayJson.addElement(propertyArrayHelper.getIndexArray(), nextObjectJson);
+        currentObjectJson = nextObjectJson;
+    }
+
+    private void fetchJsonObjectWhenIsValid(String field, PropertyArrayHelper propertyArrayHelper, ArrayJson arrayJson) {
+        AbstractJsonType element = arrayJson.getElement(propertyArrayHelper.getIndexArray());
+        JsonObjectFieldsValidator.checkIsArrayOnlyForObjects(field, arrayJson, element, propertiesKey);
+        currentObjectJson = (ObjectJson) element;
     }
 
     private void createArrayAndAddElement(String field, PropertyArrayHelper propertyArrayHelper) {
