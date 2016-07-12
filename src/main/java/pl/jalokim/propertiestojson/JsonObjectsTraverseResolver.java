@@ -25,11 +25,11 @@ public class JsonObjectsTraverseResolver {
         this.currentObjectJson = coreObjectJson;
     }
 
-    private static Map<Algorithm, TraverseAlgorithm> algorithms = new HashMap<>();
+    private static Map<AlgorithmType, TraverseAlgorithm> algorithms = new HashMap<>();
     static {
-        algorithms.put(Algorithm.OBJECT, new ObjectJsonTypeTraverseAlgorithm());
-        algorithms.put(Algorithm.PRIMITIVE, new PrimitiveTypeTraverseAlgorithm());
-        algorithms.put(Algorithm.ARRAY, new ArrayJsonTypeTraverseAlgorithm());
+        algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeTraverseAlgorithm());
+        algorithms.put(AlgorithmType.PRIMITIVE, new PrimitiveTypeTraverseAlgorithm());
+        algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeTraverseAlgorithm());
     }
 
     public void initializeFieldsInJson() {
@@ -40,21 +40,21 @@ public class JsonObjectsTraverseResolver {
         }
     }
 
-    private Algorithm resolveAlgorithm(int index, String field){
-        if (isLastPartOfKey(index)){
-           return  Algorithm.PRIMITIVE;
+    private AlgorithmType resolveAlgorithm(int index, String field){
+        if (isPrimitiveField(index)){
+           return  AlgorithmType.PRIMITIVE;
         }
         if (isArrayField(field)){
-            return Algorithm.ARRAY;
+            return AlgorithmType.ARRAY;
         }
-        return Algorithm.OBJECT;
+        return AlgorithmType.OBJECT;
     }
 
     public static boolean isArrayField(String field) {
         return field.contains(ARRAY_START_SIGN) && field.contains(ARRAY_END_SIGN);
     }
 
-    private boolean isLastPartOfKey(int index) {
+    private boolean isPrimitiveField(int index) {
         int lastIndex = fields.length - 1;
         return index == lastIndex;
     }
