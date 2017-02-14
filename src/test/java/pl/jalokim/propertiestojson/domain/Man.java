@@ -5,7 +5,7 @@ import java.util.List;
 public class Man {
     private String name;
     private String surname;
-    private Adress adress;
+    private Address address;
     private List<String> emails;
     private List<String> children;
     private List<Group> groups;
@@ -36,12 +36,12 @@ public class Man {
         this.surname = surname;
     }
 
-    public Adress getAdress() {
-        return adress;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setAdress(Adress adress) {
-        this.adress = adress;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public List<String> getChildren() {

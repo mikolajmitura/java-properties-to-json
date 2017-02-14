@@ -1,6 +1,6 @@
 package pl.jalokim.propertiestojson.domain;
 
-public class Adress {
+public class Address {
     String city;
     String street;
 

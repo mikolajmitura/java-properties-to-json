@@ -36,7 +36,7 @@ public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonPa
         Assertions.assertThat(mainObject.getField2()).isNull();
         Assertions.assertThat(mainObject.getInsurance().getCost()).isEqualTo(COST_INT_VALUE);
         Assertions.assertThat(mainObject.getInsurance().getType()).isNull();
-        Assertions.assertThat(mainObject.getMan().getAdress()).isNull();
+        Assertions.assertThat(mainObject.getMan().getAddress()).isNull();
         Assertions.assertThat(mainObject.getMan().getName()).isNull();
         Assertions.assertThat(mainObject.getMan().getSurname()).isNull();
         Assertions.assertThat(mainObject.getMan().getInsurance()).isNull();
