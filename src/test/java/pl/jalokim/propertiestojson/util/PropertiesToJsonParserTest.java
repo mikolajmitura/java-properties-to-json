@@ -3,17 +3,11 @@ package pl.jalokim.propertiestojson.util;
 import com.google.gson.Gson;
 import org.assertj.core.api.Assertions;
 
-import org.junit.Before;
 import org.junit.Test;
 import pl.jalokim.propertiestojson.domain.MainObject;
-import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
-import pl.jalokim.propertiestojson.util.PropertiesToJsonParser;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.io.InputStream;
+
 
 public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTest{
 
@@ -45,8 +39,8 @@ public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTe
         Assertions.assertThat(mainObject.getField2()).isEqualTo(FIELD2_VALUE);
         Assertions.assertThat(mainObject.getInsurance().getCost()).isEqualTo(COST_INT_VALUE);
         Assertions.assertThat(mainObject.getInsurance().getType()).isEqualTo(INSRANCE_TYPE);
-        Assertions.assertThat(mainObject.getMan().getAdress().getCity()).isEqualTo(CITY);
-        Assertions.assertThat(mainObject.getMan().getAdress().getStreet()).isEqualTo(STREET);
+        Assertions.assertThat(mainObject.getMan().getAddress().getCity()).isEqualTo(CITY);
+        Assertions.assertThat(mainObject.getMan().getAddress().getStreet()).isEqualTo(STREET);
         Assertions.assertThat(mainObject.getMan().getName()).isEqualTo(NAME);
         Assertions.assertThat(mainObject.getMan().getSurname()).isEqualTo(SURNAME);
         Assertions.assertThat(mainObject.getMan().getInsurance().getCost()).isEqualTo(EXPECTED_MAN_COST);

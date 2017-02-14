@@ -1,7 +1,5 @@
 package pl.jalokim.propertiestojson.domain;
 
-import java.util.List;
-
 public class Insurance {
     private String type;
     private Double cost;

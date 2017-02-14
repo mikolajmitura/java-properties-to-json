@@ -10,7 +10,7 @@ public class PropertyKeysPickupOrderedForTest extends PropertyKeysPickup{
     private List<String> mockKeys = new ArrayList<>();
 
     public void setUpMockKeys(String... keys){
-        Arrays.stream(keys).forEach(mockKeys::add);
+        mockKeys.addAll(Arrays.asList(keys));
     }
 
     @Override

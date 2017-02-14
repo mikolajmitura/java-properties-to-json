@@ -1,8 +1,5 @@
 package pl.jalokim.propertiestojson.domain;
 
-/**
- * Created by mikolaj on 7/3/16.
- */
 public class Group {
     private String type;
     private String name;

@@ -53,8 +53,8 @@ public class AbstractPropertiesToJsonParserTest {
         Map<String,String> properties = new HashMap<>();
         properties.put("man.name", NAME);
         properties.put("man.surname", SURNAME);
-        properties.put("man.adress.city", CITY);
-        properties.put("man.adress.street", STREET);
+        properties.put("man.address.city", CITY);
+        properties.put("man.address.street", STREET);
         properties.put("insurance.type",INSRANCE_TYPE);
         properties.put("insurance.cost", COST_STRING_VALUE);
         properties.put("field1", FIELD1_VALUE);
