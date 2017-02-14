@@ -165,7 +165,16 @@ object.array[1].someField2=someObjectSomeFieldValue2
 ## reason: in first key 'array' is consider as array for primitive type not for objects and so on.
 
 ```
+Maven dependency
+---------------------------------------------
 
+```xml
+    <dependency>
+        <groupId>pl.jalokim.propertiestojson</groupId>
+        <artifactId>java-properties-to-json</artifactId>
+        <version>1.2</version>
+    </dependency>
+```
 
 Build from sources
 ---------------------------------------------
