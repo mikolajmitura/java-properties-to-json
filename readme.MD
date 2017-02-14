@@ -147,7 +147,7 @@ Will result
 Requirements
 ---------------------------------------------
 
-- java 1.8
+- java 7
 
 - properties structure must have structure compatible with json
 
