@@ -17,7 +17,7 @@ public class PropertiesToJsonParserExceptionTest {
     public ExpectedException expectedEx = ExpectedException.none();
 
     @Test
-    public void ThrowWhenExpectedObjectNotPrimitiveType(){
+    public void throwWhenExpectedObjectNotPrimitiveType(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
         expectedEx.expectMessage(String.format(EXPECTED_OBJECT_JSON_TYPE, "man", "man","{\"someField\":\"test\"}"));
@@ -28,7 +28,7 @@ public class PropertiesToJsonParserExceptionTest {
     }
 
     @Test
-    public void ThrowWhenExpectedPrimitiveNotJsonObject(){
+    public void throwWhenExpectedPrimitiveNotJsonObject(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
         expectedEx.expectMessage(String.format(EXPECTED_PRIMITIVE_JSON_TYPE,"field1","field1.prop2","\"test\""));
@@ -40,7 +40,7 @@ public class PropertiesToJsonParserExceptionTest {
 
 
     @Test
-    public void ThrowWhenExpectedJsonArrayNotPrimitiveType(){
+    public void throwWhenExpectedJsonArrayNotPrimitiveType(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
         expectedEx.expectMessage(String.format(EXPECTED_ARRAY_JSON_TYPE, "groups","groups","[\"test\"]"));
@@ -51,7 +51,7 @@ public class PropertiesToJsonParserExceptionTest {
     }
 
     @Test
-    public void ThrowWhenExpectedPrimitiveTypeNotArray(){
+    public void throwWhenExpectedPrimitiveTypeNotArray(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
         expectedEx.expectMessage(String.format(EXPECTED_PRIMITIVE_JSON_TYPE, "groups", "groups[0]","\"groupsVALUE\""));
@@ -62,7 +62,7 @@ public class PropertiesToJsonParserExceptionTest {
     }
 
     @Test
-    public void ThrowWhenExpectedPrimitiveArrayNotObjectInArray(){
+    public void throwWhenExpectedPrimitiveArrayNotObjectInArray(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
         expectedEx.expectMessage(String.format(EXPECTED_ARRAY_WITH_PRIMITIVE_TYPES, "array", "array[0].name","[\"valueOfArray0\"]"));
@@ -73,7 +73,7 @@ public class PropertiesToJsonParserExceptionTest {
     }
 
     @Test
-    public void ThrowWhenExpectedJsonObjectArrayNotPrimitiveArray(){
+    public void throwWhenExpectedJsonObjectArrayNotPrimitiveArray(){
         //then
         expectedEx.expect(ParsePropertiesException.class);
         expectedEx.expectMessage(String.format(EXPECTED_ARRAY_WITH_JSON_OBJECT_TYPES, "array","array[0]","[{\"name\":\"array[0].nameVALUE\"}]"));
