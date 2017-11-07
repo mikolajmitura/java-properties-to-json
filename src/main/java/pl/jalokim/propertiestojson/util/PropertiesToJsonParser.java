@@ -4,9 +4,13 @@ import org.assertj.core.util.VisibleForTesting;
 import pl.jalokim.propertiestojson.JsonObjectsTraverseResolver;
 import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
 import pl.jalokim.propertiestojson.object.ObjectJson;
+import pl.jalokim.propertiestojson.util.exception.ReadInputException;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -20,14 +24,56 @@ public class PropertiesToJsonParser {
     private static PropertyKeysPickup propertyKeysPickup = new PropertyKeysPickup();
 
     /**
+     *
+     * @param pathToFile path to File
+     * @param includeDomainKeys domain head keys which should be parsed to json <br>
+     *                          example properties:<br>
+     *                          object1.field1=value1<br>
+     *                          object1.field2=value2<br>
+     *                          someObject2.field2=value3<br>
+     *                          filter "object1"<br>
+     *                          will parse only nested domain for "object1"<br>
+     * @return simple String with json
+     * @throws ReadInputException when cannot find file
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parsePropertiesFromFileToJson(String pathToFile, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException{
+        File initialFile = new File(pathToFile);
+        try {
+            InputStream targetStream = new FileInputStream(initialFile);
+            return parseToJson(targetStream, includeDomainKeys);
+        } catch (FileNotFoundException e) {
+           throw new ReadInputException(e);
+        }
+    }
+
+    /**
+     * Generate Json by given path to file with properties
+     *
+     * @param pathToFile path to File
+     * @return simple String with json
+     * @throws ReadInputException  when cannot find file
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parsePropertiesFromFileToJson(String pathToFile) throws ReadInputException, ParsePropertiesException{
+        File initialFile = new File(pathToFile);
+        try {
+            InputStream targetStream = new FileInputStream(initialFile);
+            return parseToJson(targetStream);
+        } catch (FileNotFoundException e) {
+            throw new ReadInputException(e);
+        }
+    }
+
+    /**
      * generate Json by given InputStream
      *
      * @param inputStream InputStream with properties
      * @return simple String with json
-     * @throws IOException              when cannot find file
+     * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public static String parseToJson(InputStream inputStream) throws IOException, ParsePropertiesException {
+    public static String parseToJson(InputStream inputStream) throws ReadInputException, ParsePropertiesException {
         return parseToJson(inputStreamToProperties(inputStream));
     }
 
@@ -109,10 +155,10 @@ public class PropertiesToJsonParser {
      *                          filter "object1"<br>
      *                          will parse only nested domain for "object1"<br>
      * @return simple String with json
-     * @throws IOException              when cannot find file
+     * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public static String parseToJson(InputStream inputStream, String... includeDomainKeys) throws IOException, ParsePropertiesException {
+    public static String parseToJson(InputStream inputStream, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
         return parseToJson(inputStreamToProperties(inputStream), includeDomainKeys);
     }
 
@@ -124,15 +170,19 @@ public class PropertiesToJsonParser {
 
     public static boolean keyIsCompatibleWithRequiredKey(String requiredKey, String key) {
         String testedChar = key.substring(requiredKey.length(), requiredKey.length() + 1);
-        if (testedChar.equals(ARRAY_START_SIGN) || testedChar.equals(DOT)) {
+        if (testedChar.equals(ARRAY_START_SIGN) || testedChar.equals(".")) {
             return true;
         }
         return false;
     }
 
-    private static Properties inputStreamToProperties(InputStream inputStream) throws IOException {
+    private static Properties inputStreamToProperties(InputStream inputStream) throws ReadInputException{
         Properties properties = new Properties();
-        properties.load(inputStream);
+        try {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            throw new ReadInputException(e);
+        }
         return properties;
     }
 
