@@ -27,7 +27,11 @@ example properties:
 object.man.name=John
 object.man.surname=Doe
 object.type=SOMETYPE
-object.simpleNumber=1.2345
+object.doubleNumber=1.2345
+object.integerNumber=12
+object.booleanValue1=true
+object.booleanValue2=True
+object.booleanValue3=false
 object2.simpleArray[0]=value1
 object2.simpleArray[1]=value2
 object2.simpleArray[2]=value3
@@ -67,7 +71,11 @@ Will result:
       "simpleString":"stringValue"
    },
    "object":{
-      "simpleNumber":1.2345,
+      "doubleNumber":1.2345,
+      "integerNumber":12,
+      "booleanValue1":true,
+      "booleanValue2":true,
+      "booleanValue3":false,
       "man":{
          "surname":"Doe",
          "name":"John"
@@ -172,7 +180,7 @@ Maven dependency
     <dependency>
         <groupId>pl.jalokim.propertiestojson</groupId>
         <artifactId>java-properties-to-json</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
     </dependency>
 ```
 
