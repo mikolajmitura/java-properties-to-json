@@ -7,6 +7,7 @@ You can generate Json from:
 - from Java properties (java.util.Properties)
 - from Map<String,String> (import java.util.Map)
 - from InputStream with properties (java.io.InputStream)
+- from given file localization with properties 
 
 below variable "properties" as one of the above types:
 
@@ -20,6 +21,7 @@ import pl.jalokim.propertiestojson.util.PropertiesToJsonParser;
 ...
 String json = PropertiesToJsonParser.parseToJson(properties);
 
+String jsonFromProperties = PropertiesToJsonParser.parsePropertiesFromFileToJson("/home/user/file.properties");
 ```
 
 example properties:
