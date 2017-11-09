@@ -24,8 +24,7 @@ public class PropertiesToJsonParser {
     private static PropertyKeysPickup propertyKeysPickup = new PropertyKeysPickup();
 
     /**
-     *
-     * @param pathToFile path to File
+     * @param pathToFile        path to File
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
      *                          example properties:<br>
      *                          object1.field1=value1<br>
@@ -34,16 +33,16 @@ public class PropertiesToJsonParser {
      *                          filter "object1"<br>
      *                          will parse only nested domain for "object1"<br>
      * @return simple String with json
-     * @throws ReadInputException when cannot find file
+     * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public static String parsePropertiesFromFileToJson(String pathToFile, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException{
+    public static String parsePropertiesFromFileToJson(String pathToFile, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
         File initialFile = new File(pathToFile);
         try {
             InputStream targetStream = new FileInputStream(initialFile);
             return parseToJson(targetStream, includeDomainKeys);
         } catch (FileNotFoundException e) {
-           throw new ReadInputException(e);
+            throw new ReadInputException(e);
         }
     }
 
@@ -52,10 +51,10 @@ public class PropertiesToJsonParser {
      *
      * @param pathToFile path to File
      * @return simple String with json
-     * @throws ReadInputException  when cannot find file
+     * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public static String parsePropertiesFromFileToJson(String pathToFile) throws ReadInputException, ParsePropertiesException{
+    public static String parsePropertiesFromFileToJson(String pathToFile) throws ReadInputException, ParsePropertiesException {
         File initialFile = new File(pathToFile);
         try {
             InputStream targetStream = new FileInputStream(initialFile);
@@ -176,7 +175,7 @@ public class PropertiesToJsonParser {
         return false;
     }
 
-    private static Properties inputStreamToProperties(InputStream inputStream) throws ReadInputException{
+    private static Properties inputStreamToProperties(InputStream inputStream) throws ReadInputException {
         Properties properties = new Properties();
         try {
             properties.load(inputStream);

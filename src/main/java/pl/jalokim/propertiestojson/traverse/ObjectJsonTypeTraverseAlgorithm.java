@@ -4,7 +4,7 @@ import pl.jalokim.propertiestojson.JsonObjectFieldsValidator;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJson;
 
-public class ObjectJsonTypeTraverseAlgorithm extends TraverseAlgorithm{
+public class ObjectJsonTypeTraverseAlgorithm extends TraverseAlgorithm {
 
 
     @Override
@@ -27,9 +27,9 @@ public class ObjectJsonTypeTraverseAlgorithm extends TraverseAlgorithm{
         currentObjectJson = nextObjectJson;
     }
 
-     private void fetchJsonObjectWhenIsNotPrimitive(String field) {
+    private void fetchJsonObjectWhenIsNotPrimitive(String field) {
         AbstractJsonType jsonType = currentObjectJson.getJsonTypeByFieldName(field);
-        JsonObjectFieldsValidator.checkEarlierWasJsonObject(propertiesKey,field, jsonType);
-         currentObjectJson = (ObjectJson) jsonType;
+        JsonObjectFieldsValidator.checkEarlierWasJsonObject(propertiesKey, field, jsonType);
+        currentObjectJson = (ObjectJson) jsonType;
     }
 }

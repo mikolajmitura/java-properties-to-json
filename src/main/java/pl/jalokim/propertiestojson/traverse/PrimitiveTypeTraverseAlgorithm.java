@@ -19,7 +19,7 @@ import static pl.jalokim.propertiestojson.util.NumberUtil.isBoolean;
 import static pl.jalokim.propertiestojson.util.NumberUtil.isDoubleNumber;
 import static pl.jalokim.propertiestojson.util.NumberUtil.isIntegerNumber;
 
-public class PrimitiveTypeTraverseAlgorithm extends TraverseAlgorithm{
+public class PrimitiveTypeTraverseAlgorithm extends TraverseAlgorithm {
 
 
     @Override
@@ -35,15 +35,15 @@ public class PrimitiveTypeTraverseAlgorithm extends TraverseAlgorithm{
 
     private void addPrimitiveFieldToCurrentJsonObject(String field) {
         String propertyValue = properties.get(propertiesKey);
-        if (isSimpleArray(propertyValue)){
+        if (isSimpleArray(propertyValue)) {
             currentObjectJson.addField(field, new ArrayJson(propertyValue.split(SIMPLE_ARRAY_DELIMETER)));
-        } else if (isArrayField(field)){
+        } else if (isArrayField(field)) {
             addFieldToArray(field, propertyValue);
         } else if (isDoubleNumber(propertyValue)) {
             currentObjectJson.addField(field, new DoubleNumberJson(getDoubleNumber(propertyValue)));
-        } else if (isIntegerNumber(propertyValue)){
+        } else if (isIntegerNumber(propertyValue)) {
             currentObjectJson.addField(field, new IntegerNumberJson(getIntegerNumber(propertyValue)));
-        } else if (isBoolean(propertyValue)){
+        } else if (isBoolean(propertyValue)) {
             currentObjectJson.addField(field, new BooleanJson(getBoolean(propertyValue)));
         } else {
             currentObjectJson.addField(field, new StringJson(propertyValue));
@@ -53,7 +53,7 @@ public class PrimitiveTypeTraverseAlgorithm extends TraverseAlgorithm{
     protected void addFieldToArray(String field, String propertyValue) {
         PropertyArrayHelper propertyArrayHelper = new PropertyArrayHelper(field);
         field = propertyArrayHelper.getArrayfieldName();
-        if (arrayWithGivenFieldNameExist(field)){
+        if (arrayWithGivenFieldNameExist(field)) {
             fetchArrayAndAddElement(field, propertyValue, propertyArrayHelper);
         } else {
             createArrayAndAddElement(field, propertyValue, propertyArrayHelper);
@@ -68,8 +68,8 @@ public class PrimitiveTypeTraverseAlgorithm extends TraverseAlgorithm{
 
     private void fetchArrayAndAddElement(String field, String propertyValue, PropertyArrayHelper propertyArrayHelper) {
         ArrayJson arrayJson = getArrayJsonWhenIsValid(field);
-        checkIsListOnlyForPrimitive( propertiesKey, field, arrayJson,propertyArrayHelper.getIndexArray());
-        arrayJson.addElement(propertyArrayHelper.getIndexArray(),new StringJson(propertyValue));
+        checkIsListOnlyForPrimitive(propertiesKey, field, arrayJson, propertyArrayHelper.getIndexArray());
+        arrayJson.addElement(propertyArrayHelper.getIndexArray(), new StringJson(propertyValue));
     }
 
     private boolean arrayWithGivenFieldNameExist(String field) {

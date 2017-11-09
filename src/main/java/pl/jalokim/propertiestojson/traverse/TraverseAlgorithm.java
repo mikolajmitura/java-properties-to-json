@@ -18,13 +18,13 @@ public abstract class TraverseAlgorithm {
 
     protected ArrayJson getArrayJsonWhenIsValid(String field) {
         AbstractJsonType jsonType = currentObjectJson.getJsonTypeByFieldName(field);
-        checkEalierWasArrayJson(propertiesKey,field, jsonType);
+        checkEalierWasArrayJson(propertiesKey, field, jsonType);
         return (ArrayJson) jsonType;
     }
 
     public abstract ObjectJson traverse(String field);
 
-    public final ObjectJson traverseOnObjectAndInitByField(DataForTraverse dataForTraverse){
+    public final ObjectJson traverseOnObjectAndInitByField(DataForTraverse dataForTraverse) {
         properties = dataForTraverse.getProperties();
         propertiesKey = dataForTraverse.getPropertiesKey();
         currentObjectJson = dataForTraverse.getCurrentObjectJson();

@@ -26,6 +26,7 @@ public class JsonObjectsTraverseResolver {
     }
 
     private static Map<AlgorithmType, TraverseAlgorithm> algorithms = new HashMap<>();
+
     static {
         algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeTraverseAlgorithm());
         algorithms.put(AlgorithmType.PRIMITIVE, new PrimitiveTypeTraverseAlgorithm());
@@ -40,11 +41,11 @@ public class JsonObjectsTraverseResolver {
         }
     }
 
-    private AlgorithmType resolveAlgorithm(int index, String field){
-        if (isPrimitiveField(index)){
-           return  AlgorithmType.PRIMITIVE;
+    private AlgorithmType resolveAlgorithm(int index, String field) {
+        if (isPrimitiveField(index)) {
+            return AlgorithmType.PRIMITIVE;
         }
-        if (isArrayField(field)){
+        if (isArrayField(field)) {
             return AlgorithmType.ARRAY;
         }
         return AlgorithmType.OBJECT;

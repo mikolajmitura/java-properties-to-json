@@ -8,11 +8,11 @@ public class PropertyArrayHelper {
     private int indexArray;
     private String arrayfieldName;
 
-    public PropertyArrayHelper(String field){
-        int indexOfStartArraySign = field.indexOf(ARRAY_START_SIGN)+1;
+    public PropertyArrayHelper(String field) {
+        int indexOfStartArraySign = field.indexOf(ARRAY_START_SIGN) + 1;
         int indexofEndArraySign = field.indexOf(ARRAY_END_SIGN);
         indexArray = Integer.valueOf(field.substring(indexOfStartArraySign, indexofEndArraySign));
-        arrayfieldName = field.substring(0, indexOfStartArraySign-1);
+        arrayfieldName = field.substring(0, indexOfStartArraySign - 1);
     }
 
     public int getIndexArray() {

@@ -6,7 +6,7 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJson;
 import pl.jalokim.propertiestojson.object.ObjectJson;
 
-public class ArrayJsonTypeTraverseAlgorithm extends  TraverseAlgorithm{
+public class ArrayJsonTypeTraverseAlgorithm extends TraverseAlgorithm {
 
     @Override
     public ObjectJson traverse(String field) {
@@ -17,7 +17,7 @@ public class ArrayJsonTypeTraverseAlgorithm extends  TraverseAlgorithm{
     private void fetchJsonObjectAndCreateArrayWhenNotExist(String field) {
         PropertyArrayHelper propertyArrayHelper = new PropertyArrayHelper(field);
         field = propertyArrayHelper.getArrayfieldName();
-        if (isArrayExist(field)){
+        if (isArrayExist(field)) {
             fetchArrayAndAddElement(field, propertyArrayHelper);
         } else {
             createArrayAndAddElement(field, propertyArrayHelper);
@@ -30,7 +30,7 @@ public class ArrayJsonTypeTraverseAlgorithm extends  TraverseAlgorithm{
 
     private void fetchArrayAndAddElement(String field, PropertyArrayHelper propertyArrayHelper) {
         ArrayJson arrayJson = getArrayJsonWhenIsValid(field);
-        if (existElementInArrayByGivenIdex(arrayJson, propertyArrayHelper.getIndexArray())){
+        if (existElementInArrayByGivenIdex(arrayJson, propertyArrayHelper.getIndexArray())) {
             fetchJsonObjectWhenIsValid(field, propertyArrayHelper, arrayJson);
         } else {
             createJsonObjectAndAddToArray(propertyArrayHelper, arrayJson);

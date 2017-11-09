@@ -1,15 +1,16 @@
 package pl.jalokim.propertiestojson.object;
 
 
-public class DoubleNumberJson extends AbstractJsonType{
+public class DoubleNumberJson extends AbstractJsonType {
 
-	private Double number;
-	public DoubleNumberJson(Double number) {
-		this.number = number;
-	}
+    private Double number;
 
-	@Override
-	public String toStringJson() {
-		return number.toString();
-	}
+    public DoubleNumberJson(Double number) {
+        this.number = number;
+    }
+
+    @Override
+    public String toStringJson() {
+        return number.toString();
+    }
 }
