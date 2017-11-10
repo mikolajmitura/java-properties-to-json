@@ -10,7 +10,7 @@ import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 
 
-public class ArrayJson extends AbstractJsonType {
+public class ArrayJsonType extends AbstractJsonType {
 
     public static final int INIT_SIZE = 100;
     private AbstractJsonType[] elements = new AbstractJsonType[INIT_SIZE];
@@ -34,7 +34,7 @@ public class ArrayJson extends AbstractJsonType {
         return index > elements.length - 1;
     }
 
-    public ArrayJson() {
+    public ArrayJsonType() {
 
     }
 
@@ -42,10 +42,10 @@ public class ArrayJson extends AbstractJsonType {
         return elements[index];
     }
 
-    public ArrayJson(String[] elements) {
+    public ArrayJsonType(String[] elements) {
         for (int index = 0; index < elements.length; index++) {
             String element = elements[index];
-            addElement(index, new StringJson(element.trim()));
+            addElement(index, new StringJsonType(element.trim()));
         }
     }
 
