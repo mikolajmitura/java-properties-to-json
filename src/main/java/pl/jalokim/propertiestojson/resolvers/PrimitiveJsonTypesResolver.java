@@ -16,7 +16,7 @@ import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkIsListOnlyForPrimitive;
+import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkThatArrayElementIsPrimitiveType;
 import static pl.jalokim.propertiestojson.JsonObjectsTraverseResolver.isArrayField;
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
@@ -89,7 +89,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     private void fetchArrayAndAddElement(String field, String propertyValue, PropertyArrayHelper propertyArrayHelper) {
         ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(field);
-        checkIsListOnlyForPrimitive(propertiesKey, field, arrayJsonType, propertyArrayHelper.getIndexArray());
+        checkThatArrayElementIsPrimitiveType(propertiesKey, field, arrayJsonType, propertyArrayHelper.getIndexArray());
         addElementToArray(propertyValue, propertyArrayHelper, arrayJsonType);
     }
 

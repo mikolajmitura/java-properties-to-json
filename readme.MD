@@ -170,6 +170,13 @@ object.man=simpleValue
 
 ## reason: in first key 'man' is consider as json object type and so on.
 
+object.array[0]=simpleValue
+object.array[0].someField=someObjectSomeFieldValue
+object.array[0].someField2=someObjectSomeFieldValue2
+
+## reason: in first key 'object.array[0]' is consider as array element with primitive type not for Json Object. The key 'object.array[0].someField' try add object in array with index 0 where already is primitive JSON type with value: 'simpleValue'.
+
+
 ```
 Maven dependency
 ---------------------------------------------

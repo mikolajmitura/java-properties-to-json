@@ -49,7 +49,7 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
 
     private void fetchJsonObjectWhenIsValid(String field, PropertyArrayHelper propertyArrayHelper, ArrayJsonType arrayJsonType) {
         AbstractJsonType element = arrayJsonType.getElement(propertyArrayHelper.getIndexArray());
-        JsonObjectFieldsValidator.checkIsArrayOnlyForObjects(field, arrayJsonType, element, propertiesKey);
+        JsonObjectFieldsValidator.checkThatArrayElementIsObjectJsonType(field, arrayJsonType, element, propertiesKey, propertyArrayHelper.getIndexArray());
         currentObjectJsonType = (ObjectJsonType) element;
     }
 

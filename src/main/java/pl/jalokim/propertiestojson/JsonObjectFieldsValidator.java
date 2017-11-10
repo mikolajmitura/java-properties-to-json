@@ -33,21 +33,27 @@ public class JsonObjectFieldsValidator {
         whenWasStringTypeThenThrowException(propertiesKey, field, jsonType);
     }
 
-    public static void checkIsListOnlyForPrimitive(String propertiesKey, String field, ArrayJsonType arrayJsonType, int index) {
+    public static void checkThatArrayElementIsPrimitiveType(String propertiesKey, String field, ArrayJsonType arrayJsonType,
+                                                            int index) {
 
         if (arrayJsonType.getElement(index) != null && !(arrayJsonType.getElement(index) instanceof StringJsonType)) {
-            throwException(EXPECTED_ARRAY_WITH_JSON_OBJECT_TYPES, field, propertiesKey, arrayJsonType);
+            throwException(EXPECTED_ELEMENT_ARRAY_JSON_OBJECT_TYPES, field, index, propertiesKey, arrayJsonType);
         }
     }
 
-    public static void checkIsArrayOnlyForObjects(String field, ArrayJsonType arrayJsonType, AbstractJsonType element, String propertiesKey) {
+    public static void checkThatArrayElementIsObjectJsonType(String field, ArrayJsonType arrayJsonType, AbstractJsonType element,
+                                                             String propertiesKey, int index) {
         if (!(element instanceof ObjectJsonType)) {
-            throwException(EXPECTED_ARRAY_WITH_PRIMITIVE_TYPES, field, propertiesKey, arrayJsonType);
+            throwException(EXPECTED_ELEMENT_ARRAY_PRIMITIVE_TYPES, field, index, propertiesKey, arrayJsonType);
         }
     }
 
     private static void throwException(String message, String field, String propertiesKey, AbstractJsonType jsonType) {
-        throw new ParsePropertiesException(String.format(message, field, propertiesKey, jsonType.toStringJson()));
+        throw new ParsePropertiesException(String.format(message, field, jsonType.toStringJson(), propertiesKey));
+    }
+
+    private static void throwException(String message, String field, int index, String propertiesKey, AbstractJsonType jsonType) {
+        throw new ParsePropertiesException(String.format(message, field, index, ((ArrayJsonType) jsonType).getElement(index).toStringJson(), propertiesKey));
     }
 
     private static void whenWasStringTypeThenThrowException(String propertiesKey, String field, AbstractJsonType jsonType) {
