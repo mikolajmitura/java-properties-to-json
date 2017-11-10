@@ -16,7 +16,7 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
 
     private void fetchJsonObjectAndCreateArrayWhenNotExist(String field) {
         PropertyArrayHelper propertyArrayHelper = new PropertyArrayHelper(field);
-        field = propertyArrayHelper.getArrayfieldName();
+        field = propertyArrayHelper.getArrayFieldName();
         if (isArrayExist(field)) {
             fetchArrayAndAddElement(field, propertyArrayHelper);
         } else {

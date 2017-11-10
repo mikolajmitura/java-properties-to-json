@@ -146,6 +146,7 @@ public class PropertiesToJsonParser {
      */
     public static String parseToJson(Map<String, String> properties) throws ParsePropertiesException {
         ObjectJsonType coreObjectJsonType = new ObjectJsonType();
+
         for (String propertiesKey : getAllKeysFromProperties(properties)) {
             addFieldsToJsonObject(properties, coreObjectJsonType, propertiesKey);
         }

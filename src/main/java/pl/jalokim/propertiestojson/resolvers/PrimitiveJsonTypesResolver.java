@@ -1,12 +1,17 @@
-package pl.jalokim.propertiestojson.resolvers.primitives;
+package pl.jalokim.propertiestojson.resolvers;
 
 import pl.jalokim.propertiestojson.JsonObjectFieldsValidator;
 import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
-import pl.jalokim.propertiestojson.object.StringJsonType;
-import pl.jalokim.propertiestojson.resolvers.JsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.DoubleJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.IntegerJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonType;
+import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver;
+import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +21,16 @@ import static pl.jalokim.propertiestojson.JsonObjectsTraverseResolver.isArrayFie
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
-    private List<PrimitiveJsonTypeResolver> resolvers = new ArrayList<>();
+    private static List<PrimitiveJsonTypeResolver> resolvers = new ArrayList<>();
+    private static List<PrimitiveJsonTypeResolver> primitiveResolvers = new ArrayList<>();
 
-    public PrimitiveJsonTypesResolver(){
+    static {
         resolvers.add(new PrimitiveArrayJsonType());
-        resolvers.add(new DoubleJsonTypeResolver());
-        resolvers.add(new IntegerJsonTypeResolver());
-        resolvers.add(new BooleanJsonTypeResolver());
-        resolvers.add(new StringJsonTypeResolver());
+        primitiveResolvers.add(new DoubleJsonTypeResolver());
+        primitiveResolvers.add(new IntegerJsonTypeResolver());
+        primitiveResolvers.add(new BooleanJsonTypeResolver());
+        primitiveResolvers.add(new StringJsonTypeResolver());
+        resolvers.addAll(primitiveResolvers);
     }
 
     @Override
@@ -42,23 +49,27 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         if (isArrayField(field)) {
             addFieldToArray(field, propertyValue);
         } else {
-            resolvePrimitiveType(field, propertyValue);
+            currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, resolvers));
         }
     }
 
-    private void resolvePrimitiveType(String field, String propertyValue) {
+    private static AbstractJsonType resolvePrimitiveTypeAndReturn(String propertyValue, List<PrimitiveJsonTypeResolver> resolvers) {
         for (PrimitiveJsonTypeResolver resolver : resolvers) {
             AbstractJsonType abstractJsonType = resolver.returnPrimitiveJsonTypeWhenIsGivenType(propertyValue);
             if (abstractJsonType != null){
-                currentObjectJsonType.addField(field, abstractJsonType);
-                break;
+                return abstractJsonType;
             }
         }
+        throw new ParsePropertiesException("Cannot find valid JSON type");
+    }
+
+    public static AbstractJsonType resolvePrimitiveTypeAndReturn(String propertyValue) {
+        return resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers);
     }
 
     protected void addFieldToArray(String field, String propertyValue) {
         PropertyArrayHelper propertyArrayHelper = new PropertyArrayHelper(field);
-        field = propertyArrayHelper.getArrayfieldName();
+        field = propertyArrayHelper.getArrayFieldName();
         if (arrayWithGivenFieldNameExist(field)) {
             fetchArrayAndAddElement(field, propertyValue, propertyArrayHelper);
         } else {
@@ -72,14 +83,18 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     private void createArrayAndAddElement(String field, String propertyValue, PropertyArrayHelper propertyArrayHelper) {
         ArrayJsonType arrayJsonTypeObject = new ArrayJsonType();
-        arrayJsonTypeObject.addElement(propertyArrayHelper.getIndexArray(), new StringJsonType(propertyValue));
+        addElementToArray(propertyValue, propertyArrayHelper, arrayJsonTypeObject);
         currentObjectJsonType.addField(field, arrayJsonTypeObject);
     }
 
     private void fetchArrayAndAddElement(String field, String propertyValue, PropertyArrayHelper propertyArrayHelper) {
         ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(field);
         checkIsListOnlyForPrimitive(propertiesKey, field, arrayJsonType, propertyArrayHelper.getIndexArray());
-        arrayJsonType.addElement(propertyArrayHelper.getIndexArray(), new StringJsonType(propertyValue));
+        addElementToArray(propertyValue, propertyArrayHelper, arrayJsonType);
+    }
+
+    private void addElementToArray(String propertyValue, PropertyArrayHelper propertyArrayHelper, ArrayJsonType arrayJsonTypeObject) {
+        arrayJsonTypeObject.addElement(propertyArrayHelper.getIndexArray(), resolvePrimitiveTypeAndReturn(propertyValue));
     }
 
 }

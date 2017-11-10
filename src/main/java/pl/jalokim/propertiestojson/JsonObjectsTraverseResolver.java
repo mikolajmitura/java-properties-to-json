@@ -2,7 +2,7 @@ package pl.jalokim.propertiestojson;
 
 import pl.jalokim.propertiestojson.object.*;
 import pl.jalokim.propertiestojson.resolvers.*;
-import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypesResolver;
+import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.transfer.DataForResolve;
 
 import java.util.HashMap;

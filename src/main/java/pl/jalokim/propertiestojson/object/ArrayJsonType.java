@@ -8,6 +8,7 @@ import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
+import static pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn;
 
 
 public class ArrayJsonType extends AbstractJsonType {
@@ -45,7 +46,7 @@ public class ArrayJsonType extends AbstractJsonType {
     public ArrayJsonType(String[] elements) {
         for (int index = 0; index < elements.length; index++) {
             String element = elements[index];
-            addElement(index, new StringJsonType(element.trim()));
+            addElement(index, resolvePrimitiveTypeAndReturn(element.trim()));
         }
     }
 
