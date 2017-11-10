@@ -185,7 +185,7 @@ Maven dependency
     <dependency>
         <groupId>pl.jalokim.propertiestojson</groupId>
         <artifactId>java-properties-to-json</artifactId>
-        <version>1.3</version>
+        <version>2.0</version>
     </dependency>
 ```
 
