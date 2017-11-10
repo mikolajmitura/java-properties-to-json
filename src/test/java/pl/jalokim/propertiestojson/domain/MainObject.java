@@ -3,7 +3,7 @@ package pl.jalokim.propertiestojson.domain;
 public class MainObject {
 
     private Man man;
-    private  Insurance insurance;
+    private Insurance insurance;
     private String field1;
     private String field2;
 

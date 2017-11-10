@@ -13,7 +13,7 @@ public class DoubleJsonTypeResolver extends PrimitiveJsonTypeResolver {
             if (propertyValue.contains(NORMAL_DOT)){
                 return new DoubleJsonType(getDoubleNumber(propertyValue));
             }
-        } catch (Exception exc) {
+        } catch (NumberFormatException exc) {
         }
         return null;
     }

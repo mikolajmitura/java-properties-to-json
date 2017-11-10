@@ -15,7 +15,7 @@ import java.util.Map;
 public class AbstractPropertiesToJsonParserTest {
 
     @Before
-    public void before(){
+    public void before() {
         PropertiesToJsonParser.setPropertyKeysPickup(new PropertyKeysPickup());
     }
 
@@ -31,7 +31,7 @@ public class AbstractPropertiesToJsonParserTest {
     protected static final String EMAIL_1 = "example@gg.com";
     protected static final String EMAIL_2 = "example2@cc.com";
     protected static final String EMAIL_3 = "example3@gg.com";
-    protected static final String EMAILS = String.format(" %s ,%s, %s,%s",EMAIL_1, EMAIL_2, EMAIL_3, EMAIL_3);
+    protected static final String EMAILS = String.format(" %s ,%s, %s,%s", EMAIL_1, EMAIL_2, EMAIL_3, EMAIL_3);
     protected static final String GROUP_1 = "group1";
     protected static final String COMMERCIAL = "Commercial";
     protected static final String GROUP_3 = "group3";
@@ -49,21 +49,21 @@ public class AbstractPropertiesToJsonParserTest {
         return new FileInputStream(FILE_PATH);
     }
 
-    protected Map<String,String> initProperlyProperties(){
-        Map<String,String> properties = new HashMap<>();
+    protected Map<String, String> initProperlyProperties() {
+        Map<String, String> properties = new HashMap<>();
         properties.put("man.name", NAME);
         properties.put("man.surname", SURNAME);
         properties.put("man.address.city", CITY);
         properties.put("man.address.street", STREET);
-        properties.put("insurance.type",INSRANCE_TYPE);
+        properties.put("insurance.type", INSRANCE_TYPE);
         properties.put("insurance.cost", COST_STRING_VALUE);
         properties.put("field1", FIELD1_VALUE);
         properties.put("field2", FIELD2_VALUE);
         properties.put("man.emails", EMAILS);
         properties.put("man.groups[0].name", GROUP_1);
-        properties.put("man.groups[0].type",COMMERCIAL);
+        properties.put("man.groups[0].type", COMMERCIAL);
         properties.put("man.groups[2].name", GROUP_3);
-        properties.put("man.groups[2].type",COMMERCIAL);
+        properties.put("man.groups[2].type", COMMERCIAL);
         properties.put("man.groups[1].name", GROUP_2);
         properties.put("man.groups[1].type", FREE);
         properties.put("man.hoobies[0]", CARS);
@@ -87,7 +87,7 @@ public class AbstractPropertiesToJsonParserTest {
         Assertions.assertThat(emails.get(3)).isEqualTo(EMAIL_3);
     }
 
-    protected void assertHobbiesList(MainObject mainObject){
+    protected void assertHobbiesList(MainObject mainObject) {
         List<String> hobbies = mainObject.getMan().getHoobies();
         Assertions.assertThat(hobbies.get(0)).isEqualTo(CARS);
         Assertions.assertThat(hobbies.get(1)).isEqualTo(SCIENCE);

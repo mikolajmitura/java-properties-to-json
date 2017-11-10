@@ -9,7 +9,7 @@ public class IntegerJsonTypeResolver extends PrimitiveJsonTypeResolver {
     public PrimitiveJsonType<?> returnPrimitiveJsonTypeWhenIsGivenType(String propertyValue) {
         try {
            return new IntegerJsonType(getIntegerNumber(propertyValue));
-        } catch (Exception exc) {
+        } catch (NumberFormatException exc) {
         }
         return null;
     }
