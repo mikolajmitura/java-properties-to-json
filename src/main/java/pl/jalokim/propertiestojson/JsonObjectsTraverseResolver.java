@@ -1,8 +1,9 @@
 package pl.jalokim.propertiestojson;
 
 import pl.jalokim.propertiestojson.object.*;
-import pl.jalokim.propertiestojson.traverse.*;
-import pl.jalokim.propertiestojson.traverse.transfer.DataForTraverse;
+import pl.jalokim.propertiestojson.resolvers.*;
+import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
+import pl.jalokim.propertiestojson.resolvers.transfer.DataForResolve;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,35 +17,36 @@ public class JsonObjectsTraverseResolver {
     private Map<String, String> properties;
     private String propertiesKey;
     private String[] fields;
-    private ObjectJson currentObjectJson;
+    private ObjectJsonType currentObjectJsonType;
 
-    public JsonObjectsTraverseResolver(Map<String, String> properties, String propertiesKey, String[] fields, ObjectJson coreObjectJson) {
+    public JsonObjectsTraverseResolver(Map<String, String> properties, String propertiesKey, String[] fields, ObjectJsonType coreObjectJsonType) {
         this.properties = properties;
         this.propertiesKey = propertiesKey;
         this.fields = fields;
-        this.currentObjectJson = coreObjectJson;
+        this.currentObjectJsonType = coreObjectJsonType;
     }
 
-    private static Map<AlgorithmType, TraverseAlgorithm> algorithms = new HashMap<>();
+    private static Map<AlgorithmType, JsonTypeResolver> algorithms = new HashMap<>();
+
     static {
-        algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeTraverseAlgorithm());
-        algorithms.put(AlgorithmType.PRIMITIVE, new PrimitiveTypeTraverseAlgorithm());
-        algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeTraverseAlgorithm());
+        algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());
+        algorithms.put(AlgorithmType.PRIMITIVE, new PrimitiveJsonTypesResolver());
+        algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeResolver());
     }
 
     public void initializeFieldsInJson() {
         for (int index = 0; index < fields.length; index++) {
             String field = fields[index];
-            DataForTraverse dataForTraverse = new DataForTraverse(properties, propertiesKey, currentObjectJson, field);
-            currentObjectJson = algorithms.get(resolveAlgorithm(index, field)).traverseOnObjectAndInitByField(dataForTraverse);
+            DataForResolve dataForResolve = new DataForResolve(properties, propertiesKey, currentObjectJsonType, field);
+            currentObjectJsonType = algorithms.get(resolveAlgorithm(index, field)).traverseOnObjectAndInitByField(dataForResolve);
         }
     }
 
-    private AlgorithmType resolveAlgorithm(int index, String field){
-        if (isPrimitiveField(index)){
-           return  AlgorithmType.PRIMITIVE;
+    private AlgorithmType resolveAlgorithm(int index, String field) {
+        if (isPrimitiveField(index)) {
+            return AlgorithmType.PRIMITIVE;
         }
-        if (isArrayField(field)){
+        if (isArrayField(field)) {
             return AlgorithmType.ARRAY;
         }
         return AlgorithmType.OBJECT;

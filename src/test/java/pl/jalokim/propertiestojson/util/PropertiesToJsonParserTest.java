@@ -7,6 +7,7 @@ import org.junit.Test;
 import pl.jalokim.propertiestojson.domain.MainComplexObject;
 import pl.jalokim.propertiestojson.domain.MainObject;
 
+import java.io.File;
 import java.io.InputStream;
 
 
@@ -15,13 +16,29 @@ public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTe
     @Test
     public void returnExpectedJsonFromGivenFile() {
         //when
-        String json = PropertiesToJsonParser.parsePropertiesFromFileToJson("src/test/resources/primitiveTypes.properties");
+        String json = PropertiesToJsonParser.parsePropertiesFromFileToJson(new File("src/test/resources/primitiveTypes.properties"));
         // then
         assertJsonWithPrimitivesTypes(json);
     }
 
     @Test
     public void returnExpectedJsonWithGivenIncludeFromGivenFile() {
+        //when
+        String json = PropertiesToJsonParser.parsePropertiesFromFileToJson(new File("src/test/resources/primitiveTypes.properties"), "complexObject");
+        // then
+        assertJsonWithPrimitivesTypesWithoutSimpleText(json);
+    }
+
+    @Test
+    public void returnExpectedJsonFromGivenFilePath() {
+        //when
+        String json = PropertiesToJsonParser.parsePropertiesFromFileToJson("src/test/resources/primitiveTypes.properties");
+        // then
+        assertJsonWithPrimitivesTypes(json);
+    }
+
+    @Test
+    public void returnExpectedJsonWithGivenIncludeFromGivenFilePath() {
         //when
         String json = PropertiesToJsonParser.parsePropertiesFromFileToJson("src/test/resources/primitiveTypes.properties", "complexObject");
         // then

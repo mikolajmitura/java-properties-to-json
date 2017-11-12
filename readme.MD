@@ -7,6 +7,7 @@ You can generate Json from:
 - from Java properties (java.util.Properties)
 - from Map<String,String> (import java.util.Map)
 - from InputStream with properties (java.io.InputStream)
+- from File with properties (java.io.File)
 - from given file localization with properties 
 
 below variable "properties" as one of the above types:
@@ -22,6 +23,7 @@ import pl.jalokim.propertiestojson.util.PropertiesToJsonParser;
 String json = PropertiesToJsonParser.parseToJson(properties);
 
 String jsonFromProperties = PropertiesToJsonParser.parsePropertiesFromFileToJson("/home/user/file.properties");
+String jsonFromProperties2 = PropertiesToJsonParser.parsePropertiesFromFileToJson(new File("/home/user/file.properties"));
 ```
 
 example properties:
@@ -169,10 +171,11 @@ object.man=simpleValue
 ## reason: in first key 'man' is consider as json object type and so on.
 
 object.array[0]=simpleValue
-object.array[1].someField=someObjectSomeFieldValue
-object.array[1].someField2=someObjectSomeFieldValue2
+object.array[0].someField=someObjectSomeFieldValue
+object.array[0].someField2=someObjectSomeFieldValue2
 
-## reason: in first key 'array' is consider as array for primitive type not for objects and so on.
+## reason: in first key 'object.array[0]' is consider as array element with primitive type not for Json Object. The key 'object.array[0].someField' try add object in array with index 0 where already is primitive JSON type with value: 'simpleValue'.
+
 
 ```
 Maven dependency
@@ -182,7 +185,7 @@ Maven dependency
     <dependency>
         <groupId>pl.jalokim.propertiestojson</groupId>
         <artifactId>java-properties-to-json</artifactId>
-        <version>1.3</version>
+        <version>2.0</version>
     </dependency>
 ```
 

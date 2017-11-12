@@ -8,12 +8,12 @@ import pl.jalokim.propertiestojson.domain.MainObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonParserTest{
+public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonParserTest {
 
     @Test
-    public void parsePropertiesOnlyByIncludedKeys(){
+    public void parsePropertiesOnlyByIncludedKeys() {
         //when
-        String json = PropertiesToJsonParser.parseToJson(initProperlyProperties(),"man.groups","man.hoobies","insurance.cost");
+        String json = PropertiesToJsonParser.parseToJson(initProperlyProperties(), "man.groups", "man.hoobies", "insurance.cost");
         // then
         assertJsonIsAsExpected(json);
     }
@@ -23,7 +23,7 @@ public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonPa
         // given
         InputStream inputStream = getPropertiesFromFile();
         // when
-        String json = PropertiesToJsonParser.parseToJson(inputStream, "man.groups","man.hoobies","insurance.cost");
+        String json = PropertiesToJsonParser.parseToJson(inputStream, "man.groups", "man.hoobies", "insurance.cost");
         // then
         assertJsonIsAsExpected(json);
     }
@@ -40,9 +40,9 @@ public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonPa
         Assertions.assertThat(mainObject.getMan().getSurname()).isNull();
         Assertions.assertThat(mainObject.getMan().getInsurance()).isNull();
         Assertions.assertThat(mainObject.getMan().getEmails()).isNull();
-        assertGroupByIdAndExpectedValues(mainObject,0,GROUP_1, COMMERCIAL);
-        assertGroupByIdAndExpectedValues(mainObject,1,GROUP_2, FREE);
-        assertGroupByIdAndExpectedValues(mainObject,2,GROUP_3, COMMERCIAL);
+        assertGroupByIdAndExpectedValues(mainObject, 0, GROUP_1, COMMERCIAL);
+        assertGroupByIdAndExpectedValues(mainObject, 1, GROUP_2, FREE);
+        assertGroupByIdAndExpectedValues(mainObject, 2, GROUP_3, COMMERCIAL);
         assertHobbiesList(mainObject);
     }
 
@@ -51,7 +51,7 @@ public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonPa
         // given
         InputStream inputStream = getPropertiesFromFile();
         // when
-        String json = PropertiesToJsonParser.parseToJson(inputStream, "man.groups","man.hoobies","insurance");
+        String json = PropertiesToJsonParser.parseToJson(inputStream, "man.groups", "man.hoobies", "insurance");
         // then
         assertJsonIsAsExpectedWithWholeInsurance(json);
     }
@@ -68,9 +68,9 @@ public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonPa
         Assertions.assertThat(mainObject.getMan().getSurname()).isNull();
         Assertions.assertThat(mainObject.getMan().getInsurance()).isNull();
         Assertions.assertThat(mainObject.getMan().getEmails()).isNull();
-        assertGroupByIdAndExpectedValues(mainObject,0,GROUP_1, COMMERCIAL);
-        assertGroupByIdAndExpectedValues(mainObject,1,GROUP_2, FREE);
-        assertGroupByIdAndExpectedValues(mainObject,2,GROUP_3, COMMERCIAL);
+        assertGroupByIdAndExpectedValues(mainObject, 0, GROUP_1, COMMERCIAL);
+        assertGroupByIdAndExpectedValues(mainObject, 1, GROUP_2, FREE);
+        assertGroupByIdAndExpectedValues(mainObject, 2, GROUP_3, COMMERCIAL);
         assertHobbiesList(mainObject);
     }
 

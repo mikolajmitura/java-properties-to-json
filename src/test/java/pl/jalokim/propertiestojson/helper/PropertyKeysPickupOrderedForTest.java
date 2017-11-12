@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class PropertyKeysPickupOrderedForTest extends PropertyKeysPickup{
+public class PropertyKeysPickupOrderedForTest extends PropertyKeysPickup {
 
     private List<String> mockKeys = new ArrayList<>();
 
-    public void setUpMockKeys(String... keys){
+    public void setUpMockKeys(String... keys) {
         mockKeys.addAll(Arrays.asList(keys));
     }
 

@@ -1,20 +1,20 @@
-package pl.jalokim.propertiestojson.traverse.transfer;
+package pl.jalokim.propertiestojson.resolvers.transfer;
 
-import pl.jalokim.propertiestojson.object.ObjectJson;
+import pl.jalokim.propertiestojson.object.ObjectJsonType;
 
 import java.util.Map;
 
-public class DataForTraverse {
+public class DataForResolve {
 
     private final Map<String, String> properties;
     private final String propertiesKey;
-    private final ObjectJson currentObjectJson;
+    private final ObjectJsonType currentObjectJsonType;
     private final String field;
 
-    public DataForTraverse(Map<String, String> properties, String propertiesKey, ObjectJson currentObjectJson, String field) {
+    public DataForResolve(Map<String, String> properties, String propertiesKey, ObjectJsonType currentObjectJsonType, String field) {
         this.properties = properties;
         this.propertiesKey = propertiesKey;
-        this.currentObjectJson = currentObjectJson;
+        this.currentObjectJsonType = currentObjectJsonType;
         this.field = field;
     }
 
@@ -26,8 +26,8 @@ public class DataForTraverse {
         return propertiesKey;
     }
 
-    public ObjectJson getCurrentObjectJson() {
-        return currentObjectJson;
+    public ObjectJsonType getCurrentObjectJsonType() {
+        return currentObjectJsonType;
     }
 
     public String getField() {
