@@ -1,19 +1,20 @@
 package pl.jalokim.propertiestojson.util;
 
-import org.assertj.core.util.VisibleForTesting;
 import pl.jalokim.propertiestojson.JsonObjectsTraverseResolver;
 import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
-import pl.jalokim.propertiestojson.util.exception.ReadInputException;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
-
+import pl.jalokim.propertiestojson.util.exception.ReadInputException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.REGEX_DOT;
@@ -239,7 +240,6 @@ public class PropertiesToJsonParser {
         return map;
     }
 
-    @VisibleForTesting
     protected static void setPropertyKeysPickup(PropertyKeysPickup propertyKeysPickup) {
         PropertiesToJsonParser.propertyKeysPickup = propertyKeysPickup;
     }
