@@ -16,4 +16,5 @@ public class Man {
     private List<Group> groups;
     private List<String> hoobies;
     private Insurance insurance;
+    private Boolean married;
 }

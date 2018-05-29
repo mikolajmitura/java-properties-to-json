@@ -8,4 +8,5 @@ import lombok.Setter;
 public class Insurance {
     private String type;
     private Double cost;
+    private Boolean valid;
 }

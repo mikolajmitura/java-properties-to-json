@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class AbstractPropertiesToJsonParserTest {
 
@@ -49,7 +50,7 @@ public class AbstractPropertiesToJsonParserTest {
         return new FileInputStream(FILE_PATH);
     }
 
-    protected Map<String, String> initProperlyProperties() {
+    protected Map<String, String> initProperlyPropertiesMap() {
         Map<String, String> properties = new HashMap<>();
         properties.put("man.name", NAME);
         properties.put("man.surname", SURNAME);
@@ -70,7 +71,36 @@ public class AbstractPropertiesToJsonParserTest {
         properties.put("man.hoobies[3]", COMPUTERS);
         properties.put("man.hoobies[2]", WOMEN);
         properties.put("man.hoobies[1]", SCIENCE);
+        properties.put("man.married", "false");
         properties.put("man.insurance.cost", MAN_COST);
+        properties.put("man.insurance.valid", "true");
+        return properties;
+    }
+
+    protected Properties initProperlyProperties() {
+        Properties properties = new Properties();
+        properties.put("man.name", NAME);
+        properties.put("man.surname", SURNAME);
+        properties.put("man.address.city", CITY);
+        properties.put("man.address.street", STREET);
+        properties.put("insurance.type", INSRANCE_TYPE);
+        properties.put("insurance.cost", COST_INT_VALUE);
+        properties.put("field1", FIELD1_VALUE);
+        properties.put("field2", FIELD2_VALUE);
+        properties.put("man.emails", EMAILS);
+        properties.put("man.groups[0].name", GROUP_1);
+        properties.put("man.groups[0].type", COMMERCIAL);
+        properties.put("man.groups[2].name", GROUP_3);
+        properties.put("man.groups[2].type", COMMERCIAL);
+        properties.put("man.groups[1].name", GROUP_2);
+        properties.put("man.groups[1].type", FREE);
+        properties.put("man.hoobies[0]", CARS);
+        properties.put("man.hoobies[3]", COMPUTERS);
+        properties.put("man.hoobies[2]", WOMEN);
+        properties.put("man.hoobies[1]", SCIENCE);
+        properties.put("man.married", false);
+        properties.put("man.insurance.cost", EXPECTED_MAN_COST);
+        properties.put("man.insurance.valid", true);
         return properties;
     }
 
