@@ -13,7 +13,7 @@ public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonPa
     @Test
     public void parsePropertiesOnlyByIncludedKeys() {
         //when
-        String json = PropertiesToJsonParser.parseToJson(initProperlyProperties(), "man.groups", "man.hoobies", "insurance.cost");
+        String json = PropertiesToJsonParser.parseToJson(initProperlyPropertiesMap(), "man.groups", "man.hoobies", "insurance.cost");
         // then
         assertJsonIsAsExpected(json);
     }

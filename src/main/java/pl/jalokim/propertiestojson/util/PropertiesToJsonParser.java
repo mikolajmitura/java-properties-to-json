@@ -234,8 +234,8 @@ public class PropertiesToJsonParser {
 
     private static Map<String, String> propertiesToMap(Properties properties) {
         Map<String, String> map = new HashMap<>();
-        for (String name : properties.stringPropertyNames()) {
-            map.put(name, properties.getProperty(name));
+        for (Map.Entry<Object,Object> property : properties.entrySet()) {
+            map.put(property.getKey().toString(), property.getValue().toString());
         }
         return map;
     }

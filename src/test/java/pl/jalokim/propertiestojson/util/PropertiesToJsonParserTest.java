@@ -59,6 +59,15 @@ public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTe
     public void returnExpectedJsonGivenByMap() {
         //when
         //given
+        String json = PropertiesToJsonParser.parseToJson(initProperlyPropertiesMap());
+        //then
+        assertJsonIsAsExpected(json);
+    }
+
+    @Test
+    public void returnExpectedJsonGivenByProperties() {
+        //when
+        //given
         String json = PropertiesToJsonParser.parseToJson(initProperlyProperties());
         //then
         assertJsonIsAsExpected(json);
@@ -92,7 +101,9 @@ public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTe
         Assertions.assertThat(mainObject.getMan().getAddress().getStreet()).isEqualTo(STREET);
         Assertions.assertThat(mainObject.getMan().getName()).isEqualTo(NAME);
         Assertions.assertThat(mainObject.getMan().getSurname()).isEqualTo(SURNAME);
+        Assertions.assertThat(mainObject.getMan().getMarried()).isEqualTo(false);
         Assertions.assertThat(mainObject.getMan().getInsurance().getCost()).isEqualTo(EXPECTED_MAN_COST);
+        Assertions.assertThat(mainObject.getMan().getInsurance().getValid()).isEqualTo(true);
         assertEmailList(mainObject);
         assertGroupByIdAndExpectedValues(mainObject, 0, GROUP_1, COMMERCIAL);
         assertGroupByIdAndExpectedValues(mainObject, 1, GROUP_2, FREE);
