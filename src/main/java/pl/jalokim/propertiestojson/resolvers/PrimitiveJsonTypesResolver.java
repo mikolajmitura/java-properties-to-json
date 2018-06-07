@@ -21,15 +21,21 @@ import static pl.jalokim.propertiestojson.JsonObjectsTraverseResolver.isArrayFie
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
-    private static List<PrimitiveJsonTypeResolver> resolvers = new ArrayList<>();
+    private List<PrimitiveJsonTypeResolver> resolvers = new ArrayList<>();
     private static List<PrimitiveJsonTypeResolver> primitiveResolvers = new ArrayList<>();
 
     static {
-        resolvers.add(new PrimitiveArrayJsonType());
         primitiveResolvers.add(new DoubleJsonTypeResolver());
         primitiveResolvers.add(new IntegerJsonTypeResolver());
         primitiveResolvers.add(new BooleanJsonTypeResolver());
         primitiveResolvers.add(new StringJsonTypeResolver());
+    }
+
+    public PrimitiveJsonTypesResolver(boolean switchOnParseArrays) {
+        super();
+        if (switchOnParseArrays) {
+            resolvers.add(new PrimitiveArrayJsonType());
+        }
         resolvers.addAll(primitiveResolvers);
     }
 

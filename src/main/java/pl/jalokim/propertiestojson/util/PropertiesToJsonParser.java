@@ -22,6 +22,7 @@ import static pl.jalokim.propertiestojson.Constants.REGEX_DOT;
 
 public class PropertiesToJsonParser {
 
+    private static boolean switchOnParseArrays = true;
     private static PropertyKeysPickup propertyKeysPickup = new PropertyKeysPickup();
 
     /**
@@ -41,6 +42,25 @@ public class PropertiesToJsonParser {
      */
     public static String parsePropertiesFromFileToJson(String pathToFile, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
         return parsePropertiesFromFileToJson(new File(pathToFile), includeDomainKeys);
+    }
+
+    /**
+     * Generate Json by given path to file with properties with only included domain keys without parsing arrays.
+     *
+     * @param pathToFile        path to File
+     * @param includeDomainKeys domain head keys which should be parsed to json <br>
+     *                          example properties:<br>
+     *                          object1.field1=value1<br>
+     *                          object1.field2=value2<br>
+     *                          someObject2.field2=value3<br>
+     *                          filter "object1"<br>
+     *                          will parse only nested domain for "object1"<br>
+     * @return simple String with json
+     * @throws ReadInputException       when cannot find file
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parsePropertiesFromFileToJsonWithoutArrays(String pathToFile, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
+        return parsePropertiesFromFileToJsonWithoutArrays(new File(pathToFile), includeDomainKeys);
     }
 
     /**
@@ -79,6 +99,43 @@ public class PropertiesToJsonParser {
         }
     }
 
+
+    /**
+     * Generate Json by given path to file with properties without parsing arrays.
+     *
+     * @param pathToFile path to File
+     * @return simple String with json
+     * @throws ReadInputException       when cannot find file
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parsePropertiesFromFileToJsonWithoutArrays(String pathToFile) throws ReadInputException, ParsePropertiesException {
+        return parsePropertiesFromFileToJsonWithoutArrays(new File(pathToFile));
+    }
+
+    /**
+     * Generate Json by given file with properties with only included domain keys without parsing arrays.
+     *
+     * @param file              file with properties
+     * @param includeDomainKeys domain head keys which should be parsed to json <br>
+     *                          example properties:<br>
+     *                          object1.field1=value1<br>
+     *                          object1.field2=value2<br>
+     *                          someObject2.field2=value3<br>
+     *                          filter "object1"<br>
+     *                          will parse only nested domain for "object1"<br>
+     * @return simple String with json
+     * @throws ReadInputException       when cannot find file
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parsePropertiesFromFileToJsonWithoutArrays(File file, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
+        try {
+            InputStream targetStream = new FileInputStream(file);
+            return parseToJsonWithoutArrays(targetStream, includeDomainKeys);
+        } catch (FileNotFoundException e) {
+            throw new ReadInputException(e);
+        }
+    }
+
     /**
      * Generate Json by given file with properties.
      *
@@ -91,6 +148,23 @@ public class PropertiesToJsonParser {
         try {
             InputStream targetStream = new FileInputStream(file);
             return parseToJson(targetStream);
+        } catch (FileNotFoundException e) {
+            throw new ReadInputException(e);
+        }
+    }
+
+    /**
+     * Generate Json by given file with properties without parsing arrays.
+     *
+     * @param file file with properties
+     * @return simple String with json
+     * @throws ReadInputException       when cannot find file
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parsePropertiesFromFileToJsonWithoutArrays(File file) throws ReadInputException, ParsePropertiesException {
+        try {
+            InputStream targetStream = new FileInputStream(file);
+            return parseToJsonWithoutArrays(targetStream);
         } catch (FileNotFoundException e) {
             throw new ReadInputException(e);
         }
@@ -116,6 +190,25 @@ public class PropertiesToJsonParser {
     }
 
     /**
+     * generate Json by given InputStream and given filter without parsing arrays.
+     *
+     * @param inputStream       InputStream with properties
+     * @param includeDomainKeys domain head keys which should be parsed to json <br>
+     *                          example properties:<br>
+     *                          object1.field1=value1<br>
+     *                          object1.field2=value2<br>
+     *                          someObject2.field2=value3<br>
+     *                          filter "object1"<br>
+     *                          will parse only nested domain for "object1"<br>
+     * @return simple String with json
+     * @throws ReadInputException       when cannot find file
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parseToJsonWithoutArrays(InputStream inputStream, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
+        return parseToJsonWithoutArrays(inputStreamToProperties(inputStream), includeDomainKeys);
+    }
+
+    /**
      * generate Json by given InputStream.
      *
      * @param inputStream InputStream with properties
@@ -128,6 +221,18 @@ public class PropertiesToJsonParser {
     }
 
     /**
+     * generate Json by given InputStream without parsing arrays.
+     *
+     * @param inputStream InputStream with properties
+     * @return simple String with json
+     * @throws ReadInputException       when cannot find file
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parseToJsonWithoutArrays(InputStream inputStream) throws ReadInputException, ParsePropertiesException {
+        return parseToJsonWithoutArrays(inputStreamToProperties(inputStream));
+    }
+
+    /**
      * generate Json by given Java Properties
      *
      * @param properties Java Properties
@@ -136,6 +241,17 @@ public class PropertiesToJsonParser {
      */
     public static String parseToJson(Properties properties) throws ParsePropertiesException {
         return parseToJson(propertiesToMap(properties));
+    }
+
+    /**
+     * generate Json by given Java Properties without parsing arrays
+     *
+     * @param properties Java Properties
+     * @return simple String with json
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parseToJsonWithoutArrays(Properties properties) throws ParsePropertiesException {
+        return parseToJsonWithoutArrays(propertiesToMap(properties));
     }
 
     /**
@@ -152,6 +268,18 @@ public class PropertiesToJsonParser {
             addFieldsToJsonObject(properties, coreObjectJsonType, propertiesKey);
         }
         return coreObjectJsonType.toStringJson();
+    }
+
+    /**
+     * generate Json by given Map&lt;String,String&gt; without parsing arrays
+     *
+     * @param properties Java Map with properties
+     * @return simple String with json
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parseToJsonWithoutArrays(Map<String, String> properties) throws ParsePropertiesException {
+        switchOnParseArrays = false;
+        return parseToJson(properties);
     }
 
     /**
@@ -179,6 +307,30 @@ public class PropertiesToJsonParser {
     }
 
     /**
+     * generate Json by given Map&lt;String,String&gt; and given filter without parsing arrays
+     *
+     * @param properties        Java Map with properties
+     * @param includeDomainKeys domain head keys which should be parsed to json <br>
+     *                          example properties:<br>
+     *                          object1.field1=value1<br>
+     *                          object1.field2=value2<br>
+     *                          someObject2.field2=value3<br>
+     *                          filter "object1"<br>
+     *                          will parse only nested domain for "object1"<br>
+     * @return simple String with json
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public static String parseToJsonWithoutArrays(Map<String, String> properties, String... includeDomainKeys) throws ParsePropertiesException {
+        Map<String, String> filteredProperties = new HashMap<>();
+        for (String key : properties.keySet()) {
+            for (String requiredKey : includeDomainKeys) {
+                checkKey(properties, filteredProperties, key, requiredKey);
+            }
+        }
+        return parseToJsonWithoutArrays(filteredProperties);
+    }
+
+    /**
      * generate Json by given Java Properties and given filter
      *
      * @param properties        Java Properties
@@ -197,6 +349,9 @@ public class PropertiesToJsonParser {
         return parseToJson(propertiesToMap(properties), includeDomainKeys);
     }
 
+    public static String parseToJsonWithoutArrays(Properties properties, String... includeDomainKeys) throws ParsePropertiesException {
+        return parseToJsonWithoutArrays(propertiesToMap(properties), includeDomainKeys);
+    }
 
     private static void checkKey(Map<String, String> properties, Map<String, String> filteredProperties, String key, String requiredKey) {
         if (key.equals(requiredKey) || (key.startsWith(requiredKey) && keyIsCompatibleWithRequiredKey(requiredKey, key))) {
@@ -224,7 +379,7 @@ public class PropertiesToJsonParser {
 
     private static void addFieldsToJsonObject(Map<String, String> properties, ObjectJsonType coreObjectJsonType, String propertiesKey) {
         String[] fields = propertiesKey.split(REGEX_DOT);
-        new JsonObjectsTraverseResolver(properties, propertiesKey, fields, coreObjectJsonType).initializeFieldsInJson();
+        new JsonObjectsTraverseResolver(properties, propertiesKey, fields, coreObjectJsonType, switchOnParseArrays).initializeFieldsInJson();
     }
 
     private static List<String> getAllKeysFromProperties(Map<String, String> properties) {
