@@ -18,19 +18,16 @@ public class JsonObjectsTraverseResolver {
     private String propertiesKey;
     private String[] fields;
     private ObjectJsonType currentObjectJsonType;
+    private Map<AlgorithmType, JsonTypeResolver> algorithms = new HashMap<>();
 
-    public JsonObjectsTraverseResolver(Map<String, String> properties, String propertiesKey, String[] fields, ObjectJsonType coreObjectJsonType) {
+    public JsonObjectsTraverseResolver(Map<String, String> properties, String propertiesKey, String[] fields, ObjectJsonType coreObjectJsonType, boolean switchOnParseArrays) {
         this.properties = properties;
         this.propertiesKey = propertiesKey;
         this.fields = fields;
         this.currentObjectJsonType = coreObjectJsonType;
-    }
 
-    private static Map<AlgorithmType, JsonTypeResolver> algorithms = new HashMap<>();
-
-    static {
         algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());
-        algorithms.put(AlgorithmType.PRIMITIVE, new PrimitiveJsonTypesResolver());
+        algorithms.put(AlgorithmType.PRIMITIVE, new PrimitiveJsonTypesResolver(switchOnParseArrays));
         algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeResolver());
     }
 
