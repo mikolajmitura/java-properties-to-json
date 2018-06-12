@@ -8,12 +8,12 @@ import pl.jalokim.propertiestojson.domain.MainObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonParserTest {
+public class PropertiesToJsonConverterFilterTest extends AbstractPropertiesToJsonConverterTest {
 
     @Test
     public void parsePropertiesOnlyByIncludedKeys() {
         //when
-        String json = PropertiesToJsonParser.parseToJson(initProperlyPropertiesMap(), "man.groups", "man.hoobies", "insurance.cost");
+        String json = new PropertiesToJsonConverter().parseToJson(initProperlyPropertiesMap(), "man.groups", "man.hoobies", "insurance.cost");
         // then
         assertJsonIsAsExpected(json);
     }
@@ -23,7 +23,7 @@ public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonPa
         // given
         InputStream inputStream = getPropertiesFromFile();
         // when
-        String json = PropertiesToJsonParser.parseToJson(inputStream, "man.groups", "man.hoobies", "insurance.cost");
+        String json = new PropertiesToJsonConverter().parseToJson(inputStream, "man.groups", "man.hoobies", "insurance.cost");
         // then
         assertJsonIsAsExpected(json);
     }
@@ -51,7 +51,7 @@ public class PropertiesToJsonParserFilterTest extends AbstractPropertiesToJsonPa
         // given
         InputStream inputStream = getPropertiesFromFile();
         // when
-        String json = PropertiesToJsonParser.parseToJson(inputStream, "man.groups", "man.hoobies", "insurance");
+        String json = new PropertiesToJsonConverter().parseToJson(inputStream, "man.groups", "man.hoobies", "insurance");
         // then
         assertJsonIsAsExpectedWithWholeInsurance(json);
     }

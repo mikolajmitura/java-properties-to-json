@@ -17,13 +17,13 @@ Simple Example
 code snippet:
 ```java
 
-import pl.jalokim.propertiestojson.util.PropertiesToJsonParser;
+import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
 ...
-String json = PropertiesToJsonParser.parseToJson(properties);
+String json = new PropertiesToJsonConverter().parseToJson(properties);
 
-String jsonFromProperties = PropertiesToJsonParser.parsePropertiesFromFileToJson("/home/user/file.properties");
-String jsonFromProperties2 = PropertiesToJsonParser.parsePropertiesFromFileToJson(new File("/home/user/file.properties"));
+String jsonFromProperties = new PropertiesToJsonConverter().parsePropertiesFromFileToJson("/home/user/file.properties");
+String jsonFromProperties2 = new PropertiesToJsonConverter().parsePropertiesFromFileToJson(new File("/home/user/file.properties"));
 ```
 
 example properties:
@@ -88,16 +88,131 @@ Will result:
    }
 }
 ```
-Example of use filters:
+
+Example of use different primitive json type resolvers:
+---------------------------------------------
+The default constructor of class PropertiesToJsonConverter has default implementation of
+json type resolvers with below order:  
+```
+ObjectFromTextJsonTypeResolver
+PrimitiveArrayJsonTypeResolver
+DoubleJsonTypeResolver
+IntegerJsonTypeResolver
+BooleanJsonTypeResolver
+StringJsonTypeResolver
+```
+
+The order is important. When cannot parse then try with next Resolver. 
+If you don't use some of them then you can pass resolvers which you want to use. 
+You can pass your own Resolver too. To do this you need to extend class PrimitiveJsonTypeResolver. 
+If your resolver cannot parse then should return null as a result in override method returnJsonTypeWhenCanBeParsed(..). 
+
+pseudo code above for custom Resolver type:
+
+```java
+@Override
+    public AbstractJsonType returnJsonTypeWhenCanBeParsed(
+            PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+        // if your condition is true then return your own implementation of AbstractJsonType
+        // if not return null
+        return null;
+    }
+```
+
+Short describe how works default resolvers
+---------------------------------------------
+
+1) ObjectFromTextJsonTypeResolver.class will try parse from text to json when as first letter will meet "{" and as last letter "}" and first letter will meet "[" and as last letter "]"
+
+```bash
+jsonObject={"fieldName":2, "text":"textValue"}
+jsonArray=[123,1234]
+```
+Will result
+```json
+{
+"jsonObject": {
+    "fieldName": 2,
+    "text": "textValue"
+  },
+  "jsonArray": [
+    123,
+    1234
+  ]
+}
+```
+2) PrimitiveArrayJsonTypeResolver when will met separator (here is comma ',') then will try parse as array. Important here is that is working with other resolvers.
+It will try parse every part to some type from your resolver list. The PrimitiveArrayJsonTypeResolver has constructor with custom separator too. 
+
+```bash
+arraytexts=1,23.0,5,false,text
+```
+Will result
+```json
+{
+"arraytexts": [1, 23.0, 5, false, "text" ]
+}
+```
+
+3) DoubleJsonTypeResolver 
+```bash
+some.value=2.0
+```
+Will result
+```json
+{
+  "some": {
+    "value": 2.0
+  }
+}
+```
+4) IntegerJsonTypeResolver
+```bash
+some.value=2
+```
+Will result
+```json
+{
+  "some": {
+    "value": 2
+  }
+}
+```
+5) BooleanJsonTypeResolver
+```bash
+some.value=true
+```
+Will result
+```json
+{
+  "some": {
+    "value": true
+  }
+}
+```
+6) StringJsonTypeResolver
+```bash
+some.value=2.0
+```
+Will result
+```json
+{
+  "some": {
+    "value": "2.0"
+  }
+}
+```
+
+Example of how use filters:
 ---------------------------------------------
 
 code snippet:
 ```java
 
-import pl.jalokim.propertiestojson.util.PropertiesToJsonParser;
+import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
 ...
-String json = PropertiesToJsonParser.parseToJson(properties, "man.groups", "man.hoobies", "insurance.cost");
+String json = new PropertiesToJsonConverter().parseToJson(properties, "man.groups", "man.hoobies", "insurance.cost");
 ```
 
 example properties:
@@ -185,7 +300,7 @@ Maven dependency
     <dependency>
         <groupId>pl.jalokim.propertiestojson</groupId>
         <artifactId>java-properties-to-json</artifactId>
-        <version>2.2</version>
+        <version>3.0</version>
     </dependency>
 ```
 

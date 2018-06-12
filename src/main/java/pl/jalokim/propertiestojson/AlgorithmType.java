@@ -1,5 +1,5 @@
 package pl.jalokim.propertiestojson;
 
 public enum AlgorithmType {
-    PRIMITIVE, ARRAY, OBJECT;
+    PRIMITIVE, ARRAY, OBJECT
 }

@@ -5,15 +5,9 @@ import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
-import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.DoubleJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.IntegerJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonType;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkThatArrayElementIsPrimitiveType;
@@ -21,16 +15,10 @@ import static pl.jalokim.propertiestojson.JsonObjectsTraverseResolver.isArrayFie
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
-    private static List<PrimitiveJsonTypeResolver> resolvers = new ArrayList<>();
-    private static List<PrimitiveJsonTypeResolver> primitiveResolvers = new ArrayList<>();
+    private final List<PrimitiveJsonTypeResolver> primitiveResolvers;
 
-    static {
-        resolvers.add(new PrimitiveArrayJsonType());
-        primitiveResolvers.add(new DoubleJsonTypeResolver());
-        primitiveResolvers.add(new IntegerJsonTypeResolver());
-        primitiveResolvers.add(new BooleanJsonTypeResolver());
-        primitiveResolvers.add(new StringJsonTypeResolver());
-        resolvers.addAll(primitiveResolvers);
+    public PrimitiveJsonTypesResolver(List<PrimitiveJsonTypeResolver> primitiveResolvers) {
+        this.primitiveResolvers = primitiveResolvers;
     }
 
     @Override
@@ -40,7 +28,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     }
 
     private void addPrimitiveFieldWhenIsValid(String field) {
-        JsonObjectFieldsValidator.checkEarlierWasJsonString(currentObjectJsonType, field, propertiesKey);
+        JsonObjectFieldsValidator.checkEarlierWasJsonPrimitiveType(currentObjectJsonType, field, propertiesKey);
         addPrimitiveFieldToCurrentJsonObject(field);
     }
 
@@ -49,13 +37,13 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         if (isArrayField(field)) {
             addFieldToArray(field, propertyValue);
         } else {
-            currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, resolvers));
+            currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers));
         }
     }
 
-    private static AbstractJsonType resolvePrimitiveTypeAndReturn(String propertyValue, List<PrimitiveJsonTypeResolver> resolvers) {
+    private AbstractJsonType resolvePrimitiveTypeAndReturn(String propertyValue, List<PrimitiveJsonTypeResolver> resolvers) {
         for (PrimitiveJsonTypeResolver resolver : resolvers) {
-            AbstractJsonType abstractJsonType = resolver.returnPrimitiveJsonTypeWhenIsGivenType(propertyValue);
+            AbstractJsonType abstractJsonType = resolver.returnJsonTypeWhenCanBeParsed(this, propertyValue);
             if (abstractJsonType != null){
                 return abstractJsonType;
             }
@@ -63,7 +51,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         throw new ParsePropertiesException("Cannot find valid JSON type");
     }
 
-    public static AbstractJsonType resolvePrimitiveTypeAndReturn(String propertyValue) {
+    public AbstractJsonType resolvePrimitiveTypeAndReturn(String propertyValue) {
         return resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers);
     }
 

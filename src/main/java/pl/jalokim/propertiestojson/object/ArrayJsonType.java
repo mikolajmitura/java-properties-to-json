@@ -1,14 +1,15 @@
 package pl.jalokim.propertiestojson.object;
 
 
+import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
-import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
-import static pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn;
+import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
 
 
 public class ArrayJsonType extends AbstractJsonType {
@@ -40,13 +41,14 @@ public class ArrayJsonType extends AbstractJsonType {
     }
 
     public AbstractJsonType getElement(int index) {
+        rewriteArrayWhenIsFull(index);
         return elements[index];
     }
 
-    public ArrayJsonType(String[] elements) {
+    public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String[] elements) {
         for (int index = 0; index < elements.length; index++) {
             String element = elements[index];
-            addElement(index, resolvePrimitiveTypeAndReturn(element.trim()));
+            addElement(index, primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(element.trim()));
         }
     }
 
