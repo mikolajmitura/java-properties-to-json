@@ -10,8 +10,10 @@ import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.util.List;
 
+import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkThatArrayElementIsPrimitiveType;
 import static pl.jalokim.propertiestojson.JsonObjectsTraverseResolver.isArrayField;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG;
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
@@ -48,7 +50,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
                 return abstractJsonType;
             }
         }
-        throw new ParsePropertiesException("Cannot find valid JSON type");
+        throw new ParsePropertiesException(format(CANNOT_FIND_TYPE_RESOLVER_MSG, propertyValue));
     }
 
     public AbstractJsonType resolvePrimitiveTypeAndReturn(String propertyValue) {

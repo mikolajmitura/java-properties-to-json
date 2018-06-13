@@ -107,16 +107,35 @@ If you don't use some of them then you can pass resolvers which you want to use.
 You can pass your own Resolver too. To do this you need to extend class PrimitiveJsonTypeResolver. 
 If your resolver cannot parse then should return null as a result in override method returnJsonTypeWhenCanBeParsed(..). 
 
-pseudo code above for custom Resolver type:
+pseudo code below for custom Resolver type:
 
 ```java
-@Override
-    public AbstractJsonType returnJsonTypeWhenCanBeParsed(
-            PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
-        // if your condition is true then return your own implementation of AbstractJsonType
-        // if not return null
-        return null;
+    import pl.jalokim.propertiestojson.object.AbstractJsonType;
+    import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
+    
+    public class OwnCustomTypeResolver extends PrimitiveJsonTypeResolver {
+        @Override
+        public AbstractJsonType returnJsonTypeWhenCanBeParsed(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+            // if your condition is true then return your own implementation of AbstractJsonType with parsed value from propertyValue
+            // AbstractJsonType should contain data parsed and provide implementation for "toStringJson()" method
+            // if it not meets your's condition then return null for allow go to others type resolver in order.
+            return null;
+        }
     }
+```
+
+```java
+
+```
+
+code snipped with you own json type resolvers order 
+```java
+    String json = new PropertiesToJsonConverter(
+            new OwnCustomTypeResolver(),
+            new IntegerJsonTypeResolver(),
+            new BooleanJsonTypeResolver(),
+            new StringJsonTypeResolver()
+    ).parseToJson(properties);
 ```
 
 Short describe how works every of default resolver
@@ -160,7 +179,7 @@ Will result (when DoubleJsonTypeResolver, IntegerJsonTypeResolver, BooleanJsonTy
 }
 ```
 
-<h4>3) DoubleJsonTypeResolver 
+<h4>3) DoubleJsonTypeResolver </h4>
 ```bash
 some.value=2.0
 ```

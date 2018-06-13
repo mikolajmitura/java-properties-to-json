@@ -36,6 +36,7 @@ import java.util.Properties;
 
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.REGEX_DOT;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.ADDED_SOME_TYPE_RESOLVER_AFTER_LAST;
 
 public class PropertiesToJsonConverter {
 
@@ -56,9 +57,11 @@ public class PropertiesToJsonConverter {
 
     /**
      * This constructor allow to give a resolvers, the order of resolvers is important.
+     *
      * @param primitiveResolvers ordered list
      */
     public PropertiesToJsonConverter(PrimitiveJsonTypeResolver... primitiveResolvers) {
+        validateTypeResolverOrder(primitiveResolvers);
         algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());
         algorithms.put(AlgorithmType.PRIMITIVE, new PrimitiveJsonTypesResolver(Arrays.asList(primitiveResolvers)));
         algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeResolver());
@@ -302,5 +305,21 @@ public class PropertiesToJsonConverter {
     private static PrimitiveJsonTypeResolver[] fromListToArray(List<PrimitiveJsonTypeResolver> resolversAsList) {
         PrimitiveJsonTypeResolver[] resolvers = new PrimitiveJsonTypeResolver[resolversAsList.size()];
         return resolversAsList.toArray(resolvers);
+    }
+
+    private static void validateTypeResolverOrder(PrimitiveJsonTypeResolver... primitiveResolvers) {
+        List<PrimitiveJsonTypeResolver> resolvers = Arrays.asList(primitiveResolvers);
+        boolean containStringResolverType = false;
+        for (PrimitiveJsonTypeResolver resolver : resolvers) {
+            if (resolver instanceof StringJsonTypeResolver) {
+                containStringResolverType = true;
+            }
+        }
+        if (containStringResolverType) {
+            PrimitiveJsonTypeResolver lastResolver = resolvers.get(resolvers.size() - 1);
+            if (!(lastResolver instanceof StringJsonTypeResolver)) {
+                throw new ParsePropertiesException(ADDED_SOME_TYPE_RESOLVER_AFTER_LAST);
+            }
+        }
     }
 }
