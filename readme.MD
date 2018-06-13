@@ -124,10 +124,6 @@ pseudo code below for custom Resolver type:
     }
 ```
 
-```java
-
-```
-
 code snipped with you own json type resolvers order 
 ```java
     String json = new PropertiesToJsonConverter(
@@ -180,6 +176,7 @@ Will result (when DoubleJsonTypeResolver, IntegerJsonTypeResolver, BooleanJsonTy
 ```
 
 <h4>3) DoubleJsonTypeResolver </h4>
+
 ```bash
 some.value=2.0
 ```
@@ -192,6 +189,7 @@ Will result
 }
 ```
 <h4>4) IntegerJsonTypeResolver </h4>
+
 ```bash
 some.value=2
 ```
@@ -204,6 +202,7 @@ Will result
 }
 ```
 <h4>5) BooleanJsonTypeResolver </h4>
+
 ```bash
 some.value=true
 ```
