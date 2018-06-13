@@ -119,10 +119,13 @@ pseudo code above for custom Resolver type:
     }
 ```
 
-Short describe how works default resolvers
+Short describe how works every of default resolver
 ---------------------------------------------
 
-1) ObjectFromTextJsonTypeResolver.class will try parse from text to json when as first letter will meet "{" and as last letter "}" and first letter will meet "[" and as last letter "]"
+<h4>1) ObjectFromTextJsonTypeResolver </h4>
+ 
+This type resolver will try parse from text to json when as first letter will encounter "{" and as last letter "}" and first letter will encounter "[" and as last letter "]"
+If it will have invalid json structure then it will go to next type resolver. 
 
 ```bash
 jsonObject={"fieldName":2, "text":"textValue"}
@@ -141,20 +144,23 @@ Will result
   ]
 }
 ```
-2) PrimitiveArrayJsonTypeResolver when will met separator (here is comma ',') then will try parse as array. Important here is that is working with other resolvers.
-It will try parse every part to some type from your resolver list. The PrimitiveArrayJsonTypeResolver has constructor with custom separator too. 
+<h4>2) PrimitiveArrayJsonTypeResolver </h4>
+ 
+This type resolver when will encounter separator (default one is comma ',') then will try parse as array. Important here to note is that is working with other resolvers.
+It will try parse every part to some type from your resolver list. The PrimitiveArrayJsonTypeResolver has constructor with custom separator by which will split text to array elements. 
+Every array element will be try parse by others primitive type resolvers.
 
 ```bash
 arraytexts=1,23.0,5,false,text
 ```
-Will result
+Will result (when DoubleJsonTypeResolver, IntegerJsonTypeResolver, BooleanJsonTypeResolver are enabled)
 ```json
 {
 "arraytexts": [1, 23.0, 5, false, "text" ]
 }
 ```
 
-3) DoubleJsonTypeResolver 
+<h4>3) DoubleJsonTypeResolver 
 ```bash
 some.value=2.0
 ```
@@ -166,7 +172,7 @@ Will result
   }
 }
 ```
-4) IntegerJsonTypeResolver
+<h4>4) IntegerJsonTypeResolver </h4>
 ```bash
 some.value=2
 ```
@@ -178,7 +184,7 @@ Will result
   }
 }
 ```
-5) BooleanJsonTypeResolver
+<h4>5) BooleanJsonTypeResolver </h4>
 ```bash
 some.value=true
 ```
@@ -190,7 +196,12 @@ Will result
   }
 }
 ```
-6) StringJsonTypeResolver
+<h4>6) StringJsonTypeResolver </h4>
+
+
+Important to note here is that this type resolver will always parse to text! 
+After this type resolver other type resolver will be omitted!
+
 ```bash
 some.value=2.0
 ```
