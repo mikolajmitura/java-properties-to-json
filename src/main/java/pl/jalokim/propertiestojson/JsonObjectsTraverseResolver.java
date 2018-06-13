@@ -2,10 +2,8 @@ package pl.jalokim.propertiestojson;
 
 import pl.jalokim.propertiestojson.object.*;
 import pl.jalokim.propertiestojson.resolvers.*;
-import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.transfer.DataForResolve;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
@@ -14,24 +12,20 @@ import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 
 public class JsonObjectsTraverseResolver {
 
+    private final Map<AlgorithmType, JsonTypeResolver> algorithms;
     private Map<String, String> properties;
     private String propertiesKey;
     private String[] fields;
     private ObjectJsonType currentObjectJsonType;
 
-    public JsonObjectsTraverseResolver(Map<String, String> properties, String propertiesKey, String[] fields, ObjectJsonType coreObjectJsonType) {
+    public JsonObjectsTraverseResolver(Map<AlgorithmType, JsonTypeResolver> algorithms,
+                                       Map<String, String> properties, String propertiesKey,
+                                       String[] fields, ObjectJsonType coreObjectJsonType) {
         this.properties = properties;
         this.propertiesKey = propertiesKey;
         this.fields = fields;
         this.currentObjectJsonType = coreObjectJsonType;
-    }
-
-    private static Map<AlgorithmType, JsonTypeResolver> algorithms = new HashMap<>();
-
-    static {
-        algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());
-        algorithms.put(AlgorithmType.PRIMITIVE, new PrimitiveJsonTypesResolver());
-        algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeResolver());
+        this.algorithms = algorithms;
     }
 
     public void initializeFieldsInJson() {

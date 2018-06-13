@@ -1,9 +1,7 @@
 package pl.jalokim.propertiestojson.util;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
 import pl.jalokim.propertiestojson.domain.MainObject;
-import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,12 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-public class AbstractPropertiesToJsonParserTest {
-
-    @Before
-    public void before() {
-        PropertiesToJsonParser.setPropertyKeysPickup(new PropertyKeysPickup());
-    }
+public class AbstractPropertiesToJsonConverterTest {
 
     protected static final String FIELD2_VALUE = "die3";
     protected static final String FIELD1_VALUE = "die2";

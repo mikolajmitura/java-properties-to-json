@@ -11,12 +11,12 @@ import java.io.File;
 import java.io.InputStream;
 
 
-public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTest {
+public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConverterTest {
 
     @Test
     public void returnExpectedJsonFromGivenFile() {
         //when
-        String json = PropertiesToJsonParser.parsePropertiesFromFileToJson(new File("src/test/resources/primitiveTypes.properties"));
+        String json = new PropertiesToJsonConverter().parsePropertiesFromFileToJson(new File("src/test/resources/primitiveTypes.properties"));
         // then
         assertJsonWithPrimitivesTypes(json);
     }
@@ -24,7 +24,7 @@ public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTe
     @Test
     public void returnExpectedJsonWithGivenIncludeFromGivenFile() {
         //when
-        String json = PropertiesToJsonParser.parsePropertiesFromFileToJson(new File("src/test/resources/primitiveTypes.properties"), "complexObject");
+        String json = new PropertiesToJsonConverter().parsePropertiesFromFileToJson(new File("src/test/resources/primitiveTypes.properties"), "complexObject");
         // then
         assertJsonWithPrimitivesTypesWithoutSimpleText(json);
     }
@@ -32,7 +32,7 @@ public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTe
     @Test
     public void returnExpectedJsonFromGivenFilePath() {
         //when
-        String json = PropertiesToJsonParser.parsePropertiesFromFileToJson("src/test/resources/primitiveTypes.properties");
+        String json = new PropertiesToJsonConverter().parsePropertiesFromFileToJson("src/test/resources/primitiveTypes.properties");
         // then
         assertJsonWithPrimitivesTypes(json);
     }
@@ -40,7 +40,7 @@ public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTe
     @Test
     public void returnExpectedJsonWithGivenIncludeFromGivenFilePath() {
         //when
-        String json = PropertiesToJsonParser.parsePropertiesFromFileToJson("src/test/resources/primitiveTypes.properties", "complexObject");
+        String json = new PropertiesToJsonConverter().parsePropertiesFromFileToJson("src/test/resources/primitiveTypes.properties", "complexObject");
         // then
         assertJsonWithPrimitivesTypesWithoutSimpleText(json);
     }
@@ -50,7 +50,7 @@ public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTe
         // given
         InputStream inputStream = getPropertiesFromFile();
         // when
-        String json = PropertiesToJsonParser.parseToJson(inputStream);
+        String json = new PropertiesToJsonConverter().parseToJson(inputStream);
         // then
         assertJsonIsAsExpected(json);
     }
@@ -59,7 +59,7 @@ public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTe
     public void returnExpectedJsonGivenByMap() {
         //when
         //given
-        String json = PropertiesToJsonParser.parseToJson(initProperlyPropertiesMap());
+        String json = new PropertiesToJsonConverter().parseToJson(initProperlyPropertiesMap());
         //then
         assertJsonIsAsExpected(json);
     }
@@ -68,7 +68,7 @@ public class PropertiesToJsonParserTest extends AbstractPropertiesToJsonParserTe
     public void returnExpectedJsonGivenByProperties() {
         //when
         //given
-        String json = PropertiesToJsonParser.parseToJson(initProperlyProperties());
+        String json = new PropertiesToJsonConverter().parseToJson(initProperlyProperties());
         //then
         assertJsonIsAsExpected(json);
     }

@@ -12,7 +12,7 @@ import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesExceptio
 public class JsonObjectFieldsValidator {
 
 
-    public static void checkEarlierWasJsonString(ObjectJsonType currentObjectJson, String field, String propertiesKey) {
+    public static void checkEarlierWasJsonPrimitiveType(ObjectJsonType currentObjectJson, String field, String propertiesKey) {
 
         if (currentObjectJson.containsField(field)) {
             AbstractJsonType jsonType = currentObjectJson.getJsonTypeByFieldName(field);
