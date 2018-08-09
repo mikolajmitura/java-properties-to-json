@@ -45,6 +45,8 @@ object2.objectArray[0].field2=value2
 object2.objectArray[0].field3=value3
 object3.arrayWithDelimeter=value1,value2,value3
 object3.simpleString=stringValue
+object3.emptyValue=
+object3.nullValue=null
 ```
 
 Will result:
@@ -72,7 +74,9 @@ Will result:
          "value2",
          "value3"
       ],
-      "simpleString":"stringValue"
+      "simpleString":"stringValue",
+      "emptyValue":"",
+      "nullValue":null
    },
    "object":{
       "doubleNumber":1.2345,
