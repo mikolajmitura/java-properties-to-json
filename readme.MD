@@ -329,7 +329,7 @@ Maven dependency
     <dependency>
         <groupId>pl.jalokim.propertiestojson</groupId>
         <artifactId>java-properties-to-json</artifactId>
-        <version>3.1</version>
+        <version>3.2</version>
     </dependency>
 ```
 
