@@ -4,7 +4,9 @@ import pl.jalokim.propertiestojson.JsonObjectFieldsValidator;
 import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
+import pl.jalokim.propertiestojson.object.JsonNullReferenceType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.object.StringJsonType;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
@@ -13,9 +15,12 @@ import java.util.List;
 import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkThatArrayElementIsPrimitiveType;
 import static pl.jalokim.propertiestojson.JsonObjectsTraverseResolver.isArrayField;
+import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_VALUE;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG;
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
+
+    private final static String EMPTY_VALUE = "";
 
     private final List<PrimitiveJsonTypeResolver> primitiveResolvers;
 
@@ -45,8 +50,14 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     private AbstractJsonType resolvePrimitiveTypeAndReturn(String propertyValue, List<PrimitiveJsonTypeResolver> resolvers) {
         for (PrimitiveJsonTypeResolver resolver : resolvers) {
+            if (propertyValue.trim().equals(EMPTY_VALUE)) {
+                return new StringJsonType(propertyValue);
+            }
+            if (propertyValue.trim().equals(NULL_VALUE)) {
+                return new JsonNullReferenceType();
+            }
             AbstractJsonType abstractJsonType = resolver.returnJsonTypeWhenCanBeParsed(this, propertyValue);
-            if (abstractJsonType != null){
+            if (abstractJsonType != null) {
                 return abstractJsonType;
             }
         }
