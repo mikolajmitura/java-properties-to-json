@@ -195,6 +195,7 @@ public class PropertiesToJsonConverter {
      * @return simple String with json
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
+    // TODO add method for map<string, object> too
     public String parseToJson(Map<String, String> properties) throws ParsePropertiesException {
         ObjectJsonType coreObjectJsonType = new ObjectJsonType();
 
@@ -279,6 +280,11 @@ public class PropertiesToJsonConverter {
         } catch (IOException e) {
             throw new ReadInputException(e);
         }
+        // TODO convert properties to <String, Object> from  <String, String>
+        // move types resolve from PrimitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn here
+        // it will convert to <String, Object.
+        // for entries <String, Object> will be two cases. normal Java object will be converted to json by some framework
+        // and second one will be class will extend Object which will build for ObjectFromTextJsonType and for ObjectFromTextJsonTypeResolver.
         return properties;
     }
 

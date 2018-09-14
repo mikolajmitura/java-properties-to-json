@@ -50,12 +50,16 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     private AbstractJsonType resolvePrimitiveTypeAndReturn(String propertyValue, List<PrimitiveJsonTypeResolver> resolvers) {
         for (PrimitiveJsonTypeResolver resolver : resolvers) {
+            if (propertyValue == null || propertyValue.trim().equals(NULL_VALUE)) {
+                return new JsonNullReferenceType();
+            }
             if (propertyValue.trim().equals(EMPTY_VALUE)) {
                 return new StringJsonType(propertyValue);
             }
-            if (propertyValue.trim().equals(NULL_VALUE)) {
-                return new JsonNullReferenceType();
-            }
+            // TODO move this to upper layer to class to pl.jalokim.propertiestojson.util.PropertiesToJsonConverter.inputStreamToProperties()
+            // here should be converting from java class type...
+            // for example Double will be converted DoubleJsonType
+            // but what with customResolverTypes??? how it should working now??? how looks like signature of those???
             AbstractJsonType abstractJsonType = resolver.returnJsonTypeWhenCanBeParsed(this, propertyValue);
             if (abstractJsonType != null) {
                 return abstractJsonType;

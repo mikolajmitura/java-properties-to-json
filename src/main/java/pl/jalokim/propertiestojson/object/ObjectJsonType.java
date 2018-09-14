@@ -12,7 +12,7 @@ import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 
 public class ObjectJsonType extends AbstractJsonType {
 
-    Map<String, AbstractJsonType> fields = new HashMap<>();
+    private Map<String, AbstractJsonType> fields = new HashMap<>();
 
 
     public void addField(final String field, final AbstractJsonType object) {
