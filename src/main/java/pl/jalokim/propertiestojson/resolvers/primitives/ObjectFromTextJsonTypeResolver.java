@@ -2,14 +2,13 @@ package pl.jalokim.propertiestojson.resolvers.primitives;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
-import pl.jalokim.propertiestojson.Constants;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
+import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
+import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
-import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
-import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
 
 public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Object> {
 
@@ -17,8 +16,8 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
 
     @Override
     public Object returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
-        if (hasJsonSignature(propertyValue, JSON_OBJECT_START, JSON_OBJECT_END) ||
-            (hasJsonSignature(propertyValue, ARRAY_START_SIGN, ARRAY_END_SIGN))) {
+        if (hasJsonObjectSignature(propertyValue) ||
+                hasJsonArraySignature(propertyValue)) {
             try {
                 JsonParser jp = new JsonParser();
                 jp.parse(propertyValue);
@@ -30,15 +29,23 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
         return null;
     }
 
-    private boolean hasJsonSignature(String propertyValue, String startSign, String endSign) {
+    public static boolean hasJsonArraySignature(String propertyValue) {
+        return hasJsonSignature(propertyValue, ARRAY_START_SIGN, ARRAY_END_SIGN);
+    }
+
+    private static boolean hasJsonObjectSignature(String propertyValue) {
+        return hasJsonSignature(propertyValue, JSON_OBJECT_START, JSON_OBJECT_END);
+    }
+
+    private static boolean hasJsonSignature(String propertyValue, String startSign, String endSign) {
         return firsLetter(propertyValue).contains(startSign) && lastLetter(propertyValue).contains(endSign);
     }
 
-    private String firsLetter(String text) {
+    private static String firsLetter(String text) {
         return text.substring(0, 1);
     }
 
-    private String lastLetter(String text) {
+    private static String lastLetter(String text) {
         return text.substring(text.length() - 1, text.length());
     }
 

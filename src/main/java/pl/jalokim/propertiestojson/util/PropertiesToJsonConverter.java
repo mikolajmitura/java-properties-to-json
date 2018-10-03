@@ -207,7 +207,7 @@ public class PropertiesToJsonConverter {
                                                           entry.getKey() == null ? "null" : entry.getKey()));
             }
         }
-        return convertFromObjectValuesMap(propertiesToMap(properties));
+        return convertFromValuesAsObjectMap(propertiesToMap(properties));
     }
 
     /**
@@ -218,7 +218,7 @@ public class PropertiesToJsonConverter {
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
     public String parseToJson(Map<String, String> properties) throws ParsePropertiesException {
-        return convertFromObjectValuesMap(stringValueMapToObjectValueMap(properties));
+        return convertFromValuesAsObjectMap(stringValueMapToObjectValueMap(properties));
 
     }
 
@@ -229,7 +229,7 @@ public class PropertiesToJsonConverter {
      * @return simple String with json
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String convertFromObjectValuesMap(Map<String, Object> properties) throws ParsePropertiesException {
+    public String convertFromValuesAsObjectMap(Map<String, Object> properties) throws ParsePropertiesException {
         ObjectJsonType coreObjectJsonType = new ObjectJsonType();
         for (String propertiesKey : getAllKeysFromProperties(properties)) {
             addFieldsToJsonObject(properties, coreObjectJsonType, propertiesKey);
@@ -262,7 +262,7 @@ public class PropertiesToJsonConverter {
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
     public String parseToJson(Map<String, String> properties, String... includeDomainKeys) throws ParsePropertiesException {
-        return convertFromObjectValuesMap(stringValueMapToObjectValueMap(properties), includeDomainKeys);
+        return convertFromValuesAsObjectMap(stringValueMapToObjectValueMap(properties), includeDomainKeys);
     }
 
     /**
@@ -279,14 +279,14 @@ public class PropertiesToJsonConverter {
      * @return simple String with json
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String convertFromObjectValuesMap(Map<String, Object> properties, String... includeDomainKeys) throws ParsePropertiesException {
+    public String convertFromValuesAsObjectMap(Map<String, Object> properties, String... includeDomainKeys) throws ParsePropertiesException {
         Map<String, Object> filteredProperties = new HashMap<>();
         for (String key : properties.keySet()) {
             for (String requiredKey : includeDomainKeys) {
                 checkKey(properties, filteredProperties, key, requiredKey);
             }
         }
-        return convertFromObjectValuesMap(filteredProperties);
+        return convertFromValuesAsObjectMap(filteredProperties);
     }
 
     /**
@@ -305,7 +305,7 @@ public class PropertiesToJsonConverter {
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
     public String parseToJson(Properties properties, String... includeDomainKeys) throws ParsePropertiesException {
-        return convertFromObjectValuesMap(propertiesToMap(properties), includeDomainKeys);
+        return convertFromValuesAsObjectMap(propertiesToMap(properties), includeDomainKeys);
     }
 
 

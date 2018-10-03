@@ -1,13 +1,9 @@
 package pl.jalokim.propertiestojson.util
 
 import groovy.json.JsonSlurper
-import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver
-import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver
-import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonTypeResolver
-import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver
+import pl.jalokim.propertiestojson.resolvers.primitives.*
+import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException
 import spock.lang.Specification
-
-import java.beans.Transient
 
 class PropertiesToJsonConverterResolversTest extends Specification {
 
@@ -63,6 +59,8 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         jsonObject.jsonObject.text == "textValue"
         jsonObject.jsonArray[0] == 123
         jsonObject.jsonArray[1] == 1234
+        jsonObject.jsonArray[2] == null
+        jsonObject.jsonArray[3] == ""
     }
 
     def "when properties with established string with number value will be converted as string not number"() {
@@ -105,6 +103,13 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         jsonObject.man.array[4] == true
         jsonObject.man.array[5] == false
         jsonObject.man.array[6] == null
+        jsonObject.man.objectArray[0] == "text1"
+        jsonObject.man.objectArray[1] == ""
+        jsonObject.man.objectArray[2] == 44
+        jsonObject.man.objectArray[3] == 15.0
+        jsonObject.man.objectArray[4] == true
+        jsonObject.man.objectArray[5] == false
+        jsonObject.man.objectArray[6] == null
         jsonObject.other.doubleValueString == 12.122
     }
 
@@ -114,6 +119,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         map.put("man.doubleValue", "1.132")
         map.put("man.text", "text")
         map.put("man.array", "text1,  ,44 , 15.0, true, FALSE, null")
+        map.put("man.objectArray", "[text1, \"\" ,44 , 15.0, true, FALSE, null]")
         map.put("other.doubleValueString", "12.122")
         return map
     }
@@ -147,5 +153,19 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         }
         private String value1
         private BigDecimal value2
+    }
+
+    def "when don't have provided resolver for raw objects"() {
+        given:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
+                new NumberJsonTypeResolver(),
+                new BooleanJsonTypeResolver()
+        )
+        Properties properties = createExtendedProperties()
+        when:
+        converter.parseToJson(properties)
+        then:
+        ParsePropertiesException ex = thrown()
+        ex.message == String.format(ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG, PojoObject.class)
     }
 }

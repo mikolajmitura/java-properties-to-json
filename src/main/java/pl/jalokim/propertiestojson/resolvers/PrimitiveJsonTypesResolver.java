@@ -7,12 +7,14 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
+import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.util.List;
 
+import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkThatArrayElementIsPrimitiveType;
 import static pl.jalokim.propertiestojson.JsonObjectsTraverseResolver.isArrayField;
-import static pl.jalokim.propertiestojson.util.PropertiesToJsonConverter.STRING_RESOLVER;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG;
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
@@ -60,7 +62,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
                 return resolver.returnJsonType(this, propertyValue);
             }
         }
-        return STRING_RESOLVER.returnJsonType(this, propertyValue);
+        throw new ParsePropertiesException(format(CANNOT_FIND_TYPE_RESOLVER_MSG, propertyValue.getClass()));
     }
 
     public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue) {

@@ -1,11 +1,15 @@
 Java Properties to JSON
 ---------------------------------------------
 
+This 4.0 version is not backward compatible!
+The way of develop own json type resolver changed.  
+
 How to generate JSON from Java properties?
 
 You can generate Json from:
 - from Java properties (java.util.Properties)
 - from Map<String,String> (import java.util.Map)
+- from Map<String,Object> (import java.util.Map)
 - from InputStream with properties (java.io.InputStream)
 - from File with properties (java.io.File)
 - from given file localization with properties 
@@ -20,10 +24,14 @@ code snippet:
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
 ...
+// properties as Map<String,String>, java.util.Properties, java.io.InputStream
 String json = new PropertiesToJsonConverter().parseToJson(properties);
 
 String jsonFromProperties = new PropertiesToJsonConverter().parsePropertiesFromFileToJson("/home/user/file.properties");
 String jsonFromProperties2 = new PropertiesToJsonConverter().parsePropertiesFromFileToJson(new File("/home/user/file.properties"));
+
+// valuesAsObjectMap is Map<String, Object>
+String jsonFromProperties2 = new PropertiesToJsonConverter().convertFromValuesAsObjectMap(valuesAsObjectMap);
 ```
 
 example properties:
@@ -98,18 +106,19 @@ Example of use different primitive json type resolvers:
 The default constructor of class PropertiesToJsonConverter has default implementation of
 json type resolvers with below order:  
 ```
-PrimitiveArrayJsonTypeResolver
+JsonNullReferenceTypeResolver
+EmptyStringJsonTypeResolver
 ObjectFromTextJsonTypeResolver
-DoubleJsonTypeResolver
-IntegerJsonTypeResolver
+PrimitiveArrayJsonTypeResolver
+NumberJsonTypeResolver
 BooleanJsonTypeResolver
 StringJsonTypeResolver
 ```
 
 The order is important. When cannot parse then try with next Resolver. 
 If you don't use some of them then you can pass resolvers which you want to use. 
-You can pass your own Resolver too. To do this you need to extend class PrimitiveJsonTypeResolver. 
-If your resolver cannot parse then should return null as a result in override method returnJsonTypeWhenCanBeParsed(..). 
+You can pass your own Resolver too. To do this you need to extend class PrimitiveJsonTypeResolver<T> and provide type.
+If your resolver cannot parse then should return null as a result in override method returnConcreteValueWhenCanBeResolved(..). 
 
 pseudo code below for custom Resolver type:
 
@@ -117,32 +126,136 @@ pseudo code below for custom Resolver type:
     import pl.jalokim.propertiestojson.object.AbstractJsonType;
     import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
     
-    // TODO to change this doc part
-    public class OwnCustomTypeResolver extends PrimitiveJsonTypeResolver {
+    public class OwnCustomTypeResolver extends PrimitiveJsonTypeResolver<Object> {
+    
+        // if your condition is true then return concrete value of Object.
+        // if it not meets your's condition then return null for allow go to others type resolver in order.
+        // For read properties from Map<String, String>, File with properties, InputStream with properties
         @Override
-        public AbstractJsonType returnJsonTypeWhenCanBeParsed(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
-            // if your condition is true then return your own implementation of AbstractJsonType with parsed value from propertyValue
-            // AbstractJsonType should contain data parsed and provide implementation for "toStringJson()" method
-            // if it not meets your's condition then return null for allow go to others type resolver in order.
+        protected Object returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+            return null;
+        }
+    
+        // For read properties from Map<String, Object>, Properties
+        // AbstractJsonType should contains data parsed and provide implementation for "toStringJson()" method
+        // To invoke concrete resolver every resolver will be check by method canResolveThisObject(Class<?>) in PrimitiveJsonTypeResolver.   
+        @Override
+        public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {
             return null;
         }
     }
 ```
 
-code snipped with you own json type resolvers order 
+Important to note here is that if you want convert properties to json from:
+- File
+- Map<String,String>
+
+Then will be call returnConcreteValueWhenCanBeResolved method from PrimitiveJsonTypeResolver.
+It method try convert from String to some concrete object.
+Next build Map<String,Object> and next step will be call returnConcreteJsonType for concrete Object. 
+ 
+
+If you will convert from below:
+- Properties (under the hood is Map<Object, Object> will convert to Map<String, Object>) 
+- Map<String, Object>
+
+Then in resolvers will be call only method returnConcreteJsonType.  
+
+Code snipped with your own json type resolvers order 
+ 
 ```java
     String json = new PropertiesToJsonConverter(
             new OwnCustomTypeResolver(),
             new NumberJsonTypeResolver(),
-            new BooleanJsonTypeResolver(),
-            new StringJsonTypeResolver() // always added as last from default
+            new BooleanJsonTypeResolver()
     ).parseToJson(properties);
+```
+
+Important to note here is that always will 2 two json type resolvers before first given by you, 
+and StringJsonTypeResolver will be as last always.
+ 
+So The real order will be: 
+```bash
+JsonNullReferenceTypeResolver 
+EmptyStringJsonTypeResolver
+.............. 
+OwnCustomTypeResolver
+NumberJsonTypeResolver
+BooleanJsonTypeResolve
+..............
+StringJsonTypeResolver
 ```
 
 Short describe how works every of default resolver
 ---------------------------------------------
 
-<h4>1) ObjectFromTextJsonTypeResolver </h4>
+<h4>1) JsonNullReferenceTypeResolver </h4>
+When you give null object as value in Properties or Map then 
+ 
+```java
+properties.put("main.field", null);
+``` 
+
+Or from file with properties
+
+```bash
+main.field=null
+```
+
+will result
+```json
+{  
+   "main":{  
+      "field":null
+   }
+}
+```
+
+<h4>2) EmptyStringJsonTypeResolver </h4>
+
+```java
+properties.put("main.field", " ");
+``` 
+
+Or from file with properties
+
+```bash
+main.field=
+```
+
+will result
+```json
+{  
+   "main":{  
+      "field":""
+   }
+}
+```
+<h4>3) PrimitiveArrayJsonTypeResolver </h4>
+ 
+This type resolver when will encounter separator (default one is comma ',') then will try parse as array. Important here to note is that is working with other resolvers.
+It will try parse every part to some type from your resolver list. The PrimitiveArrayJsonTypeResolver has constructor with custom separator by which will split text to array elements. 
+By default constructor Every array element will be try parse by others primitive type resolvers.
+
+```bash
+arraytexts=1,23.0,5,false,text
+```
+Will result (when DoubleJsonTypeResolver, IntegerJsonTypeResolver, BooleanJsonTypeResolver are added to resolvers)
+```json
+{
+"arraytexts": [1, 23.0, 5, false, "text" ]
+}
+```
+
+When created this resolver by new PrimitiveArrayJsonTypeResolver(false)
+Then will result (when DoubleJsonTypeResolver, IntegerJsonTypeResolver, BooleanJsonTypeResolver are added to resolvers)
+```json
+{
+"arraytexts": ["1", "23.0", "5", "false", "text" ]
+}
+```
+
+<h4>4) ObjectFromTextJsonTypeResolver </h4>
  
 This type resolver will try parse from text to json when as first letter will encounter "{" and as last letter "}" and first letter will encounter "[" and as last letter "]"
 If it will have invalid json structure then it will go to next type resolver. 
@@ -183,7 +296,7 @@ From properties file for example
 
 ```bash
 jsonObject={"fieldName":2, "text":"textValue"}
-jsonArray=[123,1234]
+jsonArray=[123,1234,,""]
 ```
 Will result
 ```json
@@ -194,27 +307,15 @@ Will result
   },
   "jsonArray": [
     123,
-    1234
+    1234,
+    null,
+    
   ]
 }
 ```
-<h4>2) PrimitiveArrayJsonTypeResolver </h4>
- 
-This type resolver when will encounter separator (default one is comma ',') then will try parse as array. Important here to note is that is working with other resolvers.
-It will try parse every part to some type from your resolver list. The PrimitiveArrayJsonTypeResolver has constructor with custom separator by which will split text to array elements. 
-Every array element will be try parse by others primitive type resolvers.
 
-```bash
-arraytexts=1,23.0,5,false,text
-```
-Will result (when DoubleJsonTypeResolver, IntegerJsonTypeResolver, BooleanJsonTypeResolver are enabled)
-```json
-{
-"arraytexts": [1, 23.0, 5, false, "text" ]
-}
-```
 
-<h4>3) NumberJsonTypeResolver </h4>
+<h4>5) NumberJsonTypeResolver </h4>
 
 ```bash
 some.valueLong=2
@@ -229,7 +330,7 @@ Will result
   }
 }
 ```
-<h4>4) BooleanJsonTypeResolver </h4>
+<h4>6) BooleanJsonTypeResolver </h4>
 
 ```bash
 some.value=true
@@ -242,7 +343,7 @@ Will result
   }
 }
 ```
-<h4>5) StringJsonTypeResolver </h4>
+<h4>7) StringJsonTypeResolver </h4>
 
 
 Important to note here is that this type resolver will always parse to text! 
@@ -358,7 +459,7 @@ Maven dependency
     <dependency>
         <groupId>pl.jalokim.propertiestojson</groupId>
         <artifactId>java-properties-to-json</artifactId>
-        <version>3.2</version>
+        <version>4.0</version>
     </dependency>
 ```
 
