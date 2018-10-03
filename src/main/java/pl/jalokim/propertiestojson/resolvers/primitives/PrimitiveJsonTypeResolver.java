@@ -21,7 +21,8 @@ public abstract class PrimitiveJsonTypeResolver<T> {
                 currentClass = currentClass.getSuperclass();
             }
         }
-        throw new ParsePropertiesException("Cannot find generic type for resolver: " + getClass());
+        throw new ParsePropertiesException("Cannot find generic type for resolver: " + getClass() +
+                " Please override method resolveTypeOfResolver() for provide explicit class type");
     }
 
     public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {

@@ -44,7 +44,7 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
 
     @Override
     public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {
-        if (propertyValue instanceof ObjectFromTextJsonType) {
+        if (ObjectFromTextJsonType.class.isAssignableFrom(propertyValue.getClass())) {
             return (ObjectFromTextJsonType) propertyValue;
         }
         return new ObjectFromTextJsonType(gson.toJson(propertyValue));

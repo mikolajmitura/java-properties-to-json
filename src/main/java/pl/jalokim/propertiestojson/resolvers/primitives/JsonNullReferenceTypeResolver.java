@@ -31,7 +31,7 @@ public class JsonNullReferenceTypeResolver extends PrimitiveJsonTypeResolver<Jso
 
     @Override
     public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, JsonNullReferenceType propertyValue) {
-        return NULL_OBJECT;
+        return propertyValue;
     }
 
     private Boolean isStringType(Object value) {
