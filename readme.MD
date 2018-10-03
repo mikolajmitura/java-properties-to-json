@@ -108,8 +108,8 @@ json type resolvers with below order:
 ```
 JsonNullReferenceTypeResolver
 EmptyStringJsonTypeResolver
-ObjectFromTextJsonTypeResolver
 PrimitiveArrayJsonTypeResolver
+ObjectFromTextJsonTypeResolver
 NumberJsonTypeResolver
 BooleanJsonTypeResolver
 StringJsonTypeResolver
