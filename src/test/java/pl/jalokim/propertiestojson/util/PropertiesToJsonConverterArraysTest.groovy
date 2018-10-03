@@ -4,7 +4,7 @@ import groovy.json.JsonSlurper
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException
 import spock.lang.Specification
 
-import static pl.jalokim.propertiestojson.util.PropertiesToJsonParserExceptionTest.setUpMockPickupKeysOrder
+import static PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOrder
 
 class PropertiesToJsonConverterArraysTest extends Specification {
 
@@ -13,6 +13,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         def json = converter.parsePropertiesFromFileToJson('src/test/resources/arraysMixinTypes.properties')
+        print(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.array[0].name == "Walter"

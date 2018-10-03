@@ -11,7 +11,7 @@ import pl.jalokim.propertiestojson.resolvers.transfer.DataForResolve;
 
 public abstract class JsonTypeResolver {
 
-    protected Map<String, String> properties;
+    protected Map<String, Object> properties;
     protected String propertiesKey;
     protected ObjectJsonType currentObjectJsonType;
 

@@ -1,5 +1,6 @@
 package pl.jalokim.propertiestojson.resolvers.primitives;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import pl.jalokim.propertiestojson.Constants;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
@@ -10,12 +11,14 @@ import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
 
-public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver {
+public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Object> {
+
+    private Gson gson = new Gson();
 
     @Override
-    public AbstractJsonType returnJsonTypeWhenCanBeParsed(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+    public Object returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
         if (hasJsonSignature(propertyValue, JSON_OBJECT_START, JSON_OBJECT_END) ||
-                (hasJsonSignature(propertyValue, ARRAY_START_SIGN, ARRAY_END_SIGN))) {
+            (hasJsonSignature(propertyValue, ARRAY_START_SIGN, ARRAY_END_SIGN))) {
             try {
                 JsonParser jp = new JsonParser();
                 jp.parse(propertyValue);
@@ -37,6 +40,14 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver {
 
     private String lastLetter(String text) {
         return text.substring(text.length() - 1, text.length());
+    }
+
+    @Override
+    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {
+        if (propertyValue instanceof ObjectFromTextJsonType) {
+            return (ObjectFromTextJsonType) propertyValue;
+        }
+        return new ObjectFromTextJsonType(gson.toJson(propertyValue));
     }
 
     public static class ObjectFromTextJsonType extends AbstractJsonType {

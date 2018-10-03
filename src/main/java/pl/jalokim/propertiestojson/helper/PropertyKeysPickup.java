@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PropertyKeysPickup {
-    public List<String> getAllKeysFromProperties(Map<String, String> properties) {
+    public List<String> getAllKeysFromProperties(Map<String, Object> properties) {
         return Lists.newArrayList(properties.keySet());
     }
 }

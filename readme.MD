@@ -98,8 +98,8 @@ Example of use different primitive json type resolvers:
 The default constructor of class PropertiesToJsonConverter has default implementation of
 json type resolvers with below order:  
 ```
-ObjectFromTextJsonTypeResolver
 PrimitiveArrayJsonTypeResolver
+ObjectFromTextJsonTypeResolver
 DoubleJsonTypeResolver
 IntegerJsonTypeResolver
 BooleanJsonTypeResolver
@@ -117,6 +117,7 @@ pseudo code below for custom Resolver type:
     import pl.jalokim.propertiestojson.object.AbstractJsonType;
     import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
     
+    // TODO to change this doc part
     public class OwnCustomTypeResolver extends PrimitiveJsonTypeResolver {
         @Override
         public AbstractJsonType returnJsonTypeWhenCanBeParsed(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
@@ -132,9 +133,9 @@ code snipped with you own json type resolvers order
 ```java
     String json = new PropertiesToJsonConverter(
             new OwnCustomTypeResolver(),
-            new IntegerJsonTypeResolver(),
+            new NumberJsonTypeResolver(),
             new BooleanJsonTypeResolver(),
-            new StringJsonTypeResolver()
+            new StringJsonTypeResolver() // always added as last from default
     ).parseToJson(properties);
 ```
 
@@ -145,6 +146,40 @@ Short describe how works every of default resolver
  
 This type resolver will try parse from text to json when as first letter will encounter "{" and as last letter "}" and first letter will encounter "[" and as last letter "]"
 If it will have invalid json structure then it will go to next type resolver. 
+This resolver can parse from Pojo object to json. Example when you put 
+
+``` java
+class MyOwnPojo {
+
+   MyOwnPojo (String field1, String field2) {
+        this.field1 = field1;
+        this.field2 = field2;
+   }
+
+ private String field1;
+ private String field2;
+}
+
+....
+Properties properties = new Properties();
+properties.put("some.field", new MyOwnPojo("text1", "text2"));
+// this MyOwnPojo object will be converted to json too by Gson.
+String json = new PropertiesToJsonConverter().parseToJson(properties);
+```
+
+Will result
+```json
+{  
+   "some":{  
+      "field":{  
+         "field1":"text1",
+         "field2":"text2"
+      }
+   }
+}
+```
+
+From properties file for example
 
 ```bash
 jsonObject={"fieldName":2, "text":"textValue"}
@@ -179,33 +214,22 @@ Will result (when DoubleJsonTypeResolver, IntegerJsonTypeResolver, BooleanJsonTy
 }
 ```
 
-<h4>3) DoubleJsonTypeResolver </h4>
+<h4>3) NumberJsonTypeResolver </h4>
 
 ```bash
-some.value=2.0
+some.valueLong=2
+some.valueFloat=2.0
 ```
 Will result
 ```json
 {
   "some": {
-    "value": 2.0
+    "valueLong": 2,
+    "valueFloat": 2.0
   }
 }
 ```
-<h4>4) IntegerJsonTypeResolver </h4>
-
-```bash
-some.value=2
-```
-Will result
-```json
-{
-  "some": {
-    "value": 2
-  }
-}
-```
-<h4>5) BooleanJsonTypeResolver </h4>
+<h4>4) BooleanJsonTypeResolver </h4>
 
 ```bash
 some.value=true
@@ -218,11 +242,12 @@ Will result
   }
 }
 ```
-<h4>6) StringJsonTypeResolver </h4>
+<h4>5) StringJsonTypeResolver </h4>
 
 
 Important to note here is that this type resolver will always parse to text! 
-After this type resolver other type resolver will be omitted!
+After this type resolver other type resolver would be omitted!
+So you cannot add any other resolvers after this. It will be always add as last by default.  
 
 ```bash
 some.value=2.0

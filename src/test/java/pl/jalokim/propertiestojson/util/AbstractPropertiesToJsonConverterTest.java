@@ -6,6 +6,7 @@ import pl.jalokim.propertiestojson.domain.MainObject;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +81,7 @@ public class AbstractPropertiesToJsonConverterTest {
         properties.put("insurance.cost", COST_INT_VALUE);
         properties.put("field1", FIELD1_VALUE);
         properties.put("field2", FIELD2_VALUE);
-        properties.put("man.emails", EMAILS);
+        properties.put("man.emails", Arrays.asList(EMAILS.split(",")));
         properties.put("man.groups[0].name", GROUP_1);
         properties.put("man.groups[0].type", COMMERCIAL);
         properties.put("man.groups[2].name", GROUP_3);

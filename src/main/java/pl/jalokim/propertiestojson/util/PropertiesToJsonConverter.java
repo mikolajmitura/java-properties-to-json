@@ -13,8 +13,9 @@ import pl.jalokim.propertiestojson.resolvers.JsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.ObjectJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.DoubleJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.IntegerJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.EmptyStringJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.JsonNullReferenceTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
@@ -28,32 +29,36 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.REGEX_DOT;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.ADDED_SOME_TYPE_RESOLVER_AFTER_LAST;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING_RESOLVER_AS_NOT_LAST;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE;
 
 public class PropertiesToJsonConverter {
 
-    private PropertyKeysPickup propertyKeysPickup = new PropertyKeysPickup();
-    private final Map<AlgorithmType, JsonTypeResolver> algorithms = new HashMap<>();
-
-    private static final List<PrimitiveJsonTypeResolver> defaultPrimitiveResolvers;
+    public static final StringJsonTypeResolver STRING_RESOLVER = new StringJsonTypeResolver();
+    private static final List<PrimitiveJsonTypeResolver> DEFAULT_PRIMITIVE_RESOLVERS;
+    private static final JsonNullReferenceTypeResolver NULL_RESOLVER = new JsonNullReferenceTypeResolver();
+    private static final EmptyStringJsonTypeResolver EMPTY_TEXT_RESOLVER = new EmptyStringJsonTypeResolver();
 
     static {
-        defaultPrimitiveResolvers = new ArrayList<>();
-        defaultPrimitiveResolvers.add(new ObjectFromTextJsonTypeResolver());
-        defaultPrimitiveResolvers.add(new PrimitiveArrayJsonTypeResolver());
-        defaultPrimitiveResolvers.add(new DoubleJsonTypeResolver());
-        defaultPrimitiveResolvers.add(new IntegerJsonTypeResolver());
-        defaultPrimitiveResolvers.add(new BooleanJsonTypeResolver());
-        defaultPrimitiveResolvers.add(new StringJsonTypeResolver());
+        DEFAULT_PRIMITIVE_RESOLVERS = new ArrayList<>();
+        DEFAULT_PRIMITIVE_RESOLVERS.add(new PrimitiveArrayJsonTypeResolver());
+        DEFAULT_PRIMITIVE_RESOLVERS.add(new ObjectFromTextJsonTypeResolver());
+        DEFAULT_PRIMITIVE_RESOLVERS.add(new NumberJsonTypeResolver());
+        DEFAULT_PRIMITIVE_RESOLVERS.add(new BooleanJsonTypeResolver());
     }
+
+    private PropertyKeysPickup propertyKeysPickup = new PropertyKeysPickup();
+    private final Map<AlgorithmType, JsonTypeResolver> algorithms = new HashMap<>();
+    private final PrimitiveJsonTypesResolver primitiveResolvers;
 
     /**
      * This constructor allow to give a resolvers, the order of resolvers is important.
@@ -62,8 +67,9 @@ public class PropertiesToJsonConverter {
      */
     public PropertiesToJsonConverter(PrimitiveJsonTypeResolver... primitiveResolvers) {
         validateTypeResolverOrder(primitiveResolvers);
+        this.primitiveResolvers = new PrimitiveJsonTypesResolver(buildAllPrimitiveResolvers(primitiveResolvers));
         algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());
-        algorithms.put(AlgorithmType.PRIMITIVE, new PrimitiveJsonTypesResolver(Arrays.asList(primitiveResolvers)));
+        algorithms.put(AlgorithmType.PRIMITIVE, this.primitiveResolvers);
         algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeResolver());
     }
 
@@ -71,7 +77,16 @@ public class PropertiesToJsonConverter {
      * Default implementation of json primitive type resolvers.
      */
     public PropertiesToJsonConverter() {
-        this(fromListToArray(defaultPrimitiveResolvers));
+        this(fromListToArray(DEFAULT_PRIMITIVE_RESOLVERS));
+    }
+
+    private List<PrimitiveJsonTypeResolver> buildAllPrimitiveResolvers(PrimitiveJsonTypeResolver... primitiveResolvers) {
+        List<PrimitiveJsonTypeResolver> allPrimitiveResolvers = new ArrayList<>();
+        allPrimitiveResolvers.add(NULL_RESOLVER);
+        allPrimitiveResolvers.add(EMPTY_TEXT_RESOLVER);
+        allPrimitiveResolvers.addAll(asList(primitiveResolvers));
+        allPrimitiveResolvers.add(STRING_RESOLVER);
+        return allPrimitiveResolvers;
     }
 
     /**
@@ -185,7 +200,14 @@ public class PropertiesToJsonConverter {
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
     public String parseToJson(Properties properties) throws ParsePropertiesException {
-        return parseToJson(propertiesToMap(properties));
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            if (!(entry.getKey() instanceof String)) {
+                throw new ParsePropertiesException(format(PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE,
+                                                          entry.getKey().getClass(),
+                                                          entry.getKey() == null ? "null" : entry.getKey()));
+            }
+        }
+        return convertFromObjectValuesMap(propertiesToMap(properties));
     }
 
     /**
@@ -195,10 +217,20 @@ public class PropertiesToJsonConverter {
      * @return simple String with json
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    // TODO add method for map<string, object> too
     public String parseToJson(Map<String, String> properties) throws ParsePropertiesException {
-        ObjectJsonType coreObjectJsonType = new ObjectJsonType();
+        return convertFromObjectValuesMap(stringValueMapToObjectValueMap(properties));
 
+    }
+
+    /**
+     * generate Json by given Map&lt;String,Object&gt;
+     *
+     * @param properties Java Map with properties
+     * @return simple String with json
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public String convertFromObjectValuesMap(Map<String, Object> properties) throws ParsePropertiesException {
+        ObjectJsonType coreObjectJsonType = new ObjectJsonType();
         for (String propertiesKey : getAllKeysFromProperties(properties)) {
             addFieldsToJsonObject(properties, coreObjectJsonType, propertiesKey);
         }
@@ -230,13 +262,31 @@ public class PropertiesToJsonConverter {
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
     public String parseToJson(Map<String, String> properties, String... includeDomainKeys) throws ParsePropertiesException {
-        Map<String, String> filteredProperties = new HashMap<>();
+        return convertFromObjectValuesMap(stringValueMapToObjectValueMap(properties), includeDomainKeys);
+    }
+
+    /**
+     * generate Json by given Map&lt;String,String&gt; and given filter
+     *
+     * @param properties        Java Map with properties
+     * @param includeDomainKeys domain head keys which should be parsed to json <br>
+     *                          example properties:<br>
+     *                          object1.field1=value1<br>
+     *                          object1.field2=value2<br>
+     *                          someObject2.field2=value3<br>
+     *                          filter "object1"<br>
+     *                          will parse only nested domain for "object1"<br>
+     * @return simple String with json
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public String convertFromObjectValuesMap(Map<String, Object> properties, String... includeDomainKeys) throws ParsePropertiesException {
+        Map<String, Object> filteredProperties = new HashMap<>();
         for (String key : properties.keySet()) {
             for (String requiredKey : includeDomainKeys) {
                 checkKey(properties, filteredProperties, key, requiredKey);
             }
         }
-        return parseToJson(filteredProperties);
+        return convertFromObjectValuesMap(filteredProperties);
     }
 
     /**
@@ -255,11 +305,11 @@ public class PropertiesToJsonConverter {
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
     public String parseToJson(Properties properties, String... includeDomainKeys) throws ParsePropertiesException {
-        return parseToJson(propertiesToMap(properties), includeDomainKeys);
+        return convertFromObjectValuesMap(propertiesToMap(properties), includeDomainKeys);
     }
 
 
-    private static void checkKey(Map<String, String> properties, Map<String, String> filteredProperties, String key, String requiredKey) {
+    private static void checkKey(Map<String, Object> properties, Map<String, Object> filteredProperties, String key, String requiredKey) {
         if (key.equals(requiredKey) || (key.startsWith(requiredKey) && keyIsCompatibleWithRequiredKey(requiredKey, key))) {
             filteredProperties.put(key, properties.get(key));
         }
@@ -273,36 +323,45 @@ public class PropertiesToJsonConverter {
         return false;
     }
 
-    private static Properties inputStreamToProperties(InputStream inputStream) throws ReadInputException {
+    private Properties inputStreamToProperties(InputStream inputStream) throws ReadInputException {
+        Properties propertiesWithConvertedValues = new Properties();
         Properties properties = new Properties();
         try {
             properties.load(inputStream);
+            for (Map.Entry<Object, Object> property : properties.entrySet()) {
+                Object object = primitiveResolvers.getResolvedObject((String) property.getValue());
+                propertiesWithConvertedValues.put(property.getKey(), object);
+            }
         } catch (IOException e) {
             throw new ReadInputException(e);
         }
-        // TODO convert properties to <String, Object> from  <String, String>
-        // move types resolve from PrimitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn here
-        // it will convert to <String, Object.
-        // for entries <String, Object> will be two cases. normal Java object will be converted to json by some framework
-        // and second one will be class will extend Object which will build for ObjectFromTextJsonType and for ObjectFromTextJsonTypeResolver.
-        return properties;
+        return propertiesWithConvertedValues;
     }
 
-    private void addFieldsToJsonObject(Map<String, String> properties, ObjectJsonType coreObjectJsonType, String propertiesKey) {
+    private void addFieldsToJsonObject(Map<String, Object> properties, ObjectJsonType coreObjectJsonType, String propertiesKey) {
         String[] fields = propertiesKey.split(REGEX_DOT);
         new JsonObjectsTraverseResolver(algorithms, properties, propertiesKey, fields, coreObjectJsonType)
                 .initializeFieldsInJson();
     }
 
-    private List<String> getAllKeysFromProperties(Map<String, String> properties) {
+    private List<String> getAllKeysFromProperties(Map<String, Object> properties) {
         return propertyKeysPickup.getAllKeysFromProperties(properties);
     }
 
 
-    private static Map<String, String> propertiesToMap(Properties properties) {
-        Map<String, String> map = new HashMap<>();
+    private static Map<String, Object> propertiesToMap(Properties properties) {
+        Map<String, Object> map = new HashMap<>();
         for (Map.Entry<Object, Object> property : properties.entrySet()) {
-            map.put(property.getKey().toString(), property.getValue().toString());
+            map.put(property.getKey().toString(), property.getValue());
+        }
+        return map;
+    }
+
+    private Map<String, Object> stringValueMapToObjectValueMap(Map<String, String> properties) {
+        Map<String, Object> map = new HashMap<>();
+        for (Map.Entry<String, String> property : properties.entrySet()) {
+            Object object = primitiveResolvers.getResolvedObject(property.getValue());
+            map.put(property.getKey(), object);
         }
         return map;
     }
@@ -317,7 +376,7 @@ public class PropertiesToJsonConverter {
     }
 
     private static void validateTypeResolverOrder(PrimitiveJsonTypeResolver... primitiveResolvers) {
-        List<PrimitiveJsonTypeResolver> resolvers = Arrays.asList(primitiveResolvers);
+        List<PrimitiveJsonTypeResolver> resolvers = asList(primitiveResolvers);
         boolean containStringResolverType = false;
         for (PrimitiveJsonTypeResolver resolver : resolvers) {
             if (resolver instanceof StringJsonTypeResolver) {
@@ -327,7 +386,7 @@ public class PropertiesToJsonConverter {
         if (containStringResolverType) {
             PrimitiveJsonTypeResolver lastResolver = resolvers.get(resolvers.size() - 1);
             if (!(lastResolver instanceof StringJsonTypeResolver)) {
-                throw new ParsePropertiesException(ADDED_SOME_TYPE_RESOLVER_AFTER_LAST);
+                throw new ParsePropertiesException(STRING_RESOLVER_AS_NOT_LAST);
             }
         }
     }

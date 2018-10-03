@@ -13,13 +13,13 @@ import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 public class JsonObjectsTraverseResolver {
 
     private final Map<AlgorithmType, JsonTypeResolver> algorithms;
-    private Map<String, String> properties;
+    private Map<String, Object> properties;
     private String propertiesKey;
     private String[] fields;
     private ObjectJsonType currentObjectJsonType;
 
     public JsonObjectsTraverseResolver(Map<AlgorithmType, JsonTypeResolver> algorithms,
-                                       Map<String, String> properties, String propertiesKey,
+                                       Map<String, Object> properties, String propertiesKey,
                                        String[] fields, ObjectJsonType coreObjectJsonType) {
         this.properties = properties;
         this.propertiesKey = propertiesKey;

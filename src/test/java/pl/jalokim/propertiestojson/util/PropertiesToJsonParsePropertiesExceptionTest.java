@@ -4,23 +4,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import pl.jalokim.propertiestojson.helper.PropertyKeysPickupOrderedForTest;
-import pl.jalokim.propertiestojson.resolvers.primitives.DoubleJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.IntegerJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.ADDED_SOME_TYPE_RESOLVER_AFTER_LAST;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.EXPECTED_ARRAY_JSON_TYPE;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.EXPECTED_ELEMENT_ARRAY_JSON_OBJECT_TYPES;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.EXPECTED_ELEMENT_ARRAY_PRIMITIVE_TYPES;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.EXPECTED_OBJECT_JSON_TYPE;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.EXPECTED_PRIMITIVE_JSON_TYPE;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING_RESOLVER_AS_NOT_LAST;
 
-public class PropertiesToJsonParserExceptionTest {
+public class PropertiesToJsonParsePropertiesExceptionTest {
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -100,31 +100,29 @@ public class PropertiesToJsonParserExceptionTest {
     }
 
     @Test
-    public void throwExceptionWhenCannotParseGivenValue() {
+    public void throwExceptionWhenGaveSomeTypeResolverAfterStringJsonTypeResolver() {
         //then
         expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage(String.format(CANNOT_FIND_TYPE_RESOLVER_MSG, "test"));
+        expectedEx.expectMessage(STRING_RESOLVER_AS_NOT_LAST);
         //given
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new DoubleJsonTypeResolver(),
-                new IntegerJsonTypeResolver()
+                new StringJsonTypeResolver(),
+                new NumberJsonTypeResolver()
         );
         //when
         converter.parseToJson(initProperties());
     }
 
     @Test
-    public void throwExceptionWhenGaveSomeTypeResolverAfterStringJsonTypeResolver() {
+    public void throwExceptionWhenPropertyHasKeyAnotherTypeThanString() {
         //then
         expectedEx.expect(ParsePropertiesException.class);
-        expectedEx.expectMessage(ADDED_SOME_TYPE_RESOLVER_AFTER_LAST);
+        expectedEx.expectMessage(String.format(PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE, "class java.lang.Integer", "1555"));
         //given
-        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new StringJsonTypeResolver(),
-                new IntegerJsonTypeResolver()
-        );
+        Properties properties = new Properties();
+        properties.put(1555, 123L);
         //when
-        converter.parseToJson(initProperties());
+        new PropertiesToJsonConverter().parseToJson(properties);
     }
 
     public static void setUpMockPickupKeysOrder(PropertiesToJsonConverter converter, String... keys) {
