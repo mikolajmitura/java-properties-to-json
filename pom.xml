@@ -6,7 +6,7 @@
 
     <groupId>pl.jalokim.propertiestojson</groupId>
     <artifactId>java-properties-to-json</artifactId>
-    <version>3.2</version>
+    <version>3.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Java properties to Json</name>

@@ -9,7 +9,7 @@ class PropertiesToJsonConverterEmptyPropertiesTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
-        String json = converter.parsePropertiesFromFileToJson("src/test/resources/primitiveTypes.properties")
+        String json = converter.convertPropertiesFromFileToJson("src/test/resources/primitiveTypes.properties")
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
@@ -25,7 +25,7 @@ class PropertiesToJsonConverterEmptyPropertiesTest extends Specification {
         map.put("man.nullValue", null)
         map.put("man.nullToo", "null")
         map.put("man.empty", "")
-        String json = converter.parseToJson(map)
+        String json = converter.convertToJson(map)
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:

@@ -34,7 +34,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
         setUpMockPickupKeysOrder(converter, "man.someField", "man");
         //when
-        converter.parseToJson(addWrongParams(initProperties(), "man"));
+        converter.convertToJson(addWrongParams(initProperties(), "man"));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
         setUpMockPickupKeysOrder(converter, "field1", "field1.prop2");
         //when
-        converter.parseToJson(addWrongParams(initProperties(), "field1.prop2"));
+        converter.convertToJson(addWrongParams(initProperties(), "field1.prop2"));
     }
 
 
@@ -59,7 +59,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
         setUpMockPickupKeysOrder(converter, "groups[0]", "groups");
         //when
-        converter.parseToJson(addWrongParams(initProperties(), "groups"));
+        converter.convertToJson(addWrongParams(initProperties(), "groups"));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
         setUpMockPickupKeysOrder(converter, "groups", "groups[0]");
         //when
-        converter.parseToJson(addWrongParams(initProperties(), "groups"));
+        converter.convertToJson(addWrongParams(initProperties(), "groups"));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
         setUpMockPickupKeysOrder(converter, "array[0]", "array[0].name");
         //when
-        converter.parseToJson(addWrongParams(initProperties(), "array[0].name"));
+        converter.convertToJson(addWrongParams(initProperties(), "array[0].name"));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
         setUpMockPickupKeysOrder(converter, "array[0].name", "array[0]");
         //when
-        String s = converter.parseToJson(addWrongParams(initProperties(), "array[0].name"));
+        String s = converter.convertToJson(addWrongParams(initProperties(), "array[0].name"));
         System.out.println(s);
     }
 
@@ -110,7 +110,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
                 new NumberJsonTypeResolver()
         );
         //when
-        converter.parseToJson(initProperties());
+        converter.convertToJson(initProperties());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         Properties properties = new Properties();
         properties.put(1555, 123L);
         //when
-        new PropertiesToJsonConverter().parseToJson(properties);
+        new PropertiesToJsonConverter().convertToJson(properties);
     }
 
     public static void setUpMockPickupKeysOrder(PropertiesToJsonConverter converter, String... keys) {
