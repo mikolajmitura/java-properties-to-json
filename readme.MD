@@ -151,15 +151,16 @@ Important to note here is that if you want convert properties to json from:
 - Map<String,String>
 
 Then will be call returnConcreteValueWhenCanBeResolved method from PrimitiveJsonTypeResolver.
-It method try convert from String to some concrete object.
-Next build Map<String,Object> and next step will be call returnConcreteJsonType for concrete Object. 
+It method tries convert from String to some concrete object.
+Next will build Map<String,Object> and in next step will call returnConcreteJsonType for concrete Object,
+when method canResolveThisObject(Class<?>) will return true. 
  
 
 If you will convert from below:
 - Properties (under the hood is Map<Object, Object> will convert to Map<String, Object>) 
 - Map<String, Object>
 
-Then in resolvers will be call only method returnConcreteJsonType.  
+Then in resolvers will be call only method returnConcreteJsonType while canResolveThisObject will return true.
 
 Code snipped with your own json type resolvers order 
  
@@ -306,11 +307,11 @@ Will result
     "text": "textValue"
   },
   "jsonArray": [
-    123,
-    1234,
-    null,
-    
-  ]
+      123,
+      1234,
+      null,
+      ""
+    ]
 }
 ```
 
