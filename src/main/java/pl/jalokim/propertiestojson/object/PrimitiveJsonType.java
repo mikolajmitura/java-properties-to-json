@@ -2,7 +2,7 @@ package pl.jalokim.propertiestojson.object;
 
 public abstract class PrimitiveJsonType<T> extends AbstractJsonType{
 
-    T value;
+    protected T value;
 
     public PrimitiveJsonType(T value){
         this.value = value;

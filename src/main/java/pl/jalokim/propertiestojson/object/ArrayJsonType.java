@@ -4,6 +4,8 @@ package pl.jalokim.propertiestojson.object;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
@@ -45,10 +47,13 @@ public class ArrayJsonType extends AbstractJsonType {
         return elements[index];
     }
 
-    public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String[] elements) {
-        for (int index = 0; index < elements.length; index++) {
-            String element = elements[index];
-            addElement(index, primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(element.trim()));
+    public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements) {
+        Iterator<?> iterator = elements.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Object element = iterator.next();
+            addElement(index, primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(element));
+            index++;
         }
     }
 

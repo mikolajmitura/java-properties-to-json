@@ -11,10 +11,15 @@ import pl.jalokim.propertiestojson.resolvers.transfer.DataForResolve;
 
 public abstract class JsonTypeResolver {
 
-    protected Map<String, String> properties;
+    protected Map<String, Object> properties;
     protected String propertiesKey;
     protected ObjectJsonType currentObjectJsonType;
 
+    /**
+     * Don't remove this it will be used by others in own custom type resolvers.
+     * @see <a href="https://github.com/mikolajmitura/java-properties-to-json/issues/34">issue 34</a>
+     * @return propertiesKey
+     */
     public String getPropertiesKey() {
 		return propertiesKey;
 	}

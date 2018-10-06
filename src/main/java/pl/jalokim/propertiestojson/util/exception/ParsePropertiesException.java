@@ -13,10 +13,11 @@ public class ParsePropertiesException extends RuntimeException {
     public static final String EXPECTED_ARRAY_JSON_TYPE = FIRST_PART_OF_MESSAGE + "array JSON type" + REASON_DESCRIBE + WRONG_PROPERTY_KEY;
     public static final String EXPECTED_ELEMENT_ARRAY_PRIMITIVE_TYPES = FIRST_PART_OF_MESSAGE_ARRAY + "primitive JSON Element not as JSON object" + REASON_DESCRIBE + WRONG_PROPERTY_KEY;
     public static final String EXPECTED_ELEMENT_ARRAY_JSON_OBJECT_TYPES = FIRST_PART_OF_MESSAGE_ARRAY + "object JSON Element not as primitive" + REASON_DESCRIBE + WRONG_PROPERTY_KEY;
-    public static final String ADDED_SOME_TYPE_RESOLVER_AFTER_LAST = "Added some type resolver after " + StringJsonTypeResolver.class.getCanonicalName() +
-                                                                     ". This type resolver always should be last when is in configuration of resolvers";
-    public static final String CANNOT_FIND_TYPE_RESOLVER_MSG = "Cannot find valid JSON type resolver for value: '%s' \n " +
-                                                                          "Please consider add: " + StringJsonTypeResolver.class.getCanonicalName() + " to your resolvers.";
+    public static final String STRING_RESOLVER_AS_NOT_LAST = "Added some type resolver after " + StringJsonTypeResolver.class.getCanonicalName() +
+                                                             ". This type resolver always should be last when is in configuration of resolvers";
+    public static final String PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE = "Unsupported property key type: %s for key: %s, Property key needs to be a string type";
+    public static final String CANNOT_FIND_TYPE_RESOLVER_MSG = "Cannot find valid JSON type resolver for class: '%s'. \n" +
+            "Please consider add sufficient resolver o your resolvers.";
 
     public ParsePropertiesException(String message) {
         super(message);

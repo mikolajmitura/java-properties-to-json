@@ -16,4 +16,21 @@ class PropertiesToJsonConverterEmptyPropertiesTest extends Specification {
         jsonObject.complexObject.nullValue == null
         jsonObject.complexObject.empty == ""
     }
+
+    def "json has null for null value of element in map"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        Map<String, String> map = new HashMap<>()
+        map.put("man.nullValue", null)
+        map.put("man.nullToo", "null")
+        map.put("man.empty", "")
+        String json = converter.parseToJson(map)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.man.nullValue == null
+        jsonObject.man.nullToo == null
+        jsonObject.man.empty == ""
+    }
 }

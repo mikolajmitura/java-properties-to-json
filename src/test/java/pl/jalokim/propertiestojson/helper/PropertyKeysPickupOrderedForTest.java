@@ -14,7 +14,7 @@ public class PropertyKeysPickupOrderedForTest extends PropertyKeysPickup {
     }
 
     @Override
-    public List<String> getAllKeysFromProperties(Map<String, String> properties) {
+    public List<String> getAllKeysFromProperties(Map<String, Object> properties) {
         for (String mockKey : mockKeys) {
             if (properties.get(mockKey) == null) {
                 throw new RuntimeException("cannot find key: " + mockKey + " in test keys indexing!");
