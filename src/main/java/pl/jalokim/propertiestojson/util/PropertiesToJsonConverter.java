@@ -104,8 +104,8 @@ public class PropertiesToJsonConverter {
      * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String parsePropertiesFromFileToJson(String pathToFile, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
-        return parsePropertiesFromFileToJson(new File(pathToFile), includeDomainKeys);
+    public String convertPropertiesFromFileToJson(String pathToFile, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
+        return convertPropertiesFromFileToJson(new File(pathToFile), includeDomainKeys);
     }
 
     /**
@@ -116,8 +116,8 @@ public class PropertiesToJsonConverter {
      * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String parsePropertiesFromFileToJson(String pathToFile) throws ReadInputException, ParsePropertiesException {
-        return parsePropertiesFromFileToJson(new File(pathToFile));
+    public String convertPropertiesFromFileToJson(String pathToFile) throws ReadInputException, ParsePropertiesException {
+        return convertPropertiesFromFileToJson(new File(pathToFile));
     }
 
     /**
@@ -135,10 +135,10 @@ public class PropertiesToJsonConverter {
      * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String parsePropertiesFromFileToJson(File file, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
+    public String convertPropertiesFromFileToJson(File file, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
         try {
             InputStream targetStream = new FileInputStream(file);
-            return parseToJson(targetStream, includeDomainKeys);
+            return convertToJson(targetStream, includeDomainKeys);
         } catch (FileNotFoundException e) {
             throw new ReadInputException(e);
         }
@@ -152,10 +152,10 @@ public class PropertiesToJsonConverter {
      * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String parsePropertiesFromFileToJson(File file) throws ReadInputException, ParsePropertiesException {
+    public String convertPropertiesFromFileToJson(File file) throws ReadInputException, ParsePropertiesException {
         try {
             InputStream targetStream = new FileInputStream(file);
-            return parseToJson(targetStream);
+            return convertToJson(targetStream);
         } catch (FileNotFoundException e) {
             throw new ReadInputException(e);
         }
@@ -176,8 +176,8 @@ public class PropertiesToJsonConverter {
      * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String parseToJson(InputStream inputStream, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
-        return parseToJson(inputStreamToProperties(inputStream), includeDomainKeys);
+    public String convertToJson(InputStream inputStream, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
+        return convertToJson(inputStreamToProperties(inputStream), includeDomainKeys);
     }
 
     /**
@@ -188,8 +188,8 @@ public class PropertiesToJsonConverter {
      * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String parseToJson(InputStream inputStream) throws ReadInputException, ParsePropertiesException {
-        return parseToJson(inputStreamToProperties(inputStream));
+    public String convertToJson(InputStream inputStream) throws ReadInputException, ParsePropertiesException {
+        return convertToJson(inputStreamToProperties(inputStream));
     }
 
     /**
@@ -199,7 +199,7 @@ public class PropertiesToJsonConverter {
      * @return simple String with json
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String parseToJson(Properties properties) throws ParsePropertiesException {
+    public String convertToJson(Properties properties) throws ParsePropertiesException {
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             if (!(entry.getKey() instanceof String)) {
                 throw new ParsePropertiesException(format(PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE,
@@ -217,7 +217,7 @@ public class PropertiesToJsonConverter {
      * @return simple String with json
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String parseToJson(Map<String, String> properties) throws ParsePropertiesException {
+    public String convertToJson(Map<String, String> properties) throws ParsePropertiesException {
         return convertFromValuesAsObjectMap(stringValueMapToObjectValueMap(properties));
 
     }
@@ -261,7 +261,7 @@ public class PropertiesToJsonConverter {
      * @return simple String with json
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String parseToJson(Map<String, String> properties, String... includeDomainKeys) throws ParsePropertiesException {
+    public String convertToJson(Map<String, String> properties, String... includeDomainKeys) throws ParsePropertiesException {
         return convertFromValuesAsObjectMap(stringValueMapToObjectValueMap(properties), includeDomainKeys);
     }
 
@@ -304,7 +304,7 @@ public class PropertiesToJsonConverter {
      * @return Simple String with json
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String parseToJson(Properties properties, String... includeDomainKeys) throws ParsePropertiesException {
+    public String convertToJson(Properties properties, String... includeDomainKeys) throws ParsePropertiesException {
         return convertFromValuesAsObjectMap(propertiesToMap(properties), includeDomainKeys);
     }
 

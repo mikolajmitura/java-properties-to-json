@@ -13,7 +13,7 @@ public class PropertiesToJsonConverterFilterTest extends AbstractPropertiesToJso
     @Test
     public void parsePropertiesOnlyByIncludedKeys() {
         //when
-        String json = new PropertiesToJsonConverter().parseToJson(initProperlyPropertiesMap(), "man.groups", "man.hoobies", "insurance.cost");
+        String json = new PropertiesToJsonConverter().convertToJson(initProperlyPropertiesMap(), "man.groups", "man.hoobies", "insurance.cost");
         // then
         assertJsonIsAsExpected(json);
     }
@@ -23,7 +23,7 @@ public class PropertiesToJsonConverterFilterTest extends AbstractPropertiesToJso
         // given
         InputStream inputStream = getPropertiesFromFile();
         // when
-        String json = new PropertiesToJsonConverter().parseToJson(inputStream, "man.groups", "man.hoobies", "insurance.cost");
+        String json = new PropertiesToJsonConverter().convertToJson(inputStream, "man.groups", "man.hoobies", "insurance.cost");
         // then
         assertJsonIsAsExpected(json);
     }
@@ -51,7 +51,7 @@ public class PropertiesToJsonConverterFilterTest extends AbstractPropertiesToJso
         // given
         InputStream inputStream = getPropertiesFromFile();
         // when
-        String json = new PropertiesToJsonConverter().parseToJson(inputStream, "man.groups", "man.hoobies", "insurance");
+        String json = new PropertiesToJsonConverter().convertToJson(inputStream, "man.groups", "man.hoobies", "insurance");
         // then
         assertJsonIsAsExpectedWithWholeInsurance(json);
     }

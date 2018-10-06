@@ -11,7 +11,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
-        String json = converter.parsePropertiesFromFileToJson("src/test/resources/arrayCombinations.properties", "arraytexts")
+        String json = converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties", "arraytexts")
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.arraytexts[0] == 1
@@ -26,7 +26,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(new PrimitiveArrayJsonTypeResolver(),
                 new NumberJsonTypeResolver(), new StringJsonTypeResolver())
-        String json = converter.parsePropertiesFromFileToJson("src/test/resources/arrayCombinations.properties", "arraytexts")
+        String json = converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties", "arraytexts")
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.arraytexts[0] == 1
@@ -40,7 +40,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(new StringJsonTypeResolver())
-        String json = converter.parsePropertiesFromFileToJson("src/test/resources/arrayCombinations.properties", "arraytexts")
+        String json = converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties", "arraytexts")
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.arraytexts == "1,23.0,5,false,text"
@@ -50,7 +50,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(new ObjectFromTextJsonTypeResolver(), new StringJsonTypeResolver())
-        String json = converter.parsePropertiesFromFileToJson("src/test/resources/arrayCombinations.properties", "arraytexts", "jsonObject", "jsonArray")
+        String json = converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties", "arraytexts", "jsonObject", "jsonArray")
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
@@ -68,7 +68,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         Properties properties = createProperties()
-        String json = converter.parseToJson(properties)
+        String json = converter.convertToJson(properties)
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
@@ -89,7 +89,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
-        String json = converter.parseToJson(createStringValueMap())
+        String json = converter.convertToJson(createStringValueMap())
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
@@ -129,7 +129,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         Properties properties = createExtendedProperties()
-        String json = converter.parseToJson(properties)
+        String json = converter.convertToJson(properties)
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
@@ -163,7 +163,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         )
         Properties properties = createExtendedProperties()
         when:
-        converter.parseToJson(properties)
+        converter.convertToJson(properties)
         then:
         ParsePropertiesException ex = thrown()
         ex.message == String.format(ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG, PojoObject.class)

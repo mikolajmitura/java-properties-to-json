@@ -16,7 +16,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
-        def json = converter.parsePropertiesFromFileToJson('src/test/resources/arraysMixinTypes.properties')
+        def json = converter.convertPropertiesFromFileToJson('src/test/resources/arraysMixinTypes.properties')
         print(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
@@ -58,7 +58,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
                 "object.test[102]",
                 "object.test[9]",
                 "test")
-        String json = converter.parsePropertiesFromFileToJson("src/test/resources/arrayCombinations.properties")
+        String json = converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties")
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.object.test[0]=="0_"
@@ -85,7 +85,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
                 "object.test[9]",
                 "object.test",
                 "test")
-        String json = converter.parsePropertiesFromFileToJson("src/test/resources/arrayCombinations.properties")
+        String json = converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties")
         then:
         ParsePropertiesException e = thrown()
         e.getMessage() == "Current field: 'test' is already considered as array JSON type because already this field has value: [3,\"asdf6\",\"asdf7\",\"asdf9\",\"asdf101\"] \n" +
@@ -101,7 +101,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
                new NumberJsonTypeResolver(),
                new BooleanJsonTypeResolver()
         )
-        def json = converter.parsePropertiesFromFileToJson('src/test/resources/arraysMixinTypes.properties')
+        def json = converter.convertPropertiesFromFileToJson('src/test/resources/arraysMixinTypes.properties')
         print(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:

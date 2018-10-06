@@ -25,10 +25,10 @@ import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
 ...
 // properties as Map<String,String>, java.util.Properties, java.io.InputStream
-String json = new PropertiesToJsonConverter().parseToJson(properties);
+String json = new PropertiesToJsonConverter().convertToJson(properties);
 
-String jsonFromProperties = new PropertiesToJsonConverter().parsePropertiesFromFileToJson("/home/user/file.properties");
-String jsonFromProperties2 = new PropertiesToJsonConverter().parsePropertiesFromFileToJson(new File("/home/user/file.properties"));
+String jsonFromProperties = new PropertiesToJsonConverter().convertPropertiesFromFileToJson("/home/user/file.properties");
+String jsonFromProperties2 = new PropertiesToJsonConverter().convertPropertiesFromFileToJson(new File("/home/user/file.properties"));
 
 // valuesAsObjectMap is Map<String, Object>
 String jsonFromProperties2 = new PropertiesToJsonConverter().convertFromValuesAsObjectMap(valuesAsObjectMap);
@@ -169,7 +169,7 @@ Code snipped with your own json type resolvers order
             new OwnCustomTypeResolver(),
             new NumberJsonTypeResolver(),
             new BooleanJsonTypeResolver()
-    ).parseToJson(properties);
+    ).convertToJson(properties);
 ```
 
 Important to note here is that always will 2 two json type resolvers before first given by you, 
@@ -372,7 +372,7 @@ code snippet:
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
 ...
-String json = new PropertiesToJsonConverter().parseToJson(properties, "man.groups", "man.hoobies", "insurance.cost");
+String json = new PropertiesToJsonConverter().convertToJson(properties, "man.groups", "man.hoobies", "insurance.cost");
 ```
 
 example properties:
