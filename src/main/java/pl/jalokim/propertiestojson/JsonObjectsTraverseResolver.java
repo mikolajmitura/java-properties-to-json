@@ -6,12 +6,12 @@ import pl.jalokim.propertiestojson.resolvers.transfer.DataForResolve;
 
 import java.util.Map;
 
-import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
-import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
-
-
 public class JsonObjectsTraverseResolver {
 
+    private static final String NUMBER_PATTERN = "([1-9]\\d*)|0";
+    public static final String INDEXES_PATTERN = "\\s*(\\[\\s*((" + NUMBER_PATTERN + ")|\\*)\\s*]\\s*)+";
+
+    private static final String WORD_PATTERN = "(.)*";
     private final Map<AlgorithmType, JsonTypeResolver> algorithms;
     private Map<String, Object> properties;
     private String propertiesKey;
@@ -47,7 +47,7 @@ public class JsonObjectsTraverseResolver {
     }
 
     public static boolean isArrayField(String field) {
-        return field.contains(ARRAY_START_SIGN) && field.contains(ARRAY_END_SIGN);
+        return field.matches(WORD_PATTERN + INDEXES_PATTERN);
     }
 
     private boolean isPrimitiveField(int index) {

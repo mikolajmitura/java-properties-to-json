@@ -43,7 +43,7 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
 
     private void createJsonObjectAndAddToArray(PropertyArrayHelper propertyArrayHelper, ArrayJsonType arrayJsonType) {
         ObjectJsonType nextObjectJsonType = new ObjectJsonType();
-        arrayJsonType.addElement(propertyArrayHelper.getIndexArray(), nextObjectJsonType);
+        arrayJsonType.addElement(propertyArrayHelper, nextObjectJsonType);
         currentObjectJsonType = nextObjectJsonType;
     }
 
@@ -56,7 +56,7 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
     private void createArrayAndAddElement(String field, PropertyArrayHelper propertyArrayHelper) {
         ArrayJsonType arrayJsonTypeObject = new ArrayJsonType();
         ObjectJsonType nextObjectJsonType = new ObjectJsonType();
-        arrayJsonTypeObject.addElement(propertyArrayHelper.getIndexArray(), nextObjectJsonType);
+        arrayJsonTypeObject.addElement(propertyArrayHelper, nextObjectJsonType);
         currentObjectJsonType.addField(field, arrayJsonTypeObject);
         currentObjectJsonType = nextObjectJsonType;
     }

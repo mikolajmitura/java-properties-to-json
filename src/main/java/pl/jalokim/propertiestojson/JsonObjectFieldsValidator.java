@@ -36,6 +36,8 @@ public class JsonObjectFieldsValidator {
     public static void checkThatArrayElementIsPrimitiveType(String propertiesKey, String field, ArrayJsonType arrayJsonType,
                                                             int index) {
 
+        // TODO why only arrayJsonType.getElement(index) instanceof StringJsonType ??? all primitive should be...
+        // TODO test another types....
         if (arrayJsonType.getElement(index) != null && !(arrayJsonType.getElement(index) instanceof StringJsonType)) {
             throwException(EXPECTED_ELEMENT_ARRAY_JSON_OBJECT_TYPES, field, index, propertiesKey, arrayJsonType);
         }

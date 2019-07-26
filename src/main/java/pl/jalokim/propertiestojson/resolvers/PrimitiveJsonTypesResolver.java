@@ -96,7 +96,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     }
 
     private void addElementToArray(Object propertyValue, PropertyArrayHelper propertyArrayHelper, ArrayJsonType arrayJsonTypeObject) {
-        arrayJsonTypeObject.addElement(propertyArrayHelper.getIndexArray(), resolvePrimitiveTypeAndReturn(propertyValue));
+        arrayJsonTypeObject.addElement(propertyArrayHelper, resolvePrimitiveTypeAndReturn(propertyValue));
     }
 
 }

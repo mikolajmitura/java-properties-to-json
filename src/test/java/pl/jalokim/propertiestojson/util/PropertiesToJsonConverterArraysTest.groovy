@@ -12,6 +12,36 @@ import static PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOr
 
 class PropertiesToJsonConverterArraysTest extends Specification {
 
+    def "multi dimensional array with simple values"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/multi_dim_array_in_path_object_values.properties")
+        print(json)
+        then:
+        true
+    }
+
+    def "multi dimensional array with object values"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/multi_dim_array_in_path_object_values.properties")
+        print(json)
+        then:
+        true
+    }
+
+    def "primitive arrays elements resolved to multi dim array"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/arrays_as_value_in_array_elements.properties")
+        print(json)
+        then:
+        true
+    }
+
     def "return array with mixin types (primitives and objects)"() {
         def jsonSlurper = new JsonSlurper()
         when:
