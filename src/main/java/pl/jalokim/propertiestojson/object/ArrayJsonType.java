@@ -1,6 +1,7 @@
 package pl.jalokim.propertiestojson.object;
 
 
+import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 import java.util.ArrayList;
@@ -22,6 +23,21 @@ public class ArrayJsonType extends AbstractJsonType {
     public void addElement(int index, AbstractJsonType element) {
         rewriteArrayWhenIsFull(index);
         elements[index] = element;
+    }
+
+    public void addElement(PropertyArrayHelper propertyArrayHelper, AbstractJsonType element) {
+        List<Integer> indexes = propertyArrayHelper.getIndexesInArrayField();
+        int size = propertyArrayHelper.getIndexesInArrayField().size();
+        ArrayJsonType currentArray = this;
+        for (int i = 0; i < size; i++) {
+            if (i == size -1) {
+                currentArray.addElement(indexes.get(i), element);
+            }  else {
+                ArrayJsonType newArray = new ArrayJsonType();
+                currentArray.addElement(indexes.get(i), newArray);
+                currentArray = newArray;
+            }
+        }
     }
 
     private void rewriteArrayWhenIsFull(int index) {
