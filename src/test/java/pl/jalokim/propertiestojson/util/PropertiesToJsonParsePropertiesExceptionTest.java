@@ -3,7 +3,7 @@ package pl.jalokim.propertiestojson.util;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import pl.jalokim.propertiestojson.helper.PropertyKeysPickupOrderedForTest;
+import pl.jalokim.propertiestojson.helper.PropertyKeysOrderResolverForTest;
 import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
@@ -126,9 +126,9 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
     }
 
     public static void setUpMockPickupKeysOrder(PropertiesToJsonConverter converter, String... keys) {
-        PropertyKeysPickupOrderedForTest pickupOrderedForTest = new PropertyKeysPickupOrderedForTest();
+        PropertyKeysOrderResolverForTest pickupOrderedForTest = new PropertyKeysOrderResolverForTest();
         pickupOrderedForTest.setUpMockKeys(keys);
-        converter.setPropertyKeysPickup(pickupOrderedForTest);
+        converter.setPropertyKeysOrderResolver(pickupOrderedForTest);
     }
 
     private Map<String, String> initProperties() {

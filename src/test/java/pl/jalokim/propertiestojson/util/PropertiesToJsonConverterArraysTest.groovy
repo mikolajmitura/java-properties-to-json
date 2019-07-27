@@ -1,6 +1,7 @@
 package pl.jalokim.propertiestojson.util
 
 import groovy.json.JsonSlurper
+import pl.jalokim.propertiestojson.helper.PropertyKeysOrderResolverForTest
 import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver
@@ -12,10 +13,31 @@ import static PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOr
 
 class PropertiesToJsonConverterArraysTest extends Specification {
 
+    def "create array without problem with different types on every index"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/mixin_types_in_array.properties")
+        print(json)
+        then:
+        true
+    }
+
     def "multi dimensional array with simple values"() {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        PropertyKeysOrderResolverForTest keyOrderResolver = new PropertyKeysOrderResolverForTest()
+        keyOrderResolver.setUpMockKeys(
+                "arrayWitObjects[0][0].somefield.nextField",
+                "arrayWitObjects[0][1].somefield.nextField1",
+                "arrayWitObjects[0][1].somefield.nextField2",
+                "arrayWitObjects[1][0].somefield.nextField",
+                "arrayWitObjects[1][1].somefield.nextField1",
+                "arrayWitObjects[1][1].somefield.nextField2",
+        )
+        converter.setPropertyKeysOrderResolver(keyOrderResolver)
+
         def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/multi_dim_array_in_path_object_values.properties")
         print(json)
         then:
@@ -91,16 +113,16 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         String json = converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties")
         def jsonObject = jsonSlurper.parseText(json)
         then:
-        jsonObject.object.test[0]=="0_"
-        jsonObject.object.test[1]=="1_"
-        jsonObject.object.test[2]=="2_"
-        jsonObject.object.test[3]==3
-        jsonObject.object.test[4]=="4_"
-        jsonObject.object.test[5]=="asdf6"
-        jsonObject.object.test[6]=="asdf7"
-        jsonObject.object.test[7]=="asdf9"
-        jsonObject.object.test[8]=="asdf101"
-        jsonObject.object.test[9]==[1,2,3,4]
+        jsonObject.object.test[0] == "0_"
+        jsonObject.object.test[1] == "1_"
+        jsonObject.object.test[2] == "2_"
+        jsonObject.object.test[3] == 3
+        jsonObject.object.test[4] == "4_"
+        jsonObject.object.test[5] == "asdf6"
+        jsonObject.object.test[6] == "asdf7"
+        jsonObject.object.test[7] == "asdf9"
+        jsonObject.object.test[8] == "asdf101"
+        jsonObject.object.test[9] == [1, 2, 3, 4]
     }
 
     def "indexed elements as first will not be override by primitive array will throw error because how to override???"() {
@@ -126,10 +148,10 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-               new PrimitiveArrayJsonTypeResolver(false),
-               new ObjectFromTextJsonTypeResolver(),
-               new NumberJsonTypeResolver(),
-               new BooleanJsonTypeResolver()
+                new PrimitiveArrayJsonTypeResolver(false),
+                new ObjectFromTextJsonTypeResolver(),
+                new NumberJsonTypeResolver(),
+                new BooleanJsonTypeResolver()
         )
         def json = converter.convertPropertiesFromFileToJson('src/test/resources/arraysMixinTypes.properties')
         print(json)

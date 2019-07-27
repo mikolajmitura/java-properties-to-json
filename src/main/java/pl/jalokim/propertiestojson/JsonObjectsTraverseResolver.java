@@ -1,10 +1,12 @@
 package pl.jalokim.propertiestojson;
 
-import pl.jalokim.propertiestojson.object.*;
-import pl.jalokim.propertiestojson.resolvers.*;
+import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.resolvers.JsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.transfer.DataForResolve;
 
 import java.util.Map;
+
+import static pl.jalokim.propertiestojson.util.ListUtil.getLastIndex;
 
 public class JsonObjectsTraverseResolver {
 
@@ -51,7 +53,7 @@ public class JsonObjectsTraverseResolver {
     }
 
     private boolean isPrimitiveField(int index) {
-        int lastIndex = fields.length - 1;
+        int lastIndex = getLastIndex(fields);
         return index == lastIndex;
     }
 

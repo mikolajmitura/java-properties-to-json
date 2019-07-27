@@ -46,7 +46,7 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
     }
 
     private static String lastLetter(String text) {
-        return text.substring(text.length() - 1, text.length());
+        return text.substring(text.length() - 1);
     }
 
     @Override

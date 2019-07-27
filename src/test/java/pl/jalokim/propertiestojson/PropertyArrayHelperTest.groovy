@@ -11,9 +11,9 @@ class PropertyArrayHelperTest extends Specification {
         then:
         expectedArrayName == result
         where:
-        arrayFieldName | expectedArrayName
-        "array [12] [12]" | "array"
-        "array [12]" | "array"
+        arrayFieldName        | expectedArrayName
+        "array [12] [12]"     | "array"
+        "array [12]"          | "array"
         "array_test !@# [12]" | "array_test !@#"
     }
 
@@ -24,9 +24,9 @@ class PropertyArrayHelperTest extends Specification {
         then:
         resultIndexes == expectedIndexes
         where:
-        arrayFieldName | expectedIndexes
-        "arrayField [12] [ 13]" | [12, 13]
-        "arrayField[_] [11]" | [11]
+        arrayFieldName                  | expectedIndexes
+        "arrayField [12] [ 13]"         | [12, 13]
+        "arrayField[_] [11]"            | [11]
         "arrayField [12] [ 13] [ 11 ] " | [12, 13, 11]
     }
 }

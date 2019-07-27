@@ -6,6 +6,9 @@ import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.object.StringJsonType;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
+import java.util.List;
+
+import static pl.jalokim.propertiestojson.util.ListUtil.isLastIndex;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.*;
 
 
@@ -31,6 +34,36 @@ public class JsonObjectFieldsValidator {
     public static void checkEarlierWasJsonObject(String propertiesKey, String field, AbstractJsonType jsonType) {
 
         whenWasStringTypeThenThrowException(propertiesKey, field, jsonType);
+    }
+
+    /*
+        TODO maybe it is not necessary method... but only checkThatArrayElementIsPrimitiveType is neccessary
+        and checking should be on add level, new field, new element in array...
+     */
+    public static void checkThatGivenArrayHasExpectedStructure(String propertiesKey, String field, ArrayJsonType arrayJsonType,
+                                                               PropertyArrayHelper propertyArrayHelper) {
+        List<Integer> indexes = propertyArrayHelper.getDimensionalIndexes();
+        int size = propertyArrayHelper.getDimensionalIndexes().size();
+        ArrayJsonType currentArray = arrayJsonType;
+        for (int i = 0; i < size; i++) {
+            if (isLastIndex(propertyArrayHelper.getDimensionalIndexes(), i)) {
+                checkThatArrayElementIsPrimitiveType(propertiesKey, field, arrayJsonType, indexes.get(i));
+            }  else {
+                AbstractJsonType element = currentArray.getElement(indexes.get(i));
+                if(element == null) {
+                    return;
+                }
+                if (element instanceof ArrayJsonType) {
+                    currentArray = (ArrayJsonType) element;
+                } else {
+                    // TODO done it and test this one
+                    // expected type which is in (AbstractJsonType element)  at given array in given path...
+                    //throwException();
+                    List<Integer> currentIndexes = indexes.subList(0, i);
+                    throw new RuntimeException("expected type " + element.getClass() +  " at given array in given path " + currentIndexes);
+                }
+            }
+        }
     }
 
     public static void checkThatArrayElementIsPrimitiveType(String propertiesKey, String field, ArrayJsonType arrayJsonType,

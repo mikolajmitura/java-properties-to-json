@@ -14,12 +14,12 @@ import static pl.jalokim.propertiestojson.JsonObjectsTraverseResolver.INDEXES_PA
 @Getter
 public class PropertyArrayHelper {
 
-    private List<Integer> indexesInArrayField;
+    private List<Integer> dimensionalIndexes;
     private String arrayFieldName;
 
     public PropertyArrayHelper(String field) {
         arrayFieldName = getNameFromArray(field);
-        indexesInArrayField = getIndexesFromArrayField(field);
+        dimensionalIndexes = getIndexesFromArrayField(field);
     }
 
     public static String getNameFromArray(String fieldName) {

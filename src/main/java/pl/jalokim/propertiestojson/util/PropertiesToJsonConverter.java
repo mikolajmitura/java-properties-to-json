@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import pl.jalokim.propertiestojson.AlgorithmType;
 import pl.jalokim.propertiestojson.JsonObjectsTraverseResolver;
-import pl.jalokim.propertiestojson.helper.PropertyKeysPickup;
+import pl.jalokim.propertiestojson.helper.PropertyKeysOrderResolver;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.resolvers.ArrayJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.JsonTypeResolver;
@@ -41,7 +41,7 @@ import static pl.jalokim.propertiestojson.Constants.REGEX_DOT;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING_RESOLVER_AS_NOT_LAST;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE;
 
-public class PropertiesToJsonConverter {
+public final class PropertiesToJsonConverter {
 
     public static final StringJsonTypeResolver STRING_RESOLVER = new StringJsonTypeResolver();
     private static final List<PrimitiveJsonTypeResolver> DEFAULT_PRIMITIVE_RESOLVERS;
@@ -56,7 +56,7 @@ public class PropertiesToJsonConverter {
         DEFAULT_PRIMITIVE_RESOLVERS.add(new BooleanJsonTypeResolver());
     }
 
-    private PropertyKeysPickup propertyKeysPickup = new PropertyKeysPickup();
+    private PropertyKeysOrderResolver propertyKeysOrderResolver = new PropertyKeysOrderResolver();
     private final Map<AlgorithmType, JsonTypeResolver> algorithms = new HashMap<>();
     private final PrimitiveJsonTypesResolver primitiveResolvers;
 
@@ -300,7 +300,6 @@ public class PropertiesToJsonConverter {
      *                          someObject2.field2=value3<br>
      *                          filter "object1"<br>
      *                          will parse only nested domain for "object1"<br>
-     * @param includeDomainKeys domain head keys which should be parsed to json
      * @return Simple String with json
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
@@ -308,6 +307,13 @@ public class PropertiesToJsonConverter {
         return convertFromValuesAsObjectMap(propertiesToMap(properties), includeDomainKeys);
     }
 
+    /**
+     * It change implementation of ordered gathering keys from properties
+     * @param propertyKeysOrderResolver another implementation of get ordered properties keys
+     */
+    public void setPropertyKeysOrderResolver(PropertyKeysOrderResolver propertyKeysOrderResolver) {
+        this.propertyKeysOrderResolver = propertyKeysOrderResolver;
+    }
 
     private static void checkKey(Map<String, Object> properties, Map<String, Object> filteredProperties, String key, String requiredKey) {
         if (key.equals(requiredKey) || (key.startsWith(requiredKey) && keyIsCompatibleWithRequiredKey(requiredKey, key))) {
@@ -339,13 +345,15 @@ public class PropertiesToJsonConverter {
     }
 
     private void addFieldsToJsonObject(Map<String, Object> properties, ObjectJsonType coreObjectJsonType, String propertiesKey) {
+        // TODO build nodes with child and parent...
+        // for better show which path is invalid
         String[] fields = propertiesKey.split(REGEX_DOT);
         new JsonObjectsTraverseResolver(algorithms, properties, propertiesKey, fields, coreObjectJsonType)
                 .initializeFieldsInJson();
     }
 
     private List<String> getAllKeysFromProperties(Map<String, Object> properties) {
-        return propertyKeysPickup.getAllKeysFromProperties(properties);
+        return propertyKeysOrderResolver.getKeysInExpectedOrder(properties);
     }
 
 
@@ -366,9 +374,6 @@ public class PropertiesToJsonConverter {
         return map;
     }
 
-    protected void setPropertyKeysPickup(PropertyKeysPickup propertyKeysPickup) {
-        this.propertyKeysPickup = propertyKeysPickup;
-    }
 
     private static PrimitiveJsonTypeResolver[] fromListToArray(List<PrimitiveJsonTypeResolver> resolversAsList) {
         PrimitiveJsonTypeResolver[] resolvers = new PrimitiveJsonTypeResolver[resolversAsList.size()];

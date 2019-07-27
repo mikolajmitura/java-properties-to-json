@@ -13,6 +13,8 @@ import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
+import static pl.jalokim.propertiestojson.util.ListUtil.getLastIndex;
+import static pl.jalokim.propertiestojson.util.ListUtil.isLastIndex;
 
 
 public class ArrayJsonType extends AbstractJsonType {
@@ -25,25 +27,48 @@ public class ArrayJsonType extends AbstractJsonType {
         elements[index] = element;
     }
 
-    public void addElement(PropertyArrayHelper propertyArrayHelper, AbstractJsonType element) {
-        List<Integer> indexes = propertyArrayHelper.getIndexesInArrayField();
-        int size = propertyArrayHelper.getIndexesInArrayField().size();
+    public void addElement(PropertyArrayHelper propertyArrayHelper, AbstractJsonType elementToAdd) {
+        List<Integer> indexes = propertyArrayHelper.getDimensionalIndexes();
+        int size = propertyArrayHelper.getDimensionalIndexes().size();
         ArrayJsonType currentArray = this;
-        for (int i = 0; i < size; i++) {
-            if (i == size -1) {
-                currentArray.addElement(indexes.get(i), element);
-            }  else {
-                ArrayJsonType newArray = new ArrayJsonType();
-                currentArray.addElement(indexes.get(i), newArray);
-                currentArray = newArray;
+        for(int index = 0; index < size; index++) {
+            if(isLastIndex(propertyArrayHelper.getDimensionalIndexes(), index)) {
+                currentArray.addElement(indexes.get(index), elementToAdd);
+            } else {
+                currentArray = getNextDimensionOfArray(currentArray, indexes, index);
             }
         }
     }
 
+    public static ArrayJsonType getNextDimensionOfArray(ArrayJsonType currentArray, List<Integer> indexes, int index) {
+        if(currentArray.existElementByGivenIndex(indexes.get(index))) {
+            AbstractJsonType element = currentArray.getElement(indexes.get(index));
+            if(element instanceof ArrayJsonType) {
+                return (ArrayJsonType) element;
+            } else {
+                // TODO done it and test this one
+                // expected type which is in (AbstractJsonType element)  at given array in given path...
+                //throwException();
+                List<Integer> currentIndexes = indexes.subList(0, index);
+                throw new RuntimeException("current type " + element.getClass() + " with value: " + element
+                                           + " at given array in given path " + currentIndexes);
+            }
+        } else {
+            ArrayJsonType newArray = new ArrayJsonType();
+            currentArray.addElement(indexes.get(index), newArray);
+            return newArray;
+        }
+    }
+
+    public boolean existElementByGivenIndex(int index) {
+        return getElement(index) != null;
+    }
+
     private void rewriteArrayWhenIsFull(int index) {
-        if (indexHigherThanArraySize(index)) {
+        // TODO fix it, when someone put 1000 and array is empty then will ArrayIndexOutOfBoundsException arise
+        if(indexHigherThanArraySize(index)) {
             AbstractJsonType[] elementsTemp = new AbstractJsonType[elements.length + INIT_SIZE];
-            for (int i = 0; i < elements.length; i++) {
+            for(int i = 0; i < elements.length; i++) {
                 elementsTemp[i] = elements[i];
             }
             elements = elementsTemp;
@@ -51,7 +76,7 @@ public class ArrayJsonType extends AbstractJsonType {
     }
 
     private boolean indexHigherThanArraySize(int index) {
-        return index > elements.length - 1;
+        return index > getLastIndex(elements);
     }
 
     public ArrayJsonType() {
@@ -66,7 +91,7 @@ public class ArrayJsonType extends AbstractJsonType {
     public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements) {
         Iterator<?> iterator = elements.iterator();
         int index = 0;
-        while (iterator.hasNext()) {
+        while(iterator.hasNext()) {
             Object element = iterator.next();
             addElement(index, primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(element));
             index++;
@@ -78,11 +103,11 @@ public class ArrayJsonType extends AbstractJsonType {
         StringBuilder result = new StringBuilder().append(ARRAY_START_SIGN);
         int index = 0;
         List<AbstractJsonType> elementsAsList = convertToList();
-        int lastIndex = elementsAsList.size() - 1;
-        for (AbstractJsonType element : elementsAsList) {
+        int lastIndex = getLastIndex(elementsAsList);
+        for(AbstractJsonType element : elementsAsList) {
             String lastSign = index == lastIndex ? EMPTY_STRING : NEW_LINE_SIGN;
             result.append(element.toStringJson())
-                    .append(lastSign);
+                  .append(lastSign);
             index++;
         }
         return result.append(ARRAY_END_SIGN).toString();
@@ -90,8 +115,8 @@ public class ArrayJsonType extends AbstractJsonType {
 
     private List<AbstractJsonType> convertToList() {
         List<AbstractJsonType> elementsList = new ArrayList<>();
-        for (AbstractJsonType element : elements) {
-            if (element != null) {
+        for(AbstractJsonType element : elements) {
+            if(element != null) {
                 elementsList.add(element);
             }
         }
