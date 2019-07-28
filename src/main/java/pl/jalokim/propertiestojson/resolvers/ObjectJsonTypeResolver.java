@@ -3,21 +3,22 @@ package pl.jalokim.propertiestojson.resolvers;
 import pl.jalokim.propertiestojson.JsonObjectFieldsValidator;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.path.PathMetadata;
 
 public class ObjectJsonTypeResolver extends JsonTypeResolver {
 
 
     @Override
-    public ObjectJsonType traverse(String field) {
-        fetchJsonObjectOrCreate(field);
+    public ObjectJsonType traverse(PathMetadata currentPathMetaData) {
+        fetchJsonObjectOrCreate(currentPathMetaData);
         return currentObjectJsonType;
     }
 
-    private void fetchJsonObjectOrCreate(String field) {
-        if (currentObjectJsonType.containsField(field)) {
-            fetchJsonObjectWhenIsNotPrimitive(field);
+    private void fetchJsonObjectOrCreate(PathMetadata currentPathMetaData) {
+        if (currentObjectJsonType.containsField(currentPathMetaData.getFieldName())) {
+            fetchJsonObjectWhenIsNotPrimitive(currentPathMetaData);
         } else {
-            createNewJsonObjectAndAssignToCurrent(field);
+            createNewJsonObjectAndAssignToCurrent(currentPathMetaData.getFieldName());
         }
     }
 
@@ -27,9 +28,9 @@ public class ObjectJsonTypeResolver extends JsonTypeResolver {
         currentObjectJsonType = nextObjectJsonType;
     }
 
-    private void fetchJsonObjectWhenIsNotPrimitive(String field) {
-        AbstractJsonType jsonType = currentObjectJsonType.getJsonTypeByFieldName(field);
-        JsonObjectFieldsValidator.checkEarlierWasJsonObject(propertiesKey, field, jsonType);
+    private void fetchJsonObjectWhenIsNotPrimitive(PathMetadata currentPathMetaData) {
+        AbstractJsonType jsonType = currentObjectJsonType.getJsonTypeByFieldName(currentPathMetaData.getFieldName());
+        JsonObjectFieldsValidator.checkEarlierWasJsonObject(propertyKey, currentPathMetaData, jsonType);
         currentObjectJsonType = (ObjectJsonType) jsonType;
     }
 }

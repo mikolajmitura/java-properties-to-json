@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.lang.String.join;
 import static java.util.Collections.singletonList;
-import static pl.jalokim.propertiestojson.Constants.SIMPLE_ARRAY_DELIMETER;
+import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
+import static pl.jalokim.propertiestojson.Constants.SIMPLE_ARRAY_DELIMITER;
 import static pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver.hasJsonArraySignature;
+import static pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver.isValidJsonObject;
 
 public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Collection<?>> {
 
@@ -19,12 +22,12 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
 
     public PrimitiveArrayJsonTypeResolver() {
         this.resolveTypeOfEachElement = true;
-        this.arrayElementSeparator = SIMPLE_ARRAY_DELIMETER;
+        this.arrayElementSeparator = SIMPLE_ARRAY_DELIMITER;
     }
 
     public PrimitiveArrayJsonTypeResolver(boolean resolveTypeOfEachElement) {
         this.resolveTypeOfEachElement = resolveTypeOfEachElement;
-        this.arrayElementSeparator = SIMPLE_ARRAY_DELIMETER;
+        this.arrayElementSeparator = SIMPLE_ARRAY_DELIMITER;
     }
 
     private boolean isSimpleArray(String propertyValue) {
@@ -33,13 +36,26 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
 
     @Override
     public Collection<?> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
-        if (isSimpleArray(propertyValue)){
-            List<Object> elements = new ArrayList<>();
-            if (hasJsonArraySignature(propertyValue)) {
-                return null;
+        if(isSimpleArray(propertyValue) && !isValidJsonObject(propertyValue)) {
+
+            if(hasJsonArraySignature(propertyValue)) {
+                propertyValue = propertyValue
+                        .replaceAll("]\\s*$", EMPTY_STRING)
+                        .replaceAll("^\\s*\\[\\s*", EMPTY_STRING);
+                String[] elements = propertyValue.split(arrayElementSeparator);
+                List<String> clearedElements = new ArrayList<>();
+                for(String element : elements) {
+                    element = element.trim()
+                                     .replaceAll("^\\s*\"\\s*", EMPTY_STRING)
+                                     .replaceAll("\"\\s*$", EMPTY_STRING);
+                    clearedElements.add(element);
+                }
+                propertyValue = join(arrayElementSeparator, clearedElements);
             }
-            for (String element : propertyValue.split(arrayElementSeparator)) {
-                if (resolveTypeOfEachElement) {
+
+            List<Object> elements = new ArrayList<>();
+            for(String element : propertyValue.split(arrayElementSeparator)) {
+                if(resolveTypeOfEachElement) {
                     elements.add(primitiveJsonTypesResolver.getResolvedObject(element));
                 } else {
                     elements.add(element);
@@ -52,7 +68,7 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
 
     @Override
     public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {
-        if (canResolveThisObject(propertyValue.getClass())) {
+        if(canResolveThisObject(propertyValue.getClass())) {
             return returnConcreteJsonType(primitiveJsonTypesResolver, (Collection<?>) propertyValue);
         }
         return returnConcreteJsonType(primitiveJsonTypesResolver, singletonList(propertyValue));

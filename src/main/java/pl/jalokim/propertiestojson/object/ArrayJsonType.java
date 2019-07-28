@@ -2,6 +2,7 @@ package pl.jalokim.propertiestojson.object;
 
 
 import pl.jalokim.propertiestojson.PropertyArrayHelper;
+import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 import java.util.ArrayList;
@@ -35,12 +36,12 @@ public class ArrayJsonType extends AbstractJsonType {
             if(isLastIndex(propertyArrayHelper.getDimensionalIndexes(), index)) {
                 currentArray.addElement(indexes.get(index), elementToAdd);
             } else {
-                currentArray = getNextDimensionOfArray(currentArray, indexes, index);
+                currentArray = createOrGetNextDimensionOfArray(currentArray, indexes, index);
             }
         }
     }
 
-    public static ArrayJsonType getNextDimensionOfArray(ArrayJsonType currentArray, List<Integer> indexes, int index) {
+    public static ArrayJsonType createOrGetNextDimensionOfArray(ArrayJsonType currentArray, List<Integer> indexes, int index) {
         if(currentArray.existElementByGivenIndex(indexes.get(index))) {
             AbstractJsonType element = currentArray.getElement(indexes.get(index));
             if(element instanceof ArrayJsonType) {
@@ -58,6 +59,33 @@ public class ArrayJsonType extends AbstractJsonType {
             currentArray.addElement(indexes.get(index), newArray);
             return newArray;
         }
+    }
+
+    public AbstractJsonType getElementByGivenDimIndexes(PathMetadata currentPathMetaData) {
+        PropertyArrayHelper propertyArrayHelper = currentPathMetaData.getPropertyArrayHelper();
+        List<Integer> indexes = propertyArrayHelper.getDimensionalIndexes();
+        int size = propertyArrayHelper.getDimensionalIndexes().size();
+        ArrayJsonType currentArray = this;
+        for (int i = 0; i < size; i++) {
+            if (isLastIndex(propertyArrayHelper.getDimensionalIndexes(), i)) {
+                return currentArray.getElement(indexes.get(i));
+            }  else {
+                AbstractJsonType element = currentArray.getElement(indexes.get(i));
+                if(element == null) {
+                    return null;
+                }
+                if (element instanceof ArrayJsonType) {
+                    currentArray = (ArrayJsonType) element;
+                } else {
+                    // TODO done it and test this one
+                    // expected type which is in (AbstractJsonType element)  at given array in given path...
+                    //throwException();
+                    List<Integer> currentIndexes = indexes.subList(0, i);
+                    throw new RuntimeException("expected type " + element.getClass() +  " at given array in given path: " + currentPathMetaData.getCurrentFullPath() + " current indexes: " +  currentIndexes);
+                }
+            }
+        }
+        throw new UnsupportedOperationException("cannot return expected object for " + currentPathMetaData.getCurrentFullPath() + " " + currentPathMetaData.getPropertyArrayHelper().getDimensionalIndexes());
     }
 
     public boolean existElementByGivenIndex(int index) {

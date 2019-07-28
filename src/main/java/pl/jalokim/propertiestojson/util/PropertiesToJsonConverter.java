@@ -8,6 +8,8 @@ import pl.jalokim.propertiestojson.AlgorithmType;
 import pl.jalokim.propertiestojson.JsonObjectsTraverseResolver;
 import pl.jalokim.propertiestojson.helper.PropertyKeysOrderResolver;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.path.PathMetadata;
+import pl.jalokim.propertiestojson.path.PathMetadataBuilder;
 import pl.jalokim.propertiestojson.resolvers.ArrayJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.JsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.ObjectJsonTypeResolver;
@@ -36,8 +38,8 @@ import java.util.Properties;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
-import static pl.jalokim.propertiestojson.Constants.REGEX_DOT;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING_RESOLVER_AS_NOT_LAST;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE;
 
@@ -59,6 +61,8 @@ public final class PropertiesToJsonConverter {
     private PropertyKeysOrderResolver propertyKeysOrderResolver = new PropertyKeysOrderResolver();
     private final Map<AlgorithmType, JsonTypeResolver> algorithms = new HashMap<>();
     private final PrimitiveJsonTypesResolver primitiveResolvers;
+    // TODO implement this...
+    private final boolean jsonFieldsOverrideAllowed;
 
     /**
      * This constructor allow to give a resolvers, the order of resolvers is important.
@@ -66,6 +70,16 @@ public final class PropertiesToJsonConverter {
      * @param primitiveResolvers ordered list
      */
     public PropertiesToJsonConverter(PrimitiveJsonTypeResolver... primitiveResolvers) {
+        this(false, primitiveResolvers);
+    }
+
+    /**
+     * This constructor allow to give a resolvers, the order of resolvers is important.
+     *
+     * @param primitiveResolvers ordered list
+     */
+    public PropertiesToJsonConverter(boolean jsonFieldsOverrideAllowed, PrimitiveJsonTypeResolver... primitiveResolvers) {
+        this.jsonFieldsOverrideAllowed = jsonFieldsOverrideAllowed;
         validateTypeResolverOrder(primitiveResolvers);
         this.primitiveResolvers = new PrimitiveJsonTypesResolver(buildAllPrimitiveResolvers(primitiveResolvers));
         algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());
@@ -139,7 +153,7 @@ public final class PropertiesToJsonConverter {
         try {
             InputStream targetStream = new FileInputStream(file);
             return convertToJson(targetStream, includeDomainKeys);
-        } catch (FileNotFoundException e) {
+        } catch(FileNotFoundException e) {
             throw new ReadInputException(e);
         }
     }
@@ -156,7 +170,7 @@ public final class PropertiesToJsonConverter {
         try {
             InputStream targetStream = new FileInputStream(file);
             return convertToJson(targetStream);
-        } catch (FileNotFoundException e) {
+        } catch(FileNotFoundException e) {
             throw new ReadInputException(e);
         }
     }
@@ -200,8 +214,8 @@ public final class PropertiesToJsonConverter {
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
     public String convertToJson(Properties properties) throws ParsePropertiesException {
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            if (!(entry.getKey() instanceof String)) {
+        for(Map.Entry<Object, Object> entry : properties.entrySet()) {
+            if(!(entry.getKey() instanceof String)) {
                 throw new ParsePropertiesException(format(PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE,
                                                           entry.getKey().getClass(),
                                                           entry.getKey() == null ? "null" : entry.getKey()));
@@ -231,8 +245,8 @@ public final class PropertiesToJsonConverter {
      */
     public String convertFromValuesAsObjectMap(Map<String, Object> properties) throws ParsePropertiesException {
         ObjectJsonType coreObjectJsonType = new ObjectJsonType();
-        for (String propertiesKey : getAllKeysFromProperties(properties)) {
-            addFieldsToJsonObject(properties, coreObjectJsonType, propertiesKey);
+        for(String propertyKey : getAllKeysFromProperties(properties)) {
+            addFieldsToJsonObject(properties, coreObjectJsonType, propertyKey);
         }
         return prettifyOfJson(coreObjectJsonType.toStringJson());
     }
@@ -281,8 +295,8 @@ public final class PropertiesToJsonConverter {
      */
     public String convertFromValuesAsObjectMap(Map<String, Object> properties, String... includeDomainKeys) throws ParsePropertiesException {
         Map<String, Object> filteredProperties = new HashMap<>();
-        for (String key : properties.keySet()) {
-            for (String requiredKey : includeDomainKeys) {
+        for(String key : properties.keySet()) {
+            for(String requiredKey : includeDomainKeys) {
                 checkKey(properties, filteredProperties, key, requiredKey);
             }
         }
@@ -309,21 +323,23 @@ public final class PropertiesToJsonConverter {
 
     /**
      * It change implementation of ordered gathering keys from properties
+     *
      * @param propertyKeysOrderResolver another implementation of get ordered properties keys
      */
     public void setPropertyKeysOrderResolver(PropertyKeysOrderResolver propertyKeysOrderResolver) {
+        requireNonNull(propertyKeysOrderResolver);
         this.propertyKeysOrderResolver = propertyKeysOrderResolver;
     }
 
     private static void checkKey(Map<String, Object> properties, Map<String, Object> filteredProperties, String key, String requiredKey) {
-        if (key.equals(requiredKey) || (key.startsWith(requiredKey) && keyIsCompatibleWithRequiredKey(requiredKey, key))) {
+        if(key.equals(requiredKey) || (key.startsWith(requiredKey) && keyIsCompatibleWithRequiredKey(requiredKey, key))) {
             filteredProperties.put(key, properties.get(key));
         }
     }
 
     private static boolean keyIsCompatibleWithRequiredKey(String requiredKey, String key) {
         String testedChar = key.substring(requiredKey.length(), requiredKey.length() + 1);
-        if (testedChar.equals(ARRAY_START_SIGN) || testedChar.equals(".")) {
+        if(testedChar.equals(ARRAY_START_SIGN) || testedChar.equals(".")) {
             return true;
         }
         return false;
@@ -334,21 +350,19 @@ public final class PropertiesToJsonConverter {
         Properties properties = new Properties();
         try {
             properties.load(inputStream);
-            for (Map.Entry<Object, Object> property : properties.entrySet()) {
+            for(Map.Entry<Object, Object> property : properties.entrySet()) {
                 Object object = primitiveResolvers.getResolvedObject((String) property.getValue());
                 propertiesWithConvertedValues.put(property.getKey(), object);
             }
-        } catch (IOException e) {
+        } catch(IOException e) {
             throw new ReadInputException(e);
         }
         return propertiesWithConvertedValues;
     }
 
-    private void addFieldsToJsonObject(Map<String, Object> properties, ObjectJsonType coreObjectJsonType, String propertiesKey) {
-        // TODO build nodes with child and parent...
-        // for better show which path is invalid
-        String[] fields = propertiesKey.split(REGEX_DOT);
-        new JsonObjectsTraverseResolver(algorithms, properties, propertiesKey, fields, coreObjectJsonType)
+    private void addFieldsToJsonObject(Map<String, Object> properties, ObjectJsonType coreObjectJsonType, String propertyKey) {
+        PathMetadata rootPathMetaData = PathMetadataBuilder.createRootPathMetaData(propertyKey);
+        new JsonObjectsTraverseResolver(algorithms, properties, propertyKey, rootPathMetaData, coreObjectJsonType)
                 .initializeFieldsInJson();
     }
 
@@ -359,7 +373,7 @@ public final class PropertiesToJsonConverter {
 
     private static Map<String, Object> propertiesToMap(Properties properties) {
         Map<String, Object> map = new HashMap<>();
-        for (Map.Entry<Object, Object> property : properties.entrySet()) {
+        for(Map.Entry<Object, Object> property : properties.entrySet()) {
             map.put(property.getKey().toString(), property.getValue());
         }
         return map;
@@ -367,7 +381,7 @@ public final class PropertiesToJsonConverter {
 
     private Map<String, Object> stringValueMapToObjectValueMap(Map<String, String> properties) {
         Map<String, Object> map = new HashMap<>();
-        for (Map.Entry<String, String> property : properties.entrySet()) {
+        for(Map.Entry<String, String> property : properties.entrySet()) {
             Object object = primitiveResolvers.getResolvedObject(property.getValue());
             map.put(property.getKey(), object);
         }
@@ -383,14 +397,14 @@ public final class PropertiesToJsonConverter {
     private static void validateTypeResolverOrder(PrimitiveJsonTypeResolver... primitiveResolvers) {
         List<PrimitiveJsonTypeResolver> resolvers = asList(primitiveResolvers);
         boolean containStringResolverType = false;
-        for (PrimitiveJsonTypeResolver resolver : resolvers) {
-            if (resolver instanceof StringJsonTypeResolver) {
+        for(PrimitiveJsonTypeResolver resolver : resolvers) {
+            if(resolver instanceof StringJsonTypeResolver) {
                 containStringResolverType = true;
             }
         }
-        if (containStringResolverType) {
+        if(containStringResolverType) {
             PrimitiveJsonTypeResolver lastResolver = resolvers.get(resolvers.size() - 1);
-            if (!(lastResolver instanceof StringJsonTypeResolver)) {
+            if(!(lastResolver instanceof StringJsonTypeResolver)) {
                 throw new ParsePropertiesException(STRING_RESOLVER_AS_NOT_LAST);
             }
         }

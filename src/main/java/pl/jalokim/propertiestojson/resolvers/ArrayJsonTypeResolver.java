@@ -5,27 +5,26 @@ import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.path.PathMetadata;
 
 import java.util.List;
 
-import static pl.jalokim.propertiestojson.object.ArrayJsonType.getNextDimensionOfArray;
+import static pl.jalokim.propertiestojson.object.ArrayJsonType.createOrGetNextDimensionOfArray;
 import static pl.jalokim.propertiestojson.util.ListUtil.isLastIndex;
 
 public class ArrayJsonTypeResolver extends JsonTypeResolver {
 
     @Override
-    public ObjectJsonType traverse(String field) {
-        fetchJsonObjectAndCreateArrayWhenNotExist(field);
+    public ObjectJsonType traverse(PathMetadata currentPathMetaData) {
+        fetchJsonObjectAndCreateArrayWhenNotExist(currentPathMetaData);
         return currentObjectJsonType;
     }
 
-    private void fetchJsonObjectAndCreateArrayWhenNotExist(String field) {
-        PropertyArrayHelper propertyArrayHelper = new PropertyArrayHelper(field);
-        field = propertyArrayHelper.getArrayFieldName();
-        if(isArrayExist(field)) {
-            fetchArrayAndAddElement(field, propertyArrayHelper);
+    private void fetchJsonObjectAndCreateArrayWhenNotExist(PathMetadata currentPathMetaData) {
+        if(isArrayExist(currentPathMetaData.getFieldName())) {
+            fetchArrayAndAddElement(currentPathMetaData);
         } else {
-            createArrayAndAddElement(field, propertyArrayHelper);
+            createArrayAndAddElement(currentPathMetaData);
         }
     }
 
@@ -33,19 +32,20 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
         return currentObjectJsonType.containsField(field);
     }
 
-    private void fetchArrayAndAddElement(String field, PropertyArrayHelper propertyArrayHelper) {
-        ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(field);
+    private void fetchArrayAndAddElement(PathMetadata currentPathMetaData) {
+        PropertyArrayHelper propertyArrayHelper = currentPathMetaData.getPropertyArrayHelper();
+        ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(currentPathMetaData);
         List<Integer> indexes = propertyArrayHelper.getDimensionalIndexes();
         ArrayJsonType currentArray = arrayJsonType;
         for(int index = 0; index < indexes.size(); index++) {
             if(isLastIndex(indexes, index)) {
                 if(currentArray.existElementByGivenIndex(indexes.get(index))) {
-                    fetchJsonObjectWhenIsValid(field, indexes.get(index), currentArray);
+                    fetchJsonObjectWhenIsValid(currentPathMetaData, indexes.get(index), currentArray);
                 } else {
                     createJsonObjectAndAddToArray(propertyArrayHelper, currentArray);
                 }
             } else {
-                currentArray = getNextDimensionOfArray(currentArray, indexes, index);
+                currentArray = createOrGetNextDimensionOfArray(currentArray, indexes, index);
             }
         }
     }
@@ -56,17 +56,17 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
         currentObjectJsonType = nextObjectJsonType;
     }
 
-    private void fetchJsonObjectWhenIsValid(String field, int index, ArrayJsonType arrayJsonType) {
+    private void fetchJsonObjectWhenIsValid(PathMetadata currentPathMetaData, int index, ArrayJsonType arrayJsonType) {
         AbstractJsonType element = arrayJsonType.getElement(index);
-        JsonObjectFieldsValidator.checkThatArrayElementIsObjectJsonType(field, arrayJsonType, element, propertiesKey, index);
+        JsonObjectFieldsValidator.checkEarlierWasJsonObject(currentPathMetaData.getOriginalPropertyKey(), currentPathMetaData, element);
         currentObjectJsonType = (ObjectJsonType) element;
     }
 
-    private void createArrayAndAddElement(String field, PropertyArrayHelper propertyArrayHelper) {
+    private void createArrayAndAddElement(PathMetadata currentPathMetaData) {
         ArrayJsonType arrayJsonTypeObject = new ArrayJsonType();
         ObjectJsonType nextObjectJsonType = new ObjectJsonType();
-        arrayJsonTypeObject.addElement(propertyArrayHelper, nextObjectJsonType);
-        currentObjectJsonType.addField(field, arrayJsonTypeObject);
+        arrayJsonTypeObject.addElement(currentPathMetaData.getPropertyArrayHelper(), nextObjectJsonType);
+        currentObjectJsonType.addField(currentPathMetaData.getFieldName(), arrayJsonTypeObject);
         currentObjectJsonType = nextObjectJsonType;
     }
 }

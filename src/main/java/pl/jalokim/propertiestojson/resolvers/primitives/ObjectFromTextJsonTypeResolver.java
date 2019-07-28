@@ -16,8 +16,7 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
 
     @Override
     public Object returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
-        if (hasJsonObjectSignature(propertyValue) ||
-                hasJsonArraySignature(propertyValue)) {
+        if (hasJsonObjectSignature(propertyValue) || hasJsonArraySignature(propertyValue)) {
             try {
                 JsonParser jp = new JsonParser();
                 jp.parse(propertyValue);
@@ -29,12 +28,21 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
         return null;
     }
 
+    public static boolean isValidJsonObject(String propertyValue) {
+        if (hasJsonObjectSignature(propertyValue)) {
+            JsonParser jp = new JsonParser();
+            jp.parse(propertyValue);
+            return true;
+        }
+        return false;
+    }
+
     public static boolean hasJsonArraySignature(String propertyValue) {
-        return hasJsonSignature(propertyValue, ARRAY_START_SIGN, ARRAY_END_SIGN);
+        return hasJsonSignature(propertyValue.trim(), ARRAY_START_SIGN, ARRAY_END_SIGN);
     }
 
     private static boolean hasJsonObjectSignature(String propertyValue) {
-        return hasJsonSignature(propertyValue, JSON_OBJECT_START, JSON_OBJECT_END);
+        return hasJsonSignature(propertyValue.trim(), JSON_OBJECT_START, JSON_OBJECT_END);
     }
 
     private static boolean hasJsonSignature(String propertyValue, String startSign, String endSign) {
@@ -57,6 +65,8 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
         return new ObjectFromTextJsonType(gson.toJson(propertyValue));
     }
 
+    // TODO maybe should be ObjectJsonType not wrapped json... but how???
+    // TODO test it...
     public static class ObjectFromTextJsonType extends AbstractJsonType {
 
         private String json;

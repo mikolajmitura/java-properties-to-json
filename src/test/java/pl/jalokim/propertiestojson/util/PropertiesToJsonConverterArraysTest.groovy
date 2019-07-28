@@ -6,13 +6,14 @@ import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonTypeResolver
-import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException
+import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException
 import spock.lang.Specification
 
 import static PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOrder
 
 class PropertiesToJsonConverterArraysTest extends Specification {
 
+    // TODO to impl
     def "create array without problem with different types on every index"() {
         def jsonSlurper = new JsonSlurper()
         when:
@@ -23,6 +24,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         true
     }
 
+    // TODO to impl
     def "multi dimensional array with simple values"() {
         def jsonSlurper = new JsonSlurper()
         when:
@@ -44,6 +46,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         true
     }
 
+    // TODO to impl
     def "multi dimensional array with object values"() {
         def jsonSlurper = new JsonSlurper()
         when:
@@ -97,14 +100,13 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         jsonObject.otherArray[9] == "\"in quotation marks\""
     }
 
-    def "primitive array as first will be override by indexed elements"() {
+    def "primitive array as first and next will be populated by indexed elements"() {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
                 "object.test",
                 "object.test[7]",
-                "object.test[3]",
                 "object.test[6]",
                 "object.test[101]",
                 "object.test[102]",
@@ -116,7 +118,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         jsonObject.object.test[0] == "0_"
         jsonObject.object.test[1] == "1_"
         jsonObject.object.test[2] == "2_"
-        jsonObject.object.test[3] == 3
+        jsonObject.object.test[3] == "3_"
         jsonObject.object.test[4] == "4_"
         jsonObject.object.test[5] == "asdf6"
         jsonObject.object.test[6] == "asdf7"
@@ -125,23 +127,20 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         jsonObject.object.test[9] == [1, 2, 3, 4]
     }
 
-    def "indexed elements as first will not be override by primitive array will throw error because how to override???"() {
-        def jsonSlurper = new JsonSlurper()
+    def "indexed elements as first will be merged with primitive array"() {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
                 "object.test[7]",
-                "object.test[3]",
                 "object.test[6]",
                 "object.test[101]",
                 "object.test[9]",
                 "object.test",
                 "test")
-        String json = converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties")
+        converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties")
         then:
-        ParsePropertiesException e = thrown()
-        e.getMessage() == "Current field: 'test' is already considered as array JSON type because already this field has value: [3,\"asdf6\",\"asdf7\",\"asdf9\",\"asdf101\"] \n" +
-                "(error for given wrong property key: 'object.test')"
+        CannotOverrideFieldException e = thrown()
+        e.getMessage() == "Cannot override value at path: 'object.test', current value is: '[\"asdf6\",\"asdf7\",\"asdf9\",\"asdf101\"]', problematic property key: 'object.test'"
     }
 
     def "return array with text elements when provided others resolvers and PrimitiveArrayJsonTypeResolver(false)"() {

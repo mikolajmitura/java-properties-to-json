@@ -77,6 +77,80 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         jsonObject.other.doubleValueString == "12.122"
     }
 
+    def "when given simple array then expected array in json"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        Properties properties = new Properties()
+        properties.put("man.someArray", [true, false, "string", 12.0, "{\"field\":\"fieldValue\"}", null, null])
+        properties.put("man.doubleValue", 1.132)
+        String json = converter.convertToJson(properties)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.man.someArray[0]== true
+        jsonObject.man.someArray[1]== false
+        jsonObject.man.someArray[2]== "string"
+        jsonObject.man.someArray[3]== 12.0
+        jsonObject.man.someArray[4]== "{\"field\":\"fieldValue\"}"
+        jsonObject.man.someArray[5]== null
+        jsonObject.man.someArray[6]== null
+        jsonObject.man.doubleValue == 1.132
+    }
+
+    def "when given simple array as text then expected array in json"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        Map<String, String> properties = new HashMap<>()
+        properties.put("man.someArray", "[true, false, \"string\", 12.0, \"{\"field\":\"fieldValue\"}\", null, null]")
+        String json = converter.convertToJson(properties)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.man.someArray[0]== true
+        jsonObject.man.someArray[1]== false
+        jsonObject.man.someArray[2]== "string"
+        jsonObject.man.someArray[3]== 12.0
+        jsonObject.man.someArray[4].field == "fieldValue"
+        jsonObject.man.someArray[5]== null
+        jsonObject.man.someArray[6]== null
+    }
+
+    def "when given simple array as text then expected array in json with expected values"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(new PrimitiveArrayJsonTypeResolver(), new BooleanJsonTypeResolver())
+        Map<String, String> properties = new HashMap<>()
+        properties.put("man.someArray", "[true, false, \"string\", 12.0, \"{\"field\":\"fieldValue\"}\", null, null]")
+        String json = converter.convertToJson(properties)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.man.someArray[0]== true
+        jsonObject.man.someArray[1]== false
+        jsonObject.man.someArray[2]== "string"
+        jsonObject.man.someArray[3]== "12.0"
+        jsonObject.man.someArray[4] == "{\"field\":\"fieldValue\"}"
+        jsonObject.man.someArray[5]== null
+        jsonObject.man.someArray[6]== null
+    }
+
+    def "when given simple array then expected parse error"() {
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(new PrimitiveArrayJsonTypeResolver(), new BooleanJsonTypeResolver())
+        Properties properties = new Properties()
+        properties.put("man.someArray", [true, false, "string", 12.0, "{\"field\":\"fieldValue\"}"])
+        String json = converter.convertToJson(properties)
+        println(json)
+        then:
+        Exception ex = thrown()
+        ex.message == "Cannot find valid JSON type resolver for class: 'class java.math.BigDecimal'. \n" +
+                "Please consider add sufficient resolver o your resolvers."
+    }
+
+
+
     private Properties createProperties() {
         Properties properties = new Properties()
         properties.put("man.stringNumber", "123")

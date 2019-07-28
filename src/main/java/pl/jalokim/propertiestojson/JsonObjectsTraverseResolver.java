@@ -1,60 +1,53 @@
 package pl.jalokim.propertiestojson;
 
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.JsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.transfer.DataForResolve;
 
 import java.util.Map;
 
-import static pl.jalokim.propertiestojson.util.ListUtil.getLastIndex;
-
 public class JsonObjectsTraverseResolver {
 
-    private static final String NUMBER_PATTERN = "([1-9]\\d*)|0";
-    public static final String INDEXES_PATTERN = "\\s*(\\[\\s*((" + NUMBER_PATTERN + ")|\\*)\\s*]\\s*)+";
-
-    private static final String WORD_PATTERN = "(.)*";
     private final Map<AlgorithmType, JsonTypeResolver> algorithms;
     private Map<String, Object> properties;
-    private String propertiesKey;
-    private String[] fields;
+    private String propertyKey;
+    private PathMetadata rootPathMetaData;
     private ObjectJsonType currentObjectJsonType;
 
     public JsonObjectsTraverseResolver(Map<AlgorithmType, JsonTypeResolver> algorithms,
-                                       Map<String, Object> properties, String propertiesKey,
-                                       String[] fields, ObjectJsonType coreObjectJsonType) {
+                                       Map<String, Object> properties, String propertyKey,
+                                       PathMetadata rootPathMetaData, ObjectJsonType coreObjectJsonType) {
         this.properties = properties;
-        this.propertiesKey = propertiesKey;
-        this.fields = fields;
+        this.propertyKey = propertyKey;
+        this.rootPathMetaData = rootPathMetaData;
         this.currentObjectJsonType = coreObjectJsonType;
         this.algorithms = algorithms;
     }
 
     public void initializeFieldsInJson() {
-        for (int index = 0; index < fields.length; index++) {
-            String field = fields[index];
-            DataForResolve dataForResolve = new DataForResolve(properties, propertiesKey, currentObjectJsonType, field);
-            currentObjectJsonType = algorithms.get(resolveAlgorithm(index, field)).traverseOnObjectAndInitByField(dataForResolve);
+        PathMetadata currentPathMetaData = rootPathMetaData;
+        while (currentPathMetaData != null) {
+            DataForResolve dataForResolve = new DataForResolve(properties, propertyKey, currentObjectJsonType, currentPathMetaData);
+            currentObjectJsonType = algorithms.get(resolveAlgorithm(currentPathMetaData))
+                                              .traverseOnObjectAndInitByField(dataForResolve);
+            currentPathMetaData = currentPathMetaData.getChild();
         }
     }
 
-    private AlgorithmType resolveAlgorithm(int index, String field) {
-        if (isPrimitiveField(index)) {
+    private AlgorithmType resolveAlgorithm(PathMetadata currentPathMetaData) {
+        if (isPrimitiveField(currentPathMetaData)) {
             return AlgorithmType.PRIMITIVE;
         }
-        if (isArrayField(field)) {
+        if (currentPathMetaData.isArrayField()) {
             return AlgorithmType.ARRAY;
         }
         return AlgorithmType.OBJECT;
     }
 
-    public static boolean isArrayField(String field) {
-        return field.matches(WORD_PATTERN + INDEXES_PATTERN);
-    }
 
-    private boolean isPrimitiveField(int index) {
-        int lastIndex = getLastIndex(fields);
-        return index == lastIndex;
+    private boolean isPrimitiveField(PathMetadata currentPathMetaData) {
+        return currentPathMetaData.isLeaf();
     }
 
 }

@@ -1,16 +1,18 @@
 package pl.jalokim.propertiestojson
 
+import pl.jalokim.propertiestojson.path.PathMetadata
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static pl.jalokim.propertiestojson.JsonObjectsTraverseResolver.isArrayField
 
 class JsonObjectsTraverseResolverTest extends Specification {
 
     @Unroll
     def "all given field after test has expected result"(String arrayFieldName, boolean expected) {
         when:
-        boolean result = isArrayField(arrayFieldName)
+        PathMetadata pathMetadata = new PathMetadata()
+        pathMetadata.setFieldName(arrayFieldName)
+        boolean result = pathMetadata.isArrayField()
         then:
         result == expected
         where:

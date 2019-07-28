@@ -6,6 +6,7 @@ import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
@@ -13,7 +14,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkThatGivenArrayHasExpectedStructure;
-import static pl.jalokim.propertiestojson.JsonObjectsTraverseResolver.isArrayField;
+import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG;
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
@@ -25,20 +26,21 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     }
 
     @Override
-    public ObjectJsonType traverse(String field) {
-        addPrimitiveFieldWhenIsValid(field);
+    public ObjectJsonType traverse(PathMetadata currentPathMetaData) {
+        addPrimitiveFieldWhenIsValid(currentPathMetaData);
         return null;
     }
 
-    private void addPrimitiveFieldWhenIsValid(String field) {
-        JsonObjectFieldsValidator.checkEarlierWasJsonPrimitiveType(currentObjectJsonType, field, propertiesKey);
-        addPrimitiveFieldToCurrentJsonObject(field);
+    private void addPrimitiveFieldWhenIsValid(PathMetadata currentPathMetaData) {
+        JsonObjectFieldsValidator.checkThatFieldCanBeSet(currentObjectJsonType, currentPathMetaData, propertyKey);
+        addPrimitiveFieldToCurrentJsonObject(currentPathMetaData);
     }
 
-    private void addPrimitiveFieldToCurrentJsonObject(String field) {
-        Object propertyValue = properties.get(propertiesKey);
-        if (isArrayField(field)) {
-            addFieldToArray(field, propertyValue);
+    private void addPrimitiveFieldToCurrentJsonObject(PathMetadata currentPathMetaData) {
+        String field = currentPathMetaData.getFieldName();
+        Object propertyValue = properties.get(propertyKey);
+        if (currentPathMetaData.isArrayField()) {
+            addFieldToArray(currentPathMetaData, propertyValue);
         } else {
             currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers));
         }
@@ -55,7 +57,9 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     }
 
     private AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue, List<PrimitiveJsonTypeResolver> resolvers) {
-
+        if (propertyValue == null) {
+            return NULL_OBJECT;
+        }
         Class<?> propertyValueClass = propertyValue.getClass();
         for (PrimitiveJsonTypeResolver<?> resolver : resolvers) {
             if (resolver.canResolveThisObject(propertyValueClass)) {
@@ -69,13 +73,11 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         return resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers);
     }
 
-    protected void addFieldToArray(String field, Object propertyValue) {
-        PropertyArrayHelper propertyArrayHelper = new PropertyArrayHelper(field);
-        field = propertyArrayHelper.getArrayFieldName();
-        if (arrayWithGivenFieldNameExist(field)) {
-            fetchArrayAndAddElement(field, propertyValue, propertyArrayHelper);
+    protected void addFieldToArray(PathMetadata currentPathMetaData, Object propertyValue) {
+        if (arrayWithGivenFieldNameExist(currentPathMetaData.getFieldName())) {
+            fetchArrayAndAddElement(currentPathMetaData, propertyValue);
         } else {
-            createArrayAndAddElement(field, propertyValue, propertyArrayHelper);
+            createArrayAndAddElement(currentPathMetaData, propertyValue);
         }
     }
 
@@ -83,15 +85,16 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         return currentObjectJsonType.containsField(field);
     }
 
-    private void createArrayAndAddElement(String field, Object propertyValue, PropertyArrayHelper propertyArrayHelper) {
+    private void createArrayAndAddElement(PathMetadata currentPathMetaData, Object propertyValue) {
         ArrayJsonType arrayJsonTypeObject = new ArrayJsonType();
-        addElementToArray(propertyValue, propertyArrayHelper, arrayJsonTypeObject);
-        currentObjectJsonType.addField(field, arrayJsonTypeObject);
+        addElementToArray(propertyValue, currentPathMetaData.getPropertyArrayHelper(), arrayJsonTypeObject);
+        currentObjectJsonType.addField(currentPathMetaData.getFieldName(), arrayJsonTypeObject);
     }
 
-    private void fetchArrayAndAddElement(String field, Object propertyValue, PropertyArrayHelper propertyArrayHelper) {
-        ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(field);
-        checkThatGivenArrayHasExpectedStructure(propertiesKey, field, arrayJsonType, propertyArrayHelper);
+    private void fetchArrayAndAddElement(PathMetadata currentPathMetaData, Object propertyValue) {
+        PropertyArrayHelper propertyArrayHelper = currentPathMetaData.getPropertyArrayHelper();
+        ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(currentPathMetaData);
+        checkThatGivenArrayHasExpectedStructure(propertyKey, currentPathMetaData, arrayJsonType);
         addElementToArray(propertyValue, propertyArrayHelper, arrayJsonType);
     }
 
