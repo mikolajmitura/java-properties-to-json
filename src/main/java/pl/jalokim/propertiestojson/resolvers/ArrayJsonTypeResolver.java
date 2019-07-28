@@ -35,24 +35,25 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
     private void fetchArrayAndAddElement(PathMetadata currentPathMetaData) {
         PropertyArrayHelper propertyArrayHelper = currentPathMetaData.getPropertyArrayHelper();
         ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(currentPathMetaData);
-        List<Integer> indexes = propertyArrayHelper.getDimensionalIndexes();
+        List<Integer> dimIndexes = propertyArrayHelper.getDimensionalIndexes();
         ArrayJsonType currentArray = arrayJsonType;
-        for(int index = 0; index < indexes.size(); index++) {
-            if(isLastIndex(indexes, index)) {
-                if(currentArray.existElementByGivenIndex(indexes.get(index))) {
-                    fetchJsonObjectWhenIsValid(currentPathMetaData, indexes.get(index), currentArray);
+        for(int index = 0; index < dimIndexes.size(); index++) {
+            if(isLastIndex(dimIndexes, index)) {
+                int lastDimIndex = dimIndexes.get(index);
+                if(currentArray.existElementByGivenIndex(lastDimIndex)) {
+                    fetchJsonObjectWhenIsValid(currentPathMetaData, lastDimIndex, currentArray);
                 } else {
-                    createJsonObjectAndAddToArray(propertyArrayHelper, currentArray);
+                    createJsonObjectAndAddToArray(lastDimIndex, currentArray);
                 }
             } else {
-                currentArray = createOrGetNextDimensionOfArray(currentArray, indexes, index);
+                currentArray = createOrGetNextDimensionOfArray(currentArray, dimIndexes, index);
             }
         }
     }
 
-    private void createJsonObjectAndAddToArray(PropertyArrayHelper propertyArrayHelper, ArrayJsonType arrayJsonType) {
+    private void createJsonObjectAndAddToArray(int index, ArrayJsonType arrayJsonType) {
         ObjectJsonType nextObjectJsonType = new ObjectJsonType();
-        arrayJsonType.addElement(propertyArrayHelper, nextObjectJsonType);
+        arrayJsonType.addElement(index, nextObjectJsonType);
         currentObjectJsonType = nextObjectJsonType;
     }
 

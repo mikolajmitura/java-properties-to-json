@@ -13,20 +13,18 @@ import static PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOr
 
 class PropertiesToJsonConverterArraysTest extends Specification {
 
-    // TODO to impl
+    def jsonSlurper = new JsonSlurper()
+    
     def "create array without problem with different types on every index"() {
-        def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/mixin_types_in_array.properties")
         print(json)
         then:
-        true
+        false
     }
 
-    // TODO to impl
     def "multi dimensional array with simple values"() {
-        def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         PropertyKeysOrderResolverForTest keyOrderResolver = new PropertyKeysOrderResolverForTest()
@@ -42,33 +40,49 @@ class PropertiesToJsonConverterArraysTest extends Specification {
 
         def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/multi_dim_array_in_path_object_values.properties")
         print(json)
+        def jsonObject = jsonSlurper.parseText(json)
         then:
-        true
+        jsonObject.arrayWitObjects[0][0].somefield.nextField=="test00"
+        jsonObject.arrayWitObjects[0][1].somefield.nextField1=="test01_field1"
+        jsonObject.arrayWitObjects[0][1].somefield.nextField2=="test01_field2"
+        jsonObject.arrayWitObjects[1][0].somefield.nextField=="test10"
+        jsonObject.arrayWitObjects[1][1].somefield.nextField1=="test11_field1"
+        jsonObject.arrayWitObjects[1][1].somefield.nextField2=="test11_field2"
     }
 
-    // TODO to impl
     def "multi dimensional array with object values"() {
-        def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/multi_dim_array_in_path_object_values.properties")
         print(json)
+        def jsonObject = jsonSlurper.parseText(json)
         then:
-        true
+        jsonObject.arrayWitObjects[0][0].somefield.nextField=="test00"
+        jsonObject.arrayWitObjects[0][1].somefield.nextField1=="test01_field1"
+        jsonObject.arrayWitObjects[0][1].somefield.nextField2=="test01_field2"
+        jsonObject.arrayWitObjects[1][0].somefield.nextField=="test10"
+        jsonObject.arrayWitObjects[1][1].somefield.nextField1=="test11_field1"
+        jsonObject.arrayWitObjects[1][1].somefield.nextField2=="test11_field2"
     }
 
     def "primitive arrays elements resolved to multi dim array"() {
-        def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/arrays_as_value_in_array_elements.properties")
         print(json)
+        def jsonObject = jsonSlurper.parseText(json)
         then:
-        true
+        jsonObject.array[0][0]=="value1"
+        jsonObject.array[0][1]=="value2"
+
+        jsonObject.array[1][0]=="value3"
+        jsonObject.array[1][1]=="value4"
+
+        jsonObject.array[2][0]=="value5"
+        jsonObject.array[2][1]=="value6"
     }
 
     def "return array with mixin types (primitives and objects)"() {
-        def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         def json = converter.convertPropertiesFromFileToJson('src/test/resources/arraysMixinTypes.properties')
@@ -101,7 +115,6 @@ class PropertiesToJsonConverterArraysTest extends Specification {
     }
 
     def "primitive array as first and next will be populated by indexed elements"() {
-        def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
@@ -144,7 +157,6 @@ class PropertiesToJsonConverterArraysTest extends Specification {
     }
 
     def "return array with text elements when provided others resolvers and PrimitiveArrayJsonTypeResolver(false)"() {
-        def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
                 new PrimitiveArrayJsonTypeResolver(false),
