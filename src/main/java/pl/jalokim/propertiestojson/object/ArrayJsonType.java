@@ -4,6 +4,7 @@ package pl.jalokim.propertiestojson.object;
 import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
+import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +26,7 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
 
     public static final int INIT_SIZE = 100;
     private AbstractJsonType[] elements = new AbstractJsonType[INIT_SIZE];
-    private int maxIndex = 0;
+    private int maxIndex = -1;
 
     public ArrayJsonType() {
     }
@@ -48,10 +49,13 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
         if(elements[index] != null) {
             if(elements[index] instanceof MergableObject) {
                 mergeObjectIfPossible(elements[index], elementToAdd);
+            } else {
+                // TODO test this
+                throw new CannotOverrideFieldException(format("Cannot override element in array %s, at index: %s with value: %s", this, index, elementToAdd));
             }
-            throw new RuntimeException(format("Cannot override element in array %s,  at index: %s", this, index));
+        } else {
+            elements[index] = elementToAdd;
         }
-        elements[index] = elementToAdd;
     }
 
     public void addElement(PropertyArrayHelper propertyArrayHelper, AbstractJsonType elementToAdd) {
@@ -141,7 +145,7 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
     public String toStringJson() {
         StringBuilder result = new StringBuilder().append(ARRAY_START_SIGN);
         int index = 0;
-        List<AbstractJsonType> elementsAsList = convertToList();
+        List<AbstractJsonType> elementsAsList = convertToListWithoutRealNull();
         int lastIndex = getLastIndex(elementsAsList);
         for(AbstractJsonType element : elementsAsList) {
             String lastSign = index == lastIndex ? EMPTY_STRING : NEW_LINE_SIGN;
@@ -152,7 +156,7 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
         return result.append(ARRAY_END_SIGN).toString();
     }
 
-    public List<AbstractJsonType> convertToList() {
+    public List<AbstractJsonType> convertToListWithoutRealNull() {
         List<AbstractJsonType> elementsList = new ArrayList<>();
 
         for(int i = 0; i < maxIndex + 1; i++) {
@@ -166,8 +170,21 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
         return elementsList;
     }
 
+    private List<AbstractJsonType> convertToListWithRealNull() {
+        List<AbstractJsonType> elementsList = new ArrayList<>();
+        for(int i = 0; i < maxIndex + 1; i++) {
+            AbstractJsonType element = elements[i];
+                elementsList.add(element);
+        }
+        return elementsList;
+    }
+
     @Override
     public void merge(ArrayJsonType mergeWith) {
-        throw new UnsupportedOperationException();
+        int index = 0;
+        for(AbstractJsonType abstractJsonType : mergeWith.convertToListWithRealNull()) {
+            addElement(index, abstractJsonType);
+            index++;
+        }
     }
 }

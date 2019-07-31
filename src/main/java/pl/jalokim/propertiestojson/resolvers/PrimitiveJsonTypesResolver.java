@@ -49,7 +49,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
                 ArrayJsonType currentArrayInObject = currentObjectJsonType.getJsonArray(field);
                 if (isArrayJson(abstractJsonType)) {
                     ArrayJsonType newArray = (ArrayJsonType) abstractJsonType;
-                    List<AbstractJsonType> abstractJsonTypes = newArray.convertToList();
+                    List<AbstractJsonType> abstractJsonTypes = newArray.convertToListWithoutRealNull();
                     for(int i = 0; i < abstractJsonTypes.size(); i++) {
                         currentArrayInObject.addElement(i, abstractJsonTypes.get(i));
                     }

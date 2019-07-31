@@ -10,6 +10,7 @@ public interface MergableObject<T extends AbstractJsonType> {
         if (oldObject.getClass().isAssignableFrom(elementToAdd.getClass())) {
             oldObject.merge(elementToAdd);
         } else {
+            // TODO test this
             throw new RuntimeException(
                     format("Cannot merge objects with different types, old object %s%n new object: %s",
                            oldObject, elementToAdd));

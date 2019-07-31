@@ -11,6 +11,10 @@ public class CannotOverrideFieldException extends RuntimeException {
         this(currentPath, currentValue.toString(), propertyKey);
     }
 
+    public CannotOverrideFieldException(String msg) {
+        super(msg);
+    }
+
     @VisibleForTesting
     public CannotOverrideFieldException(String currentPath, String currentValue, String propertyKey) {
         super(String.format(CANNOT_OVERRIDE_VALUE, currentPath, currentValue, propertyKey));
