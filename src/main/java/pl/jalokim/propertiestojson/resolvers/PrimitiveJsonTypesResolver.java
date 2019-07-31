@@ -8,12 +8,14 @@ import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
+import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.util.List;
 
 import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkThatGivenArrayHasExpectedStructure;
+import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isArrayJson;
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG;
 
@@ -42,7 +44,21 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         if (currentPathMetaData.isArrayField()) {
             addFieldToArray(currentPathMetaData, propertyValue);
         } else {
-            currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers));
+            if (currentObjectJsonType.containsField(field) && isArrayJson(currentObjectJsonType.getJsonTypeByFieldName(field))) {
+                AbstractJsonType abstractJsonType = resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers);
+                ArrayJsonType currentArrayInObject = currentObjectJsonType.getJsonArray(field);
+                if (isArrayJson(abstractJsonType)) {
+                    ArrayJsonType newArray = (ArrayJsonType) abstractJsonType;
+                    List<AbstractJsonType> abstractJsonTypes = newArray.convertToList();
+                    for(int i = 0; i < abstractJsonTypes.size(); i++) {
+                        currentArrayInObject.addElement(i, abstractJsonTypes.get(i));
+                    }
+                } else {
+                    throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), currentArrayInObject, propertyKey);
+                }
+            } else {
+                currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers));
+            }
         }
     }
 
@@ -56,7 +72,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         return object;
     }
 
-    private AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue, List<PrimitiveJsonTypeResolver> resolvers) {
+    public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue, List<PrimitiveJsonTypeResolver> resolvers) {
         if (propertyValue == null) {
             return NULL_OBJECT;
         }

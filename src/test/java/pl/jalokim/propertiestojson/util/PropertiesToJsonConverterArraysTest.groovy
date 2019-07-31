@@ -6,7 +6,6 @@ import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonTypeResolver
-import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException
 import spock.lang.Specification
 
 import static PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOrder
@@ -14,14 +13,33 @@ import static PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOr
 class PropertiesToJsonConverterArraysTest extends Specification {
 
     def jsonSlurper = new JsonSlurper()
-    
+
     def "create array without problem with different types on every index"() {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/mixin_types_in_array.properties")
         print(json)
+        def jsonObject = jsonSlurper.parseText(json)
         then:
-        false
+        jsonObject.someObject.array[0][0]==[12, 13, 14, "test", true]
+        jsonObject.someObject.array[0][1]==[1, 1.1, true, "arrayValue1"]
+        jsonObject.someObject.array[0][2]==[2, 2.2, true, "arrayValue2"]
+        jsonObject.someObject.array[1]=="test"
+        jsonObject.someObject.array[2][0]=="test1"
+        jsonObject.someObject.array[2][1]=="test2"
+        jsonObject.someObject.array[3][0].field=="value1"
+        jsonObject.someObject.array[3][1].field=="value2"
+        jsonObject.someObject.array[3][2]=="simpleText"
+        jsonObject.someObject.array[3][3][0]==1
+        jsonObject.someObject.array[3][3][1]==2
+        jsonObject.someObject.array[3][3][2]==[true, "boolean"]
+
+        jsonObject.someObject.array[3][3][2][0]==true
+        jsonObject.someObject.array[3][3][2][1]=="boolean"
+
+        jsonObject.someObject.array[3][3][3].nextObjectField=="value_02"
+        jsonObject.someObject.array[4].some_field=="value3"
+        jsonObject.someObject.array[5]==["test", true]
     }
 
     def "multi dimensional array with simple values"() {
@@ -119,13 +137,13 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
                 "object.test",
+                "object.test[6]",\
                 "object.test[7]",
-                "object.test[6]",
-                "object.test[101]",
-                "object.test[102]",
                 "object.test[9]",
+                "object.test[10]",
+                "object.test[11]",
                 "test")
-        String json = converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties")
+        String json = converter.convertToJson(getOverrideArraysProperties())
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.object.test[0] == "0_"
@@ -133,11 +151,13 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         jsonObject.object.test[2] == "2_"
         jsonObject.object.test[3] == "3_"
         jsonObject.object.test[4] == "4_"
-        jsonObject.object.test[5] == "asdf6"
-        jsonObject.object.test[6] == "asdf7"
-        jsonObject.object.test[7] == "asdf9"
-        jsonObject.object.test[8] == "asdf101"
-        jsonObject.object.test[9] == [1, 2, 3, 4]
+        jsonObject.object.test[5] == null
+        jsonObject.object.test[6] == "asdf6"
+        jsonObject.object.test[7] == "asdf7"
+        jsonObject.object.test[8] == null
+        jsonObject.object.test[9] == "asdf9"
+        jsonObject.object.test[10] == "asdf101"
+        jsonObject.object.test[11] == [1, 2, 3, 4]
     }
 
     def "indexed elements as first will be merged with primitive array"() {
@@ -146,16 +166,73 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         setUpMockPickupKeysOrder(converter,
                 "object.test[7]",
                 "object.test[6]",
-                "object.test[101]",
+                "object.test[10]",
                 "object.test[9]",
                 "object.test",
+                "object.test[11]",
                 "test")
-        converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties")
+        String json = converter.convertToJson(getOverrideArraysProperties())
+        def jsonObject = jsonSlurper.parseText(json)
         then:
-        CannotOverrideFieldException e = thrown()
-        e.getMessage() == "Cannot override value at path: 'object.test', current value is: '[\"asdf6\",\"asdf7\",\"asdf9\",\"asdf101\"]', problematic property key: 'object.test'"
+        jsonObject.object.test[0] == "0_"
+        jsonObject.object.test[1] == "1_"
+        jsonObject.object.test[2] == "2_"
+        jsonObject.object.test[3] == "3_"
+        jsonObject.object.test[4] == "4_"
+        jsonObject.object.test[5] == null
+        jsonObject.object.test[6] == "asdf6"
+        jsonObject.object.test[7] == "asdf7"
+        jsonObject.object.test[8] == null
+        jsonObject.object.test[9] == "asdf9"
+        jsonObject.object.test[10] == "asdf101"
+        jsonObject.object.test[11] == [1, 2, 3, 4]
     }
 
+
+    def "array json from text as first will be merged with indexed elements"() {
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        setUpMockPickupKeysOrder(converter,
+                "object.test[11]",
+                "object.test[11][4]",
+                "test")
+        def properties = getOverrideArraysProperties()
+        properties.put("object.test[11][4]", "[\"next_value\", 12, true]")
+        String json = converter.convertToJson(properties)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.test[11] == [1, 2, 3, 4, ["next_value", 12, true]]
+        jsonObject.object.test[11][4] == ["next_value", 12, true]
+    }
+
+    def "indexed elements as first will be merged with array json from text"() {
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        setUpMockPickupKeysOrder(converter,
+                "object.test[11][4]",
+                "object.test[11]",
+                "test")
+        def properties = getOverrideArraysProperties()
+        properties.put("object.test[11][4]", "[\"next_value\", 12, true]")
+        String json = converter.convertToJson(properties)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.test[11] == [1, 2, 3, 4, ["next_value", 12, true]]
+        jsonObject.object.test[11][4] == ["next_value", 12, true]
+    }
+
+    private Map<String, String> getOverrideArraysProperties() {
+        Map<String, String> map = new HashMap<>()
+        map.put("object.test[7]","asdf7")
+        map.put("object.test[6]","asdf6")
+        map.put("object.test[9]","asdf9")
+        map.put("object.test[10]","asdf101")
+        map.put("object.test[11]","1,2,3,4")
+        map.put("object.test","0_, 1_, 2_ , 3_ , 4_")
+        map.put("test","0_, 1_, 2_ , 3_ , 4_")
+        return map
+    }
+    
     def "return array with text elements when provided others resolvers and PrimitiveArrayJsonTypeResolver(false)"() {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(

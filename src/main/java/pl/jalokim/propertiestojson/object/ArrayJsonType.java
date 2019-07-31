@@ -10,22 +10,48 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
+import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
+import static pl.jalokim.propertiestojson.object.MergableObject.mergeObjectIfPossible;
 import static pl.jalokim.propertiestojson.util.ListUtil.getLastIndex;
 import static pl.jalokim.propertiestojson.util.ListUtil.isLastIndex;
 
 
-public class ArrayJsonType extends AbstractJsonType {
+public class ArrayJsonType extends AbstractJsonType implements MergableObject<ArrayJsonType> {
 
     public static final int INIT_SIZE = 100;
     private AbstractJsonType[] elements = new AbstractJsonType[INIT_SIZE];
+    private int maxIndex = 0;
 
-    public void addElement(int index, AbstractJsonType element) {
+    public ArrayJsonType() {
+    }
+
+    public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements) {
+        Iterator<?> iterator = elements.iterator();
+        int index = 0;
+        while(iterator.hasNext()) {
+            Object element = iterator.next();
+            addElement(index, primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(element));
+            index++;
+        }
+    }
+
+    public void addElement(int index, AbstractJsonType elementToAdd) {
+        if(maxIndex < index) {
+            maxIndex = index;
+        }
         rewriteArrayWhenIsFull(index);
-        elements[index] = element;
+        if(elements[index] != null) {
+            if(elements[index] instanceof MergableObject) {
+                mergeObjectIfPossible(elements[index], elementToAdd);
+            }
+            throw new RuntimeException(format("Cannot override element in array %s,  at index: %s", this, index));
+        }
+        elements[index] = elementToAdd;
     }
 
     public void addElement(PropertyArrayHelper propertyArrayHelper, AbstractJsonType elementToAdd) {
@@ -66,22 +92,22 @@ public class ArrayJsonType extends AbstractJsonType {
         List<Integer> indexes = propertyArrayHelper.getDimensionalIndexes();
         int size = propertyArrayHelper.getDimensionalIndexes().size();
         ArrayJsonType currentArray = this;
-        for (int i = 0; i < size; i++) {
-            if (isLastIndex(propertyArrayHelper.getDimensionalIndexes(), i)) {
+        for(int i = 0; i < size; i++) {
+            if(isLastIndex(propertyArrayHelper.getDimensionalIndexes(), i)) {
                 return currentArray.getElement(indexes.get(i));
-            }  else {
+            } else {
                 AbstractJsonType element = currentArray.getElement(indexes.get(i));
                 if(element == null) {
                     return null;
                 }
-                if (element instanceof ArrayJsonType) {
+                if(element instanceof ArrayJsonType) {
                     currentArray = (ArrayJsonType) element;
                 } else {
                     // TODO done it and test this one
                     // expected type which is in (AbstractJsonType element)  at given array in given path...
                     //throwException();
                     List<Integer> currentIndexes = indexes.subList(0, i);
-                    throw new RuntimeException("expected type " + element.getClass() +  " at given array in given path: " + currentPathMetaData.getCurrentFullPath() + " current indexes: " +  currentIndexes);
+                    throw new RuntimeException("expected type " + element.getClass() + " at given array in given path: " + currentPathMetaData.getCurrentFullPath() + " current indexes: " + currentIndexes);
                 }
             }
         }
@@ -93,12 +119,11 @@ public class ArrayJsonType extends AbstractJsonType {
     }
 
     private void rewriteArrayWhenIsFull(int index) {
-        // TODO fix it, when someone put 1000 and array is empty then will ArrayIndexOutOfBoundsException arise
         if(indexHigherThanArraySize(index)) {
-            AbstractJsonType[] elementsTemp = new AbstractJsonType[elements.length + INIT_SIZE];
-            for(int i = 0; i < elements.length; i++) {
-                elementsTemp[i] = elements[i];
-            }
+            int predictedNewSize = elements.length + INIT_SIZE;
+            int newSize = predictedNewSize > index ? predictedNewSize : index + 1;
+            AbstractJsonType[] elementsTemp = new AbstractJsonType[newSize];
+            System.arraycopy(elements, 0, elementsTemp, 0, elements.length);
             elements = elementsTemp;
         }
     }
@@ -107,23 +132,9 @@ public class ArrayJsonType extends AbstractJsonType {
         return index > getLastIndex(elements);
     }
 
-    public ArrayJsonType() {
-
-    }
-
     public AbstractJsonType getElement(int index) {
         rewriteArrayWhenIsFull(index);
         return elements[index];
-    }
-
-    public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements) {
-        Iterator<?> iterator = elements.iterator();
-        int index = 0;
-        while(iterator.hasNext()) {
-            Object element = iterator.next();
-            addElement(index, primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(element));
-            index++;
-        }
     }
 
     @Override
@@ -141,13 +152,22 @@ public class ArrayJsonType extends AbstractJsonType {
         return result.append(ARRAY_END_SIGN).toString();
     }
 
-    private List<AbstractJsonType> convertToList() {
+    public List<AbstractJsonType> convertToList() {
         List<AbstractJsonType> elementsList = new ArrayList<>();
-        for(AbstractJsonType element : elements) {
+
+        for(int i = 0; i < maxIndex + 1; i++) {
+            AbstractJsonType element = elements[i];
             if(element != null) {
                 elementsList.add(element);
+            } else {
+                elementsList.add(NULL_OBJECT);
             }
         }
         return elementsList;
+    }
+
+    @Override
+    public void merge(ArrayJsonType mergeWith) {
+        throw new UnsupportedOperationException();
     }
 }

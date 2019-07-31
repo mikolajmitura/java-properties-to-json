@@ -350,9 +350,9 @@ public final class PropertiesToJsonConverter {
         Properties properties = new Properties();
         try {
             properties.load(inputStream);
-            for(Map.Entry<Object, Object> property : properties.entrySet()) {
-                Object object = primitiveResolvers.getResolvedObject((String) property.getValue());
-                propertiesWithConvertedValues.put(property.getKey(), object);
+            for(String property : getAllKeysFromProperties(propertiesToMap(properties))) {
+                Object object = primitiveResolvers.getResolvedObject((String) properties.get(property));
+                propertiesWithConvertedValues.put(property, object);
             }
         } catch(IOException e) {
             throw new ReadInputException(e);
@@ -366,7 +366,7 @@ public final class PropertiesToJsonConverter {
                 .initializeFieldsInJson();
     }
 
-    private List<String> getAllKeysFromProperties(Map<String, Object> properties) {
+    private List<String> getAllKeysFromProperties(Map<String, ?> properties) {
         return propertyKeysOrderResolver.getKeysInExpectedOrder(properties);
     }
 
@@ -381,9 +381,9 @@ public final class PropertiesToJsonConverter {
 
     private Map<String, Object> stringValueMapToObjectValueMap(Map<String, String> properties) {
         Map<String, Object> map = new HashMap<>();
-        for(Map.Entry<String, String> property : properties.entrySet()) {
-            Object object = primitiveResolvers.getResolvedObject(property.getValue());
-            map.put(property.getKey(), object);
+        for(String property : getAllKeysFromProperties(properties)) {
+            Object object = primitiveResolvers.getResolvedObject(properties.get(property));
+            map.put(property, object);
         }
         return map;
     }

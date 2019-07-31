@@ -19,6 +19,15 @@ public class NumberJsonTypeResolver extends PrimitiveJsonTypeResolver<Number> {
 
     @Override
     public Number returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+        return convertToNumber(propertyValue);
+    }
+
+    @Override
+    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Number propertyValue) {
+        return new NumberJsonType(propertyValue);
+    }
+
+    public static Number convertToNumber(String propertyValue) {
         try {
             return getIntegerNumber(propertyValue);
         } catch (NumberFormatException exc) {
@@ -28,10 +37,5 @@ public class NumberJsonTypeResolver extends PrimitiveJsonTypeResolver<Number> {
         } catch (NumberFormatException exc) {
         }
         return null;
-    }
-
-    @Override
-    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Number propertyValue) {
-        return new NumberJsonType(propertyValue);
     }
 }

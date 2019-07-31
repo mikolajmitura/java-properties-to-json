@@ -14,7 +14,7 @@ public class PropertyKeysOrderResolverForTest extends PropertyKeysOrderResolver 
     }
 
     @Override
-    public List<String> getKeysInExpectedOrder(Map<String, Object> properties) {
+    public List<String> getKeysInExpectedOrder(Map<String, ?> properties) {
         for (String mockKey : mockKeys) {
             if (properties.get(mockKey) == null) {
                 throw new RuntimeException("cannot find key: " + mockKey + " in test keys indexing!");

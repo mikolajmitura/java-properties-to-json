@@ -13,7 +13,7 @@ import static java.util.Collections.singletonList;
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.Constants.SIMPLE_ARRAY_DELIMITER;
 import static pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver.hasJsonArraySignature;
-import static pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver.isValidJsonObject;
+import static pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver.isValidJsonObjectOrArray;
 
 public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Collection<?>> {
 
@@ -36,8 +36,9 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
 
     @Override
     public Collection<?> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
-        if(isSimpleArray(propertyValue) && !isValidJsonObject(propertyValue)) {
+        if(isSimpleArray(propertyValue) && !isValidJsonObjectOrArray(propertyValue)) {
 
+            // TODO only array with comma, not real json array from array from text?
             if(hasJsonArraySignature(propertyValue)) {
                 propertyValue = propertyValue
                         .replaceAll("]\\s*$", EMPTY_STRING)

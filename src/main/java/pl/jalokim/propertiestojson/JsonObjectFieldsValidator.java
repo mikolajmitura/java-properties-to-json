@@ -22,18 +22,24 @@ public class JsonObjectFieldsValidator {
             AbstractJsonType abstractJsonType = currentObjectJson.getJsonTypeByFieldName(currentPathMetaData.getFieldName());
             if(currentPathMetaData.isArrayField()) {
                 if(isArrayJson(abstractJsonType)) {
-                    ArrayJsonType jsonArray = (ArrayJsonType) abstractJsonType;
+                    ArrayJsonType jsonArray = currentObjectJson.getJsonArray(currentPathMetaData.getFieldName());
                     AbstractJsonType elementByDimArray = jsonArray.getElementByGivenDimIndexes(currentPathMetaData);
                     if(elementByDimArray != null) {
-                        throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), elementByDimArray, propertyKey);
+                        throwErrorWhenIsNotArray(currentPathMetaData, propertyKey, elementByDimArray);
                     }
                 } else {
                     String parentFullPath = currentPathMetaData.isRoot() ? EMPTY_STRING : currentPathMetaData.getParent().getCurrentFullPath() + NORMAL_DOT;
                     throw new CannotOverrideFieldException(parentFullPath + currentPathMetaData.getFieldName(), abstractJsonType, propertyKey);
                 }
             } else {
-                throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), abstractJsonType, propertyKey);
+                throwErrorWhenIsNotArray(currentPathMetaData, propertyKey, abstractJsonType);
             }
+        }
+    }
+
+    private static void throwErrorWhenIsNotArray(PathMetadata currentPathMetaData, String propertyKey, AbstractJsonType abstractJsonType) {
+        if (!isArrayJson(abstractJsonType)) {
+            throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), abstractJsonType, propertyKey);
         }
     }
 

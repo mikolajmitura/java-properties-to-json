@@ -1,38 +1,65 @@
 package pl.jalokim.propertiestojson.resolvers.primitives;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
+import pl.jalokim.propertiestojson.object.ArrayJsonType;
+import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
+import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
+import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
+import static pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver.convertToNumber;
 
 public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Object> {
 
-    private Gson gson = new Gson();
+    private final PrimitiveJsonTypesResolver primitiveJsonTypesResolver;
+    private final Gson gson = new Gson();
+    private final JsonParser jp = new JsonParser();
+
+    {
+        List<PrimitiveJsonTypeResolver> resolvers  = new ArrayList<>();
+        resolvers.add(new NumberJsonTypeResolver());
+        resolvers.add(new BooleanJsonTypeResolver());
+        resolvers.add(PropertiesToJsonConverter.STRING_RESOLVER);
+        primitiveJsonTypesResolver = new PrimitiveJsonTypesResolver(resolvers);
+    }
 
     @Override
     public Object returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
-        if (hasJsonObjectSignature(propertyValue) || hasJsonArraySignature(propertyValue)) {
+        if(hasJsonObjectSignature(propertyValue) || hasJsonArraySignature(propertyValue)) {
             try {
-                JsonParser jp = new JsonParser();
-                jp.parse(propertyValue);
-                return new ObjectFromTextJsonType(propertyValue);
-            } catch (Exception exception) {
+                return convertToAbstractJsonType(jp.parse(propertyValue));
+            } catch(Exception exception) {
                 return null;
             }
         }
         return null;
     }
 
-    public static boolean isValidJsonObject(String propertyValue) {
-        if (hasJsonObjectSignature(propertyValue)) {
+    public static boolean isValidJsonObjectOrArray(String propertyValue) {
+        if(hasJsonObjectSignature(propertyValue) || hasJsonArraySignature(propertyValue)) {
             JsonParser jp = new JsonParser();
-            jp.parse(propertyValue);
-            return true;
+            try {
+                jp.parse(propertyValue);
+                return true;
+            } catch(Exception ex) {
+                return false;
+            }
         }
         return false;
     }
@@ -59,25 +86,61 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
 
     @Override
     public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {
-        if (ObjectFromTextJsonType.class.isAssignableFrom(propertyValue.getClass())) {
-            return (ObjectFromTextJsonType) propertyValue;
+        if(ObjectJsonType.class.isAssignableFrom(propertyValue.getClass()) ||  ArrayJsonType.class.isAssignableFrom(propertyValue.getClass())) {
+            return (AbstractJsonType) propertyValue;
         }
-        return new ObjectFromTextJsonType(gson.toJson(propertyValue));
+        return convertToAbstractJsonType(jp.parse(gson.toJson(propertyValue)));
     }
 
-    // TODO maybe should be ObjectJsonType not wrapped json... but how???
-    // TODO test it...
-    public static class ObjectFromTextJsonType extends AbstractJsonType {
-
-        private String json;
-
-        private ObjectFromTextJsonType(String json) {
-            this.json = json;
+    private AbstractJsonType convertToAbstractJsonType(JsonElement someField) {
+        AbstractJsonType valueOfNextField = null;
+        if(someField.isJsonNull()) {
+            valueOfNextField = NULL_OBJECT;
         }
-
-        @Override
-        public String toStringJson() {
-            return json;
+        if(someField.isJsonObject()) {
+            valueOfNextField = createObjectJsonType(someField);
         }
+        if(someField.isJsonArray()) {
+            valueOfNextField = createArrayJsonType(someField);
+        }
+        if(someField.isJsonPrimitive()) {
+            JsonPrimitive jsonPrimitive = someField.getAsJsonPrimitive();
+            if(jsonPrimitive.isString()) {
+                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsString());
+            } else if(jsonPrimitive.isNumber()) {
+                String numberAsText = jsonPrimitive.getAsNumber().toString();
+                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(convertToNumber(numberAsText));
+            } else if(jsonPrimitive.isBoolean()) {
+                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsBoolean());
+            } else {
+                throw new JsonParseException("cannot get primitive value from" + jsonPrimitive);
+            }
+        }
+        if(valueOfNextField == null) {
+            throw new JsonParseException(format("valueOfNextField is null, why? problematic property key: %s, with value %s", primitiveJsonTypesResolver.getPropertiesKey(), someField));
+        }
+        return valueOfNextField;
+    }
+
+    private ObjectJsonType createObjectJsonType(JsonElement parsedJson) {
+        ObjectJsonType objectJsonType = new ObjectJsonType();
+        JsonObject asJsonObject = parsedJson.getAsJsonObject();
+        for(Map.Entry<String, JsonElement> entry : asJsonObject.entrySet()) {
+            JsonElement someField = entry.getValue();
+            AbstractJsonType valueOfNextField = convertToAbstractJsonType(someField);
+            objectJsonType.addField(entry.getKey(), valueOfNextField);
+        }
+        return objectJsonType;
+    }
+
+    private ArrayJsonType createArrayJsonType(JsonElement parsedJson) {
+        ArrayJsonType arrayJsonType = new ArrayJsonType();
+        JsonArray asJsonArray = parsedJson.getAsJsonArray();
+        int index = 0;
+        for(JsonElement element : asJsonArray) {
+            arrayJsonType.addElement(index, convertToAbstractJsonType(element));
+            index++;
+        }
+        return arrayJsonType;
     }
 }
