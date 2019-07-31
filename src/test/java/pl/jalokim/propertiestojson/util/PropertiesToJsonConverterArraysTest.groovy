@@ -210,15 +210,22 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
                 "object.test[11][4]",
+                "object.test[11][5]",
                 "object.test[11]",
                 "test")
         def properties = getOverrideArraysProperties()
         properties.put("object.test[11][4]", "[\"next_value\", 12, true]")
+        properties.put("object.test[11][5]", "{\"field\":\"test\", \"field2\": \"test_2\"}")
         String json = converter.convertToJson(properties)
         def jsonObject = jsonSlurper.parseText(json)
         then:
-        jsonObject.object.test[11] == [1, 2, 3, 4, ["next_value", 12, true]]
+        jsonObject.object.test[11][0] == 1
+        jsonObject.object.test[11][1] == 2
+        jsonObject.object.test[11][2] == 3
+        jsonObject.object.test[11][3] == 4
         jsonObject.object.test[11][4] == ["next_value", 12, true]
+        jsonObject.object.test[11][5].field == "test"
+        jsonObject.object.test[11][5].field2 == "test_2"
     }
 
     private Map<String, String> getOverrideArraysProperties() {
