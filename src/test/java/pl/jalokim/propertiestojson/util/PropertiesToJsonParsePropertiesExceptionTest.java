@@ -137,7 +137,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
     }
 
     @Test
-    public void throwWhenCannotOverrideArrayElementByArray() {
+    public void throwWhenCannotMergeObjectAsArrayElementWithArray() {
         //then
         expectedEx.expect(CannotOverrideFieldException.class);
         String expectedMsg = new CannotOverrideFieldException("some.someArray[0]", "{\"field\":\"elementFieldValue\"}", "some.someArray[0]").getMessage();
@@ -145,6 +145,20 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         //given
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
         setUpMockPickupKeysOrder(converter, "some.someArray[0].field", "some.someArray[0]");
+        //when
+        String s = converter.convertToJson(addWrongParam(initProperties(), "some.someArray[0]", "[1, 2, 3]"));
+        System.out.println(s);
+    }
+
+    @Test
+    public void throwWhenCannotOverrideArrayAsArrayElementByObject() {
+        //then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[0]", "[1,2,3]", "some.someArray[0].field").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[0]", "some.someArray[0].field");
         //when
         String s = converter.convertToJson(addWrongParam(initProperties(), "some.someArray[0]", "[1, 2, 3]"));
         System.out.println(s);

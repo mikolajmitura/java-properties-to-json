@@ -67,7 +67,7 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
         ArrayJsonType arrayJsonTypeObject = new ArrayJsonType();
         ObjectJsonType nextObjectJsonType = new ObjectJsonType();
         arrayJsonTypeObject.addElement(currentPathMetaData.getPropertyArrayHelper(), nextObjectJsonType);
-        currentObjectJsonType.addField(currentPathMetaData.getFieldName(), arrayJsonTypeObject);
+        currentObjectJsonType.addField(currentPathMetaData.getFieldName(), arrayJsonTypeObject, currentPathMetaData);
         currentObjectJsonType = nextObjectJsonType;
     }
 }

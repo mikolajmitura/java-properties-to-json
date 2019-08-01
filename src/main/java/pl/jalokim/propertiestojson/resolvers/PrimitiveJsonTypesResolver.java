@@ -34,6 +34,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     }
 
     private void addPrimitiveFieldWhenIsValid(PathMetadata currentPathMetaData) {
+        currentPathMetaData.setValue(properties.get(propertyKey));
         JsonObjectFieldsValidator.checkThatFieldCanBeSet(currentObjectJsonType, currentPathMetaData, propertyKey);
         addPrimitiveFieldToCurrentJsonObject(currentPathMetaData);
     }
@@ -57,7 +58,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
                     throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), currentArrayInObject, propertyKey);
                 }
             } else {
-                currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers));
+                currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers), currentPathMetaData);
             }
         }
     }
@@ -104,7 +105,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     private void createArrayAndAddElement(PathMetadata currentPathMetaData, Object propertyValue) {
         ArrayJsonType arrayJsonTypeObject = new ArrayJsonType();
         addElementToArray(propertyValue, currentPathMetaData.getPropertyArrayHelper(), arrayJsonTypeObject);
-        currentObjectJsonType.addField(currentPathMetaData.getFieldName(), arrayJsonTypeObject);
+        currentObjectJsonType.addField(currentPathMetaData.getFieldName(), arrayJsonTypeObject, currentPathMetaData);
     }
 
     private void fetchArrayAndAddElement(PathMetadata currentPathMetaData, Object propertyValue) {

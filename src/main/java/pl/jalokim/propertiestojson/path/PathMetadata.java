@@ -14,11 +14,13 @@ public class PathMetadata {
 
     private static final String WORD_PATTERN = "(.)*";
 
+    private final String originalPropertyKey;
     private PathMetadata parent;
     private String fieldName;
     private String originalFieldName;
     private PathMetadata child;
     private PropertyArrayHelper propertyArrayHelper;
+    private Object value;
 
     public boolean isLeaf() {
         return child == null;
@@ -34,7 +36,7 @@ public class PathMetadata {
 
     public PathMetadata getLeaf() {
         PathMetadata current = this;
-        while(current.getChild() != null) {
+        while (current.getChild() != null) {
             current = current.getChild();
         }
         return current;
@@ -48,13 +50,20 @@ public class PathMetadata {
         }
     }
 
+    public void setValue(Object value) {
+        if (!isLeaf()) {
+            throw new RuntimeException("Cannot set value for not leaf: " + getCurrentFullPath());
+        }
+        this.value = value;
+    }
+
     public String getOriginalPropertyKey() {
         return getLeaf().getCurrentFullPath();
     }
 
     public PathMetadata getRoot() {
         PathMetadata current = this;
-        while(current.getParent() != null) {
+        while (current.getParent() != null) {
             current = current.getParent();
         }
         return current;
@@ -63,6 +72,7 @@ public class PathMetadata {
     @Override
     public String toString() {
         return "field='" + fieldName + '\'' +
+               ", value=" + value +
                ", fullPath='" + getCurrentFullPath() + '}';
     }
 

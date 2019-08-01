@@ -18,13 +18,13 @@ public class ObjectJsonTypeResolver extends JsonTypeResolver {
         if (currentObjectJsonType.containsField(currentPathMetaData.getFieldName())) {
             fetchJsonObjectWhenIsNotPrimitive(currentPathMetaData);
         } else {
-            createNewJsonObjectAndAssignToCurrent(currentPathMetaData.getFieldName());
+            createNewJsonObjectAndAssignToCurrent(currentPathMetaData);
         }
     }
 
-    private void createNewJsonObjectAndAssignToCurrent(String field) {
+    private void createNewJsonObjectAndAssignToCurrent(PathMetadata currentPathMetaData) {
         ObjectJsonType nextObjectJsonType = new ObjectJsonType();
-        currentObjectJsonType.addField(field, nextObjectJsonType);
+        currentObjectJsonType.addField(currentPathMetaData.getFieldName(), nextObjectJsonType, currentPathMetaData);
         currentObjectJsonType = nextObjectJsonType;
     }
 

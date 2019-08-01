@@ -1,11 +1,12 @@
 package pl.jalokim.propertiestojson.object;
 
+import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.util.StringToJsonStringWrapper;
+import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
 import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
@@ -17,13 +18,16 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
 
     private Map<String, AbstractJsonType> fields = new HashMap<>();
 
-    public void addField(final String field, final AbstractJsonType object) {
+    public void addField(final String field, final AbstractJsonType object, PathMetadata currentPathMetaData) {
         AbstractJsonType oldFieldValue = fields.get(field);
-        if(oldFieldValue != null) {
-            if(oldFieldValue instanceof MergableObject) {
+        if (oldFieldValue != null) {
+            if (oldFieldValue instanceof MergableObject && object instanceof MergableObject) {
                 mergeObjectIfPossible(oldFieldValue, object);
+            } else {
+                throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(),
+                                                       oldFieldValue,
+                                                       currentPathMetaData.getOriginalPropertyKey());
             }
-            throw new RuntimeException(format("Cannot override field: '%s' in object %s", field, this));
         }
 
         fields.put(field, object);
@@ -46,7 +50,7 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
         StringBuilder result = new StringBuilder().append(JSON_OBJECT_START);
         int index = 0;
         int lastIndex = getLastIndex(fields.keySet());
-        for(String fieldName : fields.keySet()) {
+        for (String fieldName : fields.keySet()) {
             AbstractJsonType object = fields.get(fieldName);
             String lastSign = index == lastIndex ? EMPTY_STRING : NEW_LINE_SIGN;
             result.append(StringToJsonStringWrapper.wrap(fieldName))

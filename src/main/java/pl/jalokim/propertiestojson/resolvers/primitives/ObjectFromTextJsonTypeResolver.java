@@ -128,7 +128,7 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
         for(Map.Entry<String, JsonElement> entry : asJsonObject.entrySet()) {
             JsonElement someField = entry.getValue();
             AbstractJsonType valueOfNextField = convertToAbstractJsonType(someField);
-            objectJsonType.addField(entry.getKey(), valueOfNextField);
+            objectJsonType.addField(entry.getKey(), valueOfNextField, null);
         }
         return objectJsonType;
     }

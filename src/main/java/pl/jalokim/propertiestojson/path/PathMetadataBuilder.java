@@ -11,7 +11,7 @@ public class PathMetadataBuilder {
         for(int index = 0; index < fields.length; index++) {
             String field = fields[index];
 
-            PathMetadata nextPathMetadata = new PathMetadata();
+            PathMetadata nextPathMetadata = new PathMetadata(propertyKey);
             nextPathMetadata.setParent(currentPathMetadata);
             nextPathMetadata.setFieldName(field);
             nextPathMetadata.setOriginalFieldName(field);

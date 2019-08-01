@@ -1,6 +1,6 @@
 package pl.jalokim.propertiestojson.object;
 
-import static java.lang.String.format;
+import pl.jalokim.propertiestojson.util.exception.MergeObjectException;
 
 public interface MergableObject<T extends AbstractJsonType> {
     void merge(T mergeWith);
@@ -11,9 +11,7 @@ public interface MergableObject<T extends AbstractJsonType> {
             oldObject.merge(elementToAdd);
         } else {
             // TODO test this
-            throw new RuntimeException(
-                    format("Cannot merge objects with different types, old object %s%n new object: %s",
-                           oldObject, elementToAdd));
+            throw new MergeObjectException(oldJsonElement, elementToAdd);
         }
     }
 }

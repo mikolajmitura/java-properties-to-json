@@ -3,6 +3,7 @@ package pl.jalokim.propertiestojson;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.JsonNullReferenceType;
+import pl.jalokim.propertiestojson.object.MergableObject;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.object.PrimitiveJsonType;
 import pl.jalokim.propertiestojson.object.StringJsonType;
@@ -25,21 +26,21 @@ public class JsonObjectFieldsValidator {
                     ArrayJsonType jsonArray = currentObjectJson.getJsonArray(currentPathMetaData.getFieldName());
                     AbstractJsonType elementByDimArray = jsonArray.getElementByGivenDimIndexes(currentPathMetaData);
                     if(elementByDimArray != null) {
-                        throwErrorWhenIsNotArray(currentPathMetaData, propertyKey, elementByDimArray);
+                        throwErrorWhenCannotMerge(currentPathMetaData, propertyKey, elementByDimArray);
                     }
                 } else {
                     String parentFullPath = currentPathMetaData.isRoot() ? EMPTY_STRING : currentPathMetaData.getParent().getCurrentFullPath() + NORMAL_DOT;
                     throw new CannotOverrideFieldException(parentFullPath + currentPathMetaData.getFieldName(), abstractJsonType, propertyKey);
                 }
             } else {
-                throwErrorWhenIsNotArray(currentPathMetaData, propertyKey, abstractJsonType);
+                throwErrorWhenCannotMerge(currentPathMetaData, propertyKey, abstractJsonType);
             }
         }
     }
 
-    private static void throwErrorWhenIsNotArray(PathMetadata currentPathMetaData, String propertyKey, AbstractJsonType abstractJsonType) {
-        if (!isArrayJson(abstractJsonType)) {
-            throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), abstractJsonType, propertyKey);
+    private static void throwErrorWhenCannotMerge(PathMetadata currentPathMetaData, String propertyKey, AbstractJsonType oldJsonValue) {
+        if (!isMergableJsonType(oldJsonValue) ) {
+            throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), oldJsonValue, propertyKey);
         }
     }
 
@@ -96,5 +97,9 @@ public class JsonObjectFieldsValidator {
 
     public static boolean isArrayJson(AbstractJsonType jsonType) {
         return ArrayJsonType.class.isAssignableFrom(jsonType.getClass());
+    }
+
+    public static boolean isMergableJsonType(Object jsonType) {
+        return MergableObject.class.isAssignableFrom(jsonType.getClass());
     }
 }

@@ -46,12 +46,15 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
             maxIndex = index;
         }
         rewriteArrayWhenIsFull(index);
-        if(elements[index] != null) {
-            if(elements[index] instanceof MergableObject) {
-                mergeObjectIfPossible(elements[index], elementToAdd);
+        AbstractJsonType oldObject = elements[index];
+
+        if(oldObject != null) {
+            if(oldObject instanceof MergableObject && elementToAdd instanceof MergableObject) {
+                mergeObjectIfPossible(oldObject, elementToAdd);
             } else {
                 // TODO test this
-                throw new CannotOverrideFieldException(format("Cannot override element in array %s, at index: %s with value: %s", this, index, elementToAdd));
+                // throw new CannotOverrideFieldException(currentPathMetadata.getOriginalFieldName(), oldObject, currentPathMetadata.getOriginalPropertyKey());
+                throw new RuntimeException(format("Cannot override element in array %s, at index: %s with value: %s", this, index, elementToAdd));
             }
         } else {
             elements[index] = elementToAdd;
