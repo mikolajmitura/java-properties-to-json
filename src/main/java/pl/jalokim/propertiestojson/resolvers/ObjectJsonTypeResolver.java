@@ -29,7 +29,7 @@ public class ObjectJsonTypeResolver extends JsonTypeResolver {
     }
 
     private void fetchJsonObjectWhenIsNotPrimitive(PathMetadata currentPathMetaData) {
-        AbstractJsonType jsonType = currentObjectJsonType.getJsonTypeByFieldName(currentPathMetaData.getFieldName());
+        AbstractJsonType jsonType = currentObjectJsonType.getField(currentPathMetaData.getFieldName());
         JsonObjectFieldsValidator.checkEarlierWasJsonObject(propertyKey, currentPathMetaData, jsonType);
         currentObjectJsonType = (ObjectJsonType) jsonType;
     }

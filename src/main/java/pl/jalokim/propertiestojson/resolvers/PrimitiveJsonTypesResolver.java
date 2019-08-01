@@ -2,7 +2,6 @@ package pl.jalokim.propertiestojson.resolvers;
 
 import com.google.common.collect.ImmutableList;
 import pl.jalokim.propertiestojson.JsonObjectFieldsValidator;
-import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
@@ -45,7 +44,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         if (currentPathMetaData.isArrayField()) {
             addFieldToArray(currentPathMetaData, propertyValue);
         } else {
-            if (currentObjectJsonType.containsField(field) && isArrayJson(currentObjectJsonType.getJsonTypeByFieldName(field))) {
+            if (currentObjectJsonType.containsField(field) && isArrayJson(currentObjectJsonType.getField(field))) {
                 AbstractJsonType abstractJsonType = resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers);
                 ArrayJsonType currentArrayInObject = currentObjectJsonType.getJsonArray(field);
                 if (isArrayJson(abstractJsonType)) {

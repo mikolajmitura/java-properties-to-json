@@ -1,9 +1,7 @@
 package pl.jalokim.propertiestojson.util
 
 import groovy.json.JsonSlurper
-import org.junit.Test
 import pl.jalokim.propertiestojson.helper.PropertyKeysOrderResolverForTest
-import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException
 import spock.lang.Specification
 
 import static pl.jalokim.propertiestojson.util.PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOrder
@@ -16,7 +14,6 @@ class PropertiesToJsonConverterMixinObjectPropertiesTest extends Specification {
 
     def jsonSlurper = new JsonSlurper()
 
-    // TODO to impl
     def "can merge json object with json object from text(from primitive value)"() {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
@@ -76,7 +73,6 @@ class PropertiesToJsonConverterMixinObjectPropertiesTest extends Specification {
         someElement.someObject.nextSimpField == 12.123
     }
 
-    // TODO to impl
     def "can merge json object from text(from primitive value) with json object "() {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()

@@ -27,7 +27,7 @@ public abstract class JsonTypeResolver {
 	}
 
 	protected ArrayJsonType getArrayJsonWhenIsValid(PathMetadata currentPathMetaData) {
-        AbstractJsonType jsonType = currentObjectJsonType.getJsonTypeByFieldName(currentPathMetaData.getFieldName());
+        AbstractJsonType jsonType = currentObjectJsonType.getField(currentPathMetaData.getFieldName());
         checkEarlierWasArrayJson(propertyKey, currentPathMetaData, jsonType);
         return (ArrayJsonType) jsonType;
     }

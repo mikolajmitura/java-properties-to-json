@@ -20,7 +20,7 @@ public class JsonObjectFieldsValidator {
 
     public static void checkThatFieldCanBeSet(ObjectJsonType currentObjectJson, PathMetadata currentPathMetaData, String propertyKey) {
         if(currentObjectJson.containsField(currentPathMetaData.getFieldName())) {
-            AbstractJsonType abstractJsonType = currentObjectJson.getJsonTypeByFieldName(currentPathMetaData.getFieldName());
+            AbstractJsonType abstractJsonType = currentObjectJson.getField(currentPathMetaData.getFieldName());
             if(currentPathMetaData.isArrayField()) {
                 if(isArrayJson(abstractJsonType)) {
                     ArrayJsonType jsonArray = currentObjectJson.getJsonArray(currentPathMetaData.getFieldName());

@@ -20,24 +20,24 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
 
     public void addField(final String field, final AbstractJsonType object, PathMetadata currentPathMetaData) {
         AbstractJsonType oldFieldValue = fields.get(field);
-        if (oldFieldValue != null) {
-            if (oldFieldValue instanceof MergableObject && object instanceof MergableObject) {
+        if(oldFieldValue != null) {
+            if(oldFieldValue instanceof MergableObject && object instanceof MergableObject) {
                 mergeObjectIfPossible(oldFieldValue, object, currentPathMetaData);
             } else {
                 throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(),
                                                        oldFieldValue,
                                                        currentPathMetaData.getOriginalPropertyKey());
             }
+        } else {
+            fields.put(field, object);
         }
-
-        fields.put(field, object);
     }
 
     public boolean containsField(String field) {
         return fields.containsKey(field);
     }
 
-    public AbstractJsonType getJsonTypeByFieldName(String field) {
+    public AbstractJsonType getField(String field) {
         return fields.get(field);
     }
 
@@ -50,7 +50,7 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
         StringBuilder result = new StringBuilder().append(JSON_OBJECT_START);
         int index = 0;
         int lastIndex = getLastIndex(fields.keySet());
-        for (String fieldName : fields.keySet()) {
+        for(String fieldName : fields.keySet()) {
             AbstractJsonType object = fields.get(fieldName);
             String lastSign = index == lastIndex ? EMPTY_STRING : NEW_LINE_SIGN;
             result.append(StringToJsonStringWrapper.wrap(fieldName))
@@ -65,6 +65,8 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
 
     @Override
     public void merge(ObjectJsonType mergeWith, PathMetadata currentPathMetadata) {
-        throw new UnsupportedOperationException();
+        for(String fieldName : mergeWith.fields.keySet()) {
+            addField(fieldName, mergeWith.getField(fieldName), currentPathMetadata);
+        }
     }
 }
