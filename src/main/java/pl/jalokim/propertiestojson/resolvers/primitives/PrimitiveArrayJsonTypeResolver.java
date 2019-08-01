@@ -3,6 +3,7 @@ package pl.jalokim.propertiestojson.resolvers.primitives;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
+import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +16,11 @@ import static pl.jalokim.propertiestojson.Constants.SIMPLE_ARRAY_DELIMITER;
 import static pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver.hasJsonArraySignature;
 import static pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver.isValidJsonObjectOrArray;
 
+/**
+ * When given text contains ',' or text starts with '[' and ends with ']' in text then it tries split by comma and remove '[]' signs and then
+ * every separated text tries convert to json value.
+ * It will try resolve every types by provided resolvers in {@link PropertiesToJsonConverter(PrimitiveJsonTypeResolver...)}
+ */
 public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Collection<?>> {
 
     private final String arrayElementSeparator;
@@ -38,7 +44,6 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
     public Collection<?> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
         if(isSimpleArray(propertyValue) && !isValidJsonObjectOrArray(propertyValue)) {
 
-            // TODO only array with comma, not real json array from array from text?
             if(hasJsonArraySignature(propertyValue)) {
                 propertyValue = propertyValue
                         .replaceAll("]\\s*$", EMPTY_STRING)
@@ -46,9 +51,7 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
                 String[] elements = propertyValue.split(arrayElementSeparator);
                 List<String> clearedElements = new ArrayList<>();
                 for(String element : elements) {
-                    element = element.trim()
-                                     .replaceAll("^\\s*\"\\s*", EMPTY_STRING)
-                                     .replaceAll("\"\\s*$", EMPTY_STRING);
+                    element = element.trim();
                     clearedElements.add(element);
                 }
                 propertyValue = join(arrayElementSeparator, clearedElements);

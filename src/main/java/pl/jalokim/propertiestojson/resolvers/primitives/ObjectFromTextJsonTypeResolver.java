@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
@@ -25,6 +24,10 @@ import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
 import static pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver.convertToNumber;
 
+/**
+ * When given text contains parsable json value, json object or json array then try build instance of ObjectJsonType or ArrayJsonType
+ * TODO when will invoke  public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {????
+ */
 public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Object> {
 
     private final PrimitiveJsonTypesResolver primitiveJsonTypesResolver;
@@ -112,12 +115,7 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
                 valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(convertToNumber(numberAsText));
             } else if(jsonPrimitive.isBoolean()) {
                 valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsBoolean());
-            } else {
-                throw new JsonParseException("cannot get primitive value from" + jsonPrimitive);
             }
-        }
-        if(valueOfNextField == null) {
-            throw new JsonParseException(format("valueOfNextField is null, why? problematic property key: %s, with value %s", primitiveJsonTypesResolver.getPropertiesKey(), someField));
         }
         return valueOfNextField;
     }
