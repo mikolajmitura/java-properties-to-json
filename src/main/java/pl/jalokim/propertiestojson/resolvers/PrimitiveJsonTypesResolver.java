@@ -52,7 +52,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
                     ArrayJsonType newArray = (ArrayJsonType) abstractJsonType;
                     List<AbstractJsonType> abstractJsonTypes = newArray.convertToListWithoutRealNull();
                     for(int i = 0; i < abstractJsonTypes.size(); i++) {
-                        currentArrayInObject.addElement(i, abstractJsonTypes.get(i));
+                        currentArrayInObject.addElement(i, abstractJsonTypes.get(i), currentPathMetaData);
                     }
                 } else {
                     throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), currentArrayInObject, propertyKey);
@@ -104,19 +104,18 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     private void createArrayAndAddElement(PathMetadata currentPathMetaData, Object propertyValue) {
         ArrayJsonType arrayJsonTypeObject = new ArrayJsonType();
-        addElementToArray(propertyValue, currentPathMetaData.getPropertyArrayHelper(), arrayJsonTypeObject);
+        addElementToArray(propertyValue, currentPathMetaData, arrayJsonTypeObject);
         currentObjectJsonType.addField(currentPathMetaData.getFieldName(), arrayJsonTypeObject, currentPathMetaData);
     }
 
     private void fetchArrayAndAddElement(PathMetadata currentPathMetaData, Object propertyValue) {
-        PropertyArrayHelper propertyArrayHelper = currentPathMetaData.getPropertyArrayHelper();
         ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(currentPathMetaData);
         checkThatGivenArrayHasExpectedStructure(propertyKey, currentPathMetaData, arrayJsonType);
-        addElementToArray(propertyValue, propertyArrayHelper, arrayJsonType);
+        addElementToArray(propertyValue, currentPathMetaData, arrayJsonType);
     }
 
-    private void addElementToArray(Object propertyValue, PropertyArrayHelper propertyArrayHelper, ArrayJsonType arrayJsonTypeObject) {
-        arrayJsonTypeObject.addElement(propertyArrayHelper, resolvePrimitiveTypeAndReturn(propertyValue));
+    private void addElementToArray(Object propertyValue, PathMetadata currentPathMetaData, ArrayJsonType arrayJsonTypeObject) {
+        arrayJsonTypeObject.addElement(currentPathMetaData.getPropertyArrayHelper(), resolvePrimitiveTypeAndReturn(propertyValue), currentPathMetaData);
     }
 
 }

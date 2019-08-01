@@ -31,17 +31,17 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
     public ArrayJsonType() {
     }
 
-    public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements) {
+    public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements, PathMetadata currentPathMetadata) {
         Iterator<?> iterator = elements.iterator();
         int index = 0;
         while(iterator.hasNext()) {
             Object element = iterator.next();
-            addElement(index, primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(element));
+            addElement(index, primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(element), currentPathMetadata);
             index++;
         }
     }
 
-    public void addElement(int index, AbstractJsonType elementToAdd) {
+    public void addElement(int index, AbstractJsonType elementToAdd, PathMetadata currentPathMetadata) {
         if(maxIndex < index) {
             maxIndex = index;
         }
@@ -50,31 +50,30 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
 
         if(oldObject != null) {
             if(oldObject instanceof MergableObject && elementToAdd instanceof MergableObject) {
-                mergeObjectIfPossible(oldObject, elementToAdd);
+                mergeObjectIfPossible(oldObject, elementToAdd, currentPathMetadata);
             } else {
                 // TODO test this
-                // throw new CannotOverrideFieldException(currentPathMetadata.getOriginalFieldName(), oldObject, currentPathMetadata.getOriginalPropertyKey());
-                throw new RuntimeException(format("Cannot override element in array %s, at index: %s with value: %s", this, index, elementToAdd));
+                 throw new CannotOverrideFieldException(currentPathMetadata.getOriginalFieldName(), oldObject, currentPathMetadata.getOriginalPropertyKey());
             }
         } else {
             elements[index] = elementToAdd;
         }
     }
 
-    public void addElement(PropertyArrayHelper propertyArrayHelper, AbstractJsonType elementToAdd) {
+    public void addElement(PropertyArrayHelper propertyArrayHelper, AbstractJsonType elementToAdd, PathMetadata currentPathMetadata) {
         List<Integer> indexes = propertyArrayHelper.getDimensionalIndexes();
         int size = propertyArrayHelper.getDimensionalIndexes().size();
         ArrayJsonType currentArray = this;
         for(int index = 0; index < size; index++) {
             if(isLastIndex(propertyArrayHelper.getDimensionalIndexes(), index)) {
-                currentArray.addElement(indexes.get(index), elementToAdd);
+                currentArray.addElement(indexes.get(index), elementToAdd, currentPathMetadata);
             } else {
-                currentArray = createOrGetNextDimensionOfArray(currentArray, indexes, index);
+                currentArray = createOrGetNextDimensionOfArray(currentArray, indexes, index, currentPathMetadata);
             }
         }
     }
 
-    public static ArrayJsonType createOrGetNextDimensionOfArray(ArrayJsonType currentArray, List<Integer> indexes, int index) {
+    public static ArrayJsonType createOrGetNextDimensionOfArray(ArrayJsonType currentArray, List<Integer> indexes, int index, PathMetadata currentPathMetadata) {
         if(currentArray.existElementByGivenIndex(indexes.get(index))) {
             AbstractJsonType element = currentArray.getElement(indexes.get(index));
             if(element instanceof ArrayJsonType) {
@@ -89,7 +88,7 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
             }
         } else {
             ArrayJsonType newArray = new ArrayJsonType();
-            currentArray.addElement(indexes.get(index), newArray);
+            currentArray.addElement(indexes.get(index), newArray, currentPathMetadata);
             return newArray;
         }
     }
@@ -183,10 +182,10 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
     }
 
     @Override
-    public void merge(ArrayJsonType mergeWith) {
+    public void merge(ArrayJsonType mergeWith, PathMetadata currentPathMetadata) {
         int index = 0;
         for(AbstractJsonType abstractJsonType : mergeWith.convertToListWithRealNull()) {
-            addElement(index, abstractJsonType);
+            addElement(index, abstractJsonType, currentPathMetadata);
             index++;
         }
     }

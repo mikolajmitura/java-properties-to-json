@@ -22,7 +22,7 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
         AbstractJsonType oldFieldValue = fields.get(field);
         if (oldFieldValue != null) {
             if (oldFieldValue instanceof MergableObject && object instanceof MergableObject) {
-                mergeObjectIfPossible(oldFieldValue, object);
+                mergeObjectIfPossible(oldFieldValue, object, currentPathMetaData);
             } else {
                 throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(),
                                                        oldFieldValue,
@@ -64,7 +64,7 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
     }
 
     @Override
-    public void merge(ObjectJsonType mergeWith) {
+    public void merge(ObjectJsonType mergeWith, PathMetadata currentPathMetadata) {
         throw new UnsupportedOperationException();
     }
 }

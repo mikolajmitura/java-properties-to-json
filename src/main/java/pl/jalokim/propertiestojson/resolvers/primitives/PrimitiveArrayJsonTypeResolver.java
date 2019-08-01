@@ -76,8 +76,8 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
     }
 
     @Override
-    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> propertyValue) {
-        return new ArrayJsonType(primitiveJsonTypesResolver, propertyValue);
+    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements) {
+        return new ArrayJsonType(primitiveJsonTypesResolver, elements, null);
     }
 
     @Override

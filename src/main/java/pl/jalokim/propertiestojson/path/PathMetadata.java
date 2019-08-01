@@ -58,7 +58,7 @@ public class PathMetadata {
     }
 
     public String getOriginalPropertyKey() {
-        return getLeaf().getCurrentFullPath();
+        return originalPropertyKey;
     }
 
     public PathMetadata getRoot() {

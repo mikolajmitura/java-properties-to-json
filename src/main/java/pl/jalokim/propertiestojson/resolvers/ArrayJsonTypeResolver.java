@@ -43,17 +43,17 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
                 if(currentArray.existElementByGivenIndex(lastDimIndex)) {
                     fetchJsonObjectWhenIsValid(currentPathMetaData, lastDimIndex, currentArray);
                 } else {
-                    createJsonObjectAndAddToArray(lastDimIndex, currentArray);
+                    createJsonObjectAndAddToArray(lastDimIndex, currentArray, currentPathMetaData);
                 }
             } else {
-                currentArray = createOrGetNextDimensionOfArray(currentArray, dimIndexes, index);
+                currentArray = createOrGetNextDimensionOfArray(currentArray, dimIndexes, index, currentPathMetaData);
             }
         }
     }
 
-    private void createJsonObjectAndAddToArray(int index, ArrayJsonType arrayJsonType) {
+    private void createJsonObjectAndAddToArray(int index, ArrayJsonType arrayJsonType, PathMetadata currentPathMetaData) {
         ObjectJsonType nextObjectJsonType = new ObjectJsonType();
-        arrayJsonType.addElement(index, nextObjectJsonType);
+        arrayJsonType.addElement(index, nextObjectJsonType, currentPathMetaData);
         currentObjectJsonType = nextObjectJsonType;
     }
 
@@ -66,7 +66,7 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
     private void createArrayAndAddElement(PathMetadata currentPathMetaData) {
         ArrayJsonType arrayJsonTypeObject = new ArrayJsonType();
         ObjectJsonType nextObjectJsonType = new ObjectJsonType();
-        arrayJsonTypeObject.addElement(currentPathMetaData.getPropertyArrayHelper(), nextObjectJsonType);
+        arrayJsonTypeObject.addElement(currentPathMetaData.getPropertyArrayHelper(), nextObjectJsonType, currentPathMetaData);
         currentObjectJsonType.addField(currentPathMetaData.getFieldName(), arrayJsonTypeObject, currentPathMetaData);
         currentObjectJsonType = nextObjectJsonType;
     }

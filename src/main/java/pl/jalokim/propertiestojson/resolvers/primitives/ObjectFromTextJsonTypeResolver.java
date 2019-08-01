@@ -138,7 +138,7 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
         JsonArray asJsonArray = parsedJson.getAsJsonArray();
         int index = 0;
         for(JsonElement element : asJsonArray) {
-            arrayJsonType.addElement(index, convertToAbstractJsonType(element));
+            arrayJsonType.addElement(index, convertToAbstractJsonType(element), null);
             index++;
         }
         return arrayJsonType;

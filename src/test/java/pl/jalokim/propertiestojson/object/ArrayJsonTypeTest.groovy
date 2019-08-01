@@ -8,7 +8,7 @@ class ArrayJsonTypeTest extends Specification {
         given:
         ArrayJsonType arrayJsonType = new ArrayJsonType()
         when:
-        arrayJsonType.addElement(200, new StringJsonType("test"))
+        arrayJsonType.addElement(200, new StringJsonType("test"), null)
         then:
         arrayJsonType.getElement(200).toStringJson() == "\"test\""
     }

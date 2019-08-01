@@ -4,15 +4,19 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import pl.jalokim.propertiestojson.helper.PropertyKeysOrderResolverForTest;
+import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
+import pl.jalokim.propertiestojson.util.exception.MergeObjectException;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import static junit.framework.TestCase.fail;
+import static org.assertj.core.api.Assertions.assertThat;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING_RESOLVER_AS_NOT_LAST;
 
@@ -123,31 +127,21 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
     }
 
     @Test
-    public void throwWhenCannotOverrideArrayElementByObjectType() {
-        //then
-        expectedEx.expect(CannotOverrideFieldException.class);
-        String expectedMsg = new CannotOverrideFieldException("some.someArray[0]", "{\"field\":\"elementFieldValue\"}", "some.someArray[0]").getMessage();
-        expectedEx.expectMessage(expectedMsg);
-        //given
-        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
-        setUpMockPickupKeysOrder(converter, "some.someArray[0].field", "some.someArray[0]");
-        //when
-        String s = converter.convertToJson(addWrongParam(initProperties(), "some.someArray[0]", "{\"someField\": \"someValue\"}"));
-        System.out.println(s);
-    }
-
-    @Test
     public void throwWhenCannotMergeObjectAsArrayElementWithArray() {
-        //then
-        expectedEx.expect(CannotOverrideFieldException.class);
-        String expectedMsg = new CannotOverrideFieldException("some.someArray[0]", "{\"field\":\"elementFieldValue\"}", "some.someArray[0]").getMessage();
-        expectedEx.expectMessage(expectedMsg);
-        //given
-        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
-        setUpMockPickupKeysOrder(converter, "some.someArray[0].field", "some.someArray[0]");
-        //when
-        String s = converter.convertToJson(addWrongParam(initProperties(), "some.someArray[0]", "[1, 2, 3]"));
-        System.out.println(s);
+        try {
+            //given
+            PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+            setUpMockPickupKeysOrder(converter, "some.someArray[0].field", "some.someArray[0]");
+            //when
+            converter.convertToJson(addWrongParam(initProperties(), "some.someArray[0]", "[1, 2, 3]"));
+            fail();
+        } catch (MergeObjectException ex) {
+            //then
+            PathMetadata pathMetadata = new PathMetadata("some.someArray[0]");
+            pathMetadata.setValue("[1,2,3]");
+            String expectedMsg = new MergeObjectException("{\"field\":\"elementFieldValue\"}", "[1,2,3]", pathMetadata).getMessage();
+            assertThat(expectedMsg).isEqualTo(ex.getMessage());
+        }
     }
 
     @Test
