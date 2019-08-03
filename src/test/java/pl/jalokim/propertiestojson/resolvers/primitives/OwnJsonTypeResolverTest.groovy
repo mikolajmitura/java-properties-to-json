@@ -62,10 +62,44 @@ class OwnJsonTypeResolverTest extends Specification {
         jsonObject.object.number == "12"
     }
 
+    def "throw exception while will not convert deprecated property key during process simple text in OwnBeanPrimitiveJsonTypeResolver"() {
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
+                new OwnBeanPrimitiveJsonTypeResolver()
+        )
+
+        Map<String, String> properties = new HashMap<>()
+        properties.put("deprecated.one", "12")
+
+        converter.convertToJson(properties)
+        then:
+        RuntimeException ex = thrown()
+        ex.getMessage() == "property: deprecated.one is not supported!"
+    }
+
+    def "throw exception while will not convert deprecated property key during process OwnBean"() {
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
+                new OwnBeanPrimitiveJsonTypeResolver()
+        )
+
+        Properties properties = new Properties()
+        properties.put("deprecated.two", new OwnBean("text_value", LocalDate.of(2019, 1, 12)))
+
+        converter.convertToJson(properties)
+        then:
+        RuntimeException ex = thrown()
+        ex.getMessage() == "property: deprecated.two is not supported!"
+    }
+
     private static class OwnBeanPrimitiveJsonTypeResolver extends PrimitiveJsonTypeResolver<OwnBean> {
 
         @Override
-        protected OwnBean returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+        protected OwnBean returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+            if (propertyKey == ("deprecated.one")) {
+                throw new RuntimeException("property: deprecated.one is not supported!")
+            }
+
             if (propertyValue.matches("^package.OwnBean:.*,.*")) {
                 String[] values = propertyValue.replaceFirst("^package.OwnBean:", "").split(",")
                 return new OwnBean(values[0], LocalDate.of(Integer.parseInt(values[1]), 1, 12))
@@ -74,7 +108,10 @@ class OwnJsonTypeResolverTest extends Specification {
         }
 
         @Override
-        AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, OwnBean propertyValue) {
+        AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, OwnBean propertyValue, String propertyKey) {
+            if (propertyKey == ("deprecated.two")) {
+                throw new RuntimeException("property: deprecated.two is not supported!")
+            }
             return new OwnBeanJsonType(propertyValue.textField,
                     propertyValue.localDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond())
         }

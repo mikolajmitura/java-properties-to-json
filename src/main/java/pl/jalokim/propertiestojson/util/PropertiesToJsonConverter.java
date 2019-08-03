@@ -94,8 +94,8 @@ public final class PropertiesToJsonConverter {
     /**
      * It generates Json from properties file stored in provided path as string.
      * Every property value will tries resolve to concrete object by given resolvers...
-     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
-     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)}
      * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
@@ -103,7 +103,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param pathToFile path to File
      * @return simple String with json
@@ -117,8 +117,8 @@ public final class PropertiesToJsonConverter {
     /**
      * It generates Json from properties file stored in provided path as string and will converts only included keys or parts of property keys provided by second parameter.
      * Every property value will tries resolve to concrete object by given resolvers...
-     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
-     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)}
      * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
@@ -126,7 +126,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param pathToFile        path to File
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -147,8 +147,8 @@ public final class PropertiesToJsonConverter {
     /**
      * It generates Json from properties file stored in provided File.
      * Every property value will tries resolve to concrete object by given resolvers...
-     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
-     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)}
      * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
@@ -156,7 +156,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param file file with properties
      * @return simple String with json
@@ -175,8 +175,8 @@ public final class PropertiesToJsonConverter {
     /**
      * It generates Json from properties file stored in provided File and will converts only included keys or parts of property keys provided by second parameter.
      * Every property value will tries resolve to concrete object by given resolvers...
-     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
-     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)}
      * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
@@ -184,7 +184,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param file              file with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -210,8 +210,8 @@ public final class PropertiesToJsonConverter {
     /**
      * It generates Json from properties stored in provided InputStream.
      * Every property value will tries resolve to concrete object by given resolvers...
-     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
-     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)}
      * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
@@ -219,7 +219,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param inputStream InputStream with properties
      * @return simple String with json
@@ -233,8 +233,8 @@ public final class PropertiesToJsonConverter {
     /**
      * It generates Json from properties stored in provided InputStream and will converts only included keys or parts of property keys provided by second parameter.
      * Every property value will tries resolve to concrete object by given resolvers...
-     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
-     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)}
      * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
@@ -242,7 +242,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param inputStream       InputStream with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -269,7 +269,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param properties Java Properties
      * @return simple String with json
@@ -295,7 +295,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param properties        Java Properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -315,8 +315,8 @@ public final class PropertiesToJsonConverter {
     /**
      * It generates Json from given Map&lt;String,String&gt; instance.
      * Every property value will tries resolve to concrete object by given resolvers...
-     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
-     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)}
      * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
@@ -324,7 +324,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param properties Java Map with properties
      * @return simple String with json
@@ -338,8 +338,8 @@ public final class PropertiesToJsonConverter {
     /**
      * It generates Json from given Map&lt;String,String&gt; instance and will converts only included keys or parts of property keys provided by second parameter.
      * Every property value will tries resolve to concrete object by given resolvers...
-     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
-     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)}
      * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
@@ -347,7 +347,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param properties        Java Map with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -373,7 +373,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param properties Java Map with properties
      * @return simple String with json
@@ -406,7 +406,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
      *
      * @param properties        Java Map with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -459,7 +459,7 @@ public final class PropertiesToJsonConverter {
         try {
             properties.load(inputStream);
             for(String property : getAllKeysFromProperties(propertiesToMap(properties))) {
-                Object object = primitiveResolvers.getResolvedObject((String) properties.get(property));
+                Object object = primitiveResolvers.getResolvedObject((String) properties.get(property), property);
                 propertiesWithConvertedValues.put(property, object);
             }
         } catch(IOException e) {
@@ -490,7 +490,7 @@ public final class PropertiesToJsonConverter {
     private Map<String, Object> stringValueMapToObjectValueMap(Map<String, String> properties) {
         Map<String, Object> map = new HashMap<>();
         for(String property : getAllKeysFromProperties(properties)) {
-            Object object = primitiveResolvers.getResolvedObject(properties.get(property));
+            Object object = primitiveResolvers.getResolvedObject(properties.get(property), property);
             map.put(property, object);
         }
         return map;

@@ -12,7 +12,7 @@ public class JsonNullReferenceTypeResolver extends PrimitiveJsonTypeResolver<Jso
     public static final JsonNullReferenceTypeResolver NULL_RESOLVER = new JsonNullReferenceTypeResolver();
 
     @Override
-    public JsonNullReferenceType returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+    public JsonNullReferenceType returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         if (propertyValue == null || isStringType(propertyValue) && propertyValue.equals(NULL_VALUE)) {
             return NULL_OBJECT;
         }
@@ -20,7 +20,7 @@ public class JsonNullReferenceTypeResolver extends PrimitiveJsonTypeResolver<Jso
     }
 
     @Override
-    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, JsonNullReferenceType propertyValue) {
+    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, JsonNullReferenceType propertyValue, String propertyKey) {
         return propertyValue;
     }
 

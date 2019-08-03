@@ -1,6 +1,5 @@
 package pl.jalokim.propertiestojson.resolvers;
 
-import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkEarlierWasArrayJson;
 
 import java.util.Map;
 
@@ -16,19 +15,8 @@ public abstract class JsonTypeResolver {
     protected String propertyKey;
     protected ObjectJsonType currentObjectJsonType;
 
-    /**
-     * Don't remove this it will be used by others in own custom type resolvers.
-     * @see <a href="https://github.com/mikolajmitura/java-properties-to-json/issues/34">issue 34</a>
-     * @return propertiesKey
-     */
-    // TODO remove it and write in documentation about it
-    public String getPropertiesKey() {
-		return propertyKey;
-	}
-
 	protected ArrayJsonType getArrayJsonWhenIsValid(PathMetadata currentPathMetaData) {
         AbstractJsonType jsonType = currentObjectJsonType.getField(currentPathMetaData.getFieldName());
-        checkEarlierWasArrayJson(propertyKey, currentPathMetaData, jsonType);
         return (ArrayJsonType) jsonType;
     }
 

@@ -6,15 +6,11 @@ import pl.jalokim.propertiestojson.object.JsonNullReferenceType;
 import pl.jalokim.propertiestojson.object.MergableObject;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.object.PrimitiveJsonType;
-import pl.jalokim.propertiestojson.object.StringJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
-import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.Constants.NORMAL_DOT;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.EXPECTED_OBJECT_JSON_TYPE;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.EXPECTED_PRIMITIVE_JSON_TYPE;
 
 public class JsonObjectFieldsValidator {
 
@@ -44,47 +40,10 @@ public class JsonObjectFieldsValidator {
         }
     }
 
-    public static void checkEarlierWasArrayJson(String propertyKey, PathMetadata currentPathMetaData, AbstractJsonType jsonType) {
-        whenWasStringTypeThenThrowException(propertyKey, currentPathMetaData, jsonType);
-        whenWasObjectTypeThenThrowException(propertyKey, currentPathMetaData, jsonType);
-    }
-
     public static void checkEarlierWasJsonObject(String propertyKey, PathMetadata currentPathMetaData, AbstractJsonType jsonType) {
          if (!isObjectJson(jsonType)) {
              throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), jsonType, propertyKey);
          }
-    }
-
-    /*
-        TODO maybe it is not necessary method... but only checkThatArrayElementIsPrimitiveType is neccessary
-        and checking should be on add level, new field, new element in array...
-     */
-    public static void checkThatGivenArrayHasExpectedStructure(String propertyKey, PathMetadata currentPathMetaData, ArrayJsonType arrayJsonType) {
-        AbstractJsonType abstractJsonType = arrayJsonType.getElementByGivenDimIndexes(currentPathMetaData);
-        if(abstractJsonType != null) {
-//            checkThatGivenObjectIsPrimitiveType(propertiesKey, currentPathMetaData.getFieldName(), arrayJsonType, indexes.get(i));
-        }
-    }
-
-    private static void throwException(String message, String field, String propertyKey, AbstractJsonType jsonType) {
-        throw new ParsePropertiesException(String.format(message, field, jsonType.toStringJson(), propertyKey));
-    }
-
-    private static void whenWasStringTypeThenThrowException(String propertyKey, PathMetadata currentPathMetaData, AbstractJsonType jsonType) {
-        // TODO why only string type? all primitive maybe?
-        if(isExpectedType(jsonType, StringJsonType.class)) {
-            throwException(EXPECTED_PRIMITIVE_JSON_TYPE, currentPathMetaData.getCurrentFullPath(), propertyKey, jsonType);
-        }
-    }
-
-    private static void whenWasObjectTypeThenThrowException(String propertyKey, PathMetadata currentPathMetaData, AbstractJsonType jsonType) {
-        if(isExpectedType(jsonType, ObjectJsonType.class)) {
-            throwException(EXPECTED_OBJECT_JSON_TYPE, currentPathMetaData.getFieldName(), propertyKey, jsonType);
-        }
-    }
-
-    private static boolean isExpectedType(AbstractJsonType object, Class<?> type) {
-        return object.getClass().equals(type);
     }
 
     public static boolean isObjectJson(AbstractJsonType jsonType) {

@@ -1,6 +1,8 @@
 package pl.jalokim.propertiestojson.util
 
 import groovy.json.JsonSlurper
+import pl.jalokim.propertiestojson.object.AbstractJsonType
+import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.*
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException
 import spock.lang.Specification
@@ -332,6 +334,40 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         jsonObject.object.arrayInvalid2 == "12, true, test"
         jsonObject.object.array == [12, true, "test"]
         jsonObject.object.text == "value"
+    }
+
+    def "found too match resolvers for given bean type"() {
+        given:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
+                new NumberJsonTypeResolver(),
+                new AnotherNumberResolver()
+        )
+        Properties properties = new Properties()
+        properties.put("test.test", 12)
+
+        when:
+        converter.convertToJson(properties)
+        then:
+        ParsePropertiesException exception = thrown()
+        exception.getMessage() == "Found: " + [NumberJsonTypeResolver.class, AnotherNumberResolver.class] + " for type" + Integer.class + " expected only one!"
+
+    }
+
+    private static class AnotherNumberResolver extends PrimitiveJsonTypeResolver<Number> {
+
+        @Override
+        protected Number returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                                              String propertyValue,
+                                                              String propertyKey) {
+            return null
+        }
+
+        @Override
+        AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                                Number propertyValue,
+                                                String propertyKey) {
+            return null
+        }
     }
 
     private Properties createExtendedProperties() {

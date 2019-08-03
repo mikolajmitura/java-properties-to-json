@@ -18,12 +18,12 @@ public class NumberJsonTypeResolver extends PrimitiveJsonTypeResolver<Number> {
     }
 
     @Override
-    public Number returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+    public Number returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         return convertToNumber(propertyValue);
     }
 
     @Override
-    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Number propertyValue) {
+    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Number propertyValue, String propertyKey) {
         return new NumberJsonType(propertyValue);
     }
 

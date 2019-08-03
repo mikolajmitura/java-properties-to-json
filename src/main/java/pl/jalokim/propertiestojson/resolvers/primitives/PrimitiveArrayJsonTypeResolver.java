@@ -3,7 +3,6 @@ package pl.jalokim.propertiestojson.resolvers.primitives;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
-import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +19,7 @@ import static pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJso
 /**
  * When given text contains ',' or text starts with '[' and ends with ']' in text then it tries split by comma and remove '[]' signs and then
  * every separated text tries convert to json value.
- * It will try resolve every types by provided resolvers in {@link PropertiesToJsonConverter(PrimitiveJsonTypeResolver...)}
+ * It will try resolve every types by provided resolvers in {@link pl.jalokim.propertiestojson.util.PropertiesToJsonConverter#PropertiesToJsonConverter(PrimitiveJsonTypeResolver...)}
  */
 public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Collection<?>> {
 
@@ -42,7 +41,7 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
     }
 
     @Override
-    public Collection<?> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+    public Collection<?> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         if(isSimpleArray(propertyValue) && !isValidJsonObjectOrArray(propertyValue)) {
 
             if(hasJsonArraySignature(propertyValue)) {
@@ -61,7 +60,7 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
             List<Object> elements = new ArrayList<>();
             for(String element : propertyValue.split(arrayElementSeparator)) {
                 if(resolveTypeOfEachElement) {
-                    elements.add(primitiveJsonTypesResolver.getResolvedObject(element));
+                    elements.add(primitiveJsonTypesResolver.getResolvedObject(element, propertyKey));
                 } else {
                     elements.add(element);
                 }
@@ -72,7 +71,7 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
     }
 
     @Override
-    public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {
+    public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey) {
         if(hasElements(propertyValue.getClass())) {
             Collection<?> collection;
             if (propertyValue.getClass().isArray()) {
@@ -81,14 +80,14 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
             } else {
                 collection = (Collection<?>) propertyValue;
             }
-            return returnConcreteJsonType(primitiveJsonTypesResolver, collection);
+            return returnConcreteJsonType(primitiveJsonTypesResolver, collection, propertyKey);
         }
-        return returnConcreteJsonType(primitiveJsonTypesResolver, singletonList(propertyValue));
+        return returnConcreteJsonType(primitiveJsonTypesResolver, singletonList(propertyValue), propertyKey);
     }
 
     @Override
-    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements) {
-        return new ArrayJsonType(primitiveJsonTypesResolver, elements, null);
+    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements, String propertyKey) {
+        return new ArrayJsonType(primitiveJsonTypesResolver, elements, null, propertyKey);
     }
 
     @Override

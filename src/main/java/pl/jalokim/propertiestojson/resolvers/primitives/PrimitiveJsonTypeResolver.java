@@ -28,19 +28,18 @@ public abstract class PrimitiveJsonTypeResolver<T> {
                 " Please override method resolveTypeOfResolver() for provide explicit class type");
     }
 
-    public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {
-        return returnConcreteJsonType(primitiveJsonTypesResolver, (T) propertyValue);
+    public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey) {
+        return returnConcreteJsonType(primitiveJsonTypesResolver, (T) propertyValue, propertyKey);
     }
 
-    public T returnConvertedValueForClearedText(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+    public T returnConvertedValueForClearedText(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         return returnConcreteValueWhenCanBeResolved(primitiveJsonTypesResolver,
-                                                    propertyValue == null ? null : propertyValue.trim());
+                                                    propertyValue == null ? null : propertyValue.trim(), propertyKey);
     }
 
-    // TODO as argument should be PathMetadata
-    protected abstract T returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue);
+    protected abstract T returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey);
 
-    public abstract AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, T propertyValue);
+    public abstract AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, T propertyValue, String propertyKey);
 
     public List<Class<?>> getClassesWhichCanResolve() {
         return Collections.singletonList(canResolveClass);

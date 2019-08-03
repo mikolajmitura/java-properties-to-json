@@ -31,12 +31,12 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
     public ArrayJsonType() {
     }
 
-    public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements, PathMetadata currentPathMetadata) {
+    public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements, PathMetadata currentPathMetadata, String propertyKey) {
         Iterator<?> iterator = elements.iterator();
         int index = 0;
         while(iterator.hasNext()) {
             Object element = iterator.next();
-            addElement(index, primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(element), currentPathMetadata);
+            addElement(index, primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(element, propertyKey), currentPathMetadata);
             index++;
         }
     }
@@ -52,7 +52,7 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
             if(oldObject instanceof MergableObject && elementToAdd instanceof MergableObject) {
                 mergeObjectIfPossible(oldObject, elementToAdd, currentPathMetadata);
             } else {
-                 throw new CannotOverrideFieldException(currentPathMetadata.getOriginalFieldName(), oldObject, currentPathMetadata.getOriginalPropertyKey());
+                throw new CannotOverrideFieldException(currentPathMetadata.getOriginalFieldName(), oldObject, currentPathMetadata.getOriginalPropertyKey());
             }
         } else {
             elements[index] = elementToAdd;
@@ -175,7 +175,7 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
         List<AbstractJsonType> elementsList = new ArrayList<>();
         for(int i = 0; i < maxIndex + 1; i++) {
             AbstractJsonType element = elements[i];
-                elementsList.add(element);
+            elementsList.add(element);
         }
         return elementsList;
     }

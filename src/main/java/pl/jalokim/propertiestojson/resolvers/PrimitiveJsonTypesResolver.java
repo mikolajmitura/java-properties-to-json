@@ -12,7 +12,6 @@ import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
 import java.util.List;
 
-import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkThatGivenArrayHasExpectedStructure;
 import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isArrayJson;
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
 
@@ -45,7 +44,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
             addFieldToArray(currentPathMetaData, propertyValue);
         } else {
             if(currentObjectJsonType.containsField(field) && isArrayJson(currentObjectJsonType.getField(field))) {
-                AbstractJsonType abstractJsonType = resolvePrimitiveTypeAndReturn(propertyValue);
+                AbstractJsonType abstractJsonType = resolvePrimitiveTypeAndReturn(propertyValue, propertyKey);
                 ArrayJsonType currentArrayInObject = currentObjectJsonType.getJsonArray(field);
                 if(isArrayJson(abstractJsonType)) {
                     ArrayJsonType newArray = (ArrayJsonType) abstractJsonType;
@@ -57,27 +56,27 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
                     throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), currentArrayInObject, propertyKey);
                 }
             } else {
-                currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue), currentPathMetaData);
+                currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, propertyKey), currentPathMetaData);
             }
         }
     }
 
-    public Object getResolvedObject(String propertyValue) {
+    public Object getResolvedObject(String propertyValue, String propertyKey) {
         Object object = null;
         for(PrimitiveJsonTypeResolver primitiveResolver : primitiveResolvers) {
             if(object == null) {
-                object = primitiveResolver.returnConvertedValueForClearedText(this, propertyValue);
+                object = primitiveResolver.returnConvertedValueForClearedText(this, propertyValue, propertyKey);
             }
         }
         return object;
     }
 
-    public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue) {
+    public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue, String propertyKey) {
         if(propertyValue == null) {
             return NULL_OBJECT;
         }
         PrimitiveJsonTypeResolver<?> primitiveJsonTypeResolver = resolversHierarchyResolver.returnConcreteResolver(propertyValue);
-        return primitiveJsonTypeResolver.returnJsonType(this, propertyValue);
+        return primitiveJsonTypeResolver.returnJsonType(this, propertyValue, propertyKey);
     }
 
     protected void addFieldToArray(PathMetadata currentPathMetaData, Object propertyValue) {
@@ -100,12 +99,11 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     private void fetchArrayAndAddElement(PathMetadata currentPathMetaData, Object propertyValue) {
         ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(currentPathMetaData);
-        checkThatGivenArrayHasExpectedStructure(propertyKey, currentPathMetaData, arrayJsonType);
         addElementToArray(propertyValue, currentPathMetaData, arrayJsonType);
     }
 
     private void addElementToArray(Object propertyValue, PathMetadata currentPathMetaData, ArrayJsonType arrayJsonTypeObject) {
-        arrayJsonTypeObject.addElement(currentPathMetaData.getPropertyArrayHelper(), resolvePrimitiveTypeAndReturn(propertyValue), currentPathMetaData);
+        arrayJsonTypeObject.addElement(currentPathMetaData.getPropertyArrayHelper(), resolvePrimitiveTypeAndReturn(propertyValue, propertyKey), currentPathMetaData);
     }
 
 }

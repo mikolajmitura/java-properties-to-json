@@ -26,7 +26,7 @@ import static pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeRes
 
 /**
  * When given text contains parsable json value, json object or json array then try build instance of ObjectJsonType or ArrayJsonType
- * TODO when will invoke public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {????
+ * It will invoke {@link #returnConcreteJsonType(PrimitiveJsonTypesResolver, Object, String)} after conversion from string (raw property value to some object)
  */
 public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Object> {
 
@@ -43,10 +43,10 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
     }
 
     @Override
-    public Object returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+    public Object returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         if(hasJsonObjectSignature(propertyValue) || hasJsonArraySignature(propertyValue)) {
             try {
-                return convertToAbstractJsonType(jp.parse(propertyValue));
+                return convertToAbstractJsonType(jp.parse(propertyValue), propertyKey);
             } catch(Exception exception) {
                 return null;
             }
@@ -87,24 +87,31 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
         return text.substring(text.length() - 1);
     }
 
+    /**
+     * It return instance of ArrayJsonType or ObjectJsonType
+     * if propertyValue is not one of above types then will convert it to gson JsonElement instance and then convert to ArrayJsonType, ObjectJsonType, StringJsonType
+     * @param primitiveJsonTypesResolver resolver which is main resolver for leaf value from property
+     * @param propertyValue property key.
+     * @return instance of ArrayJsonType, ObjectJsonType or StringJsonType
+     */
     @Override
-    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {
+    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey) {
         if(ObjectJsonType.class.isAssignableFrom(propertyValue.getClass()) ||  ArrayJsonType.class.isAssignableFrom(propertyValue.getClass())) {
             return (AbstractJsonType) propertyValue;
         }
-        return convertToObjectArrayOrJsonText(jp.parse(gson.toJson(propertyValue)));
+        return convertToObjectArrayOrJsonText(jp.parse(gson.toJson(propertyValue)), propertyKey);
     }
 
-    private AbstractJsonType convertToObjectArrayOrJsonText(JsonElement someField) {
+    private AbstractJsonType convertToObjectArrayOrJsonText(JsonElement someField, String propertyKey) {
         AbstractJsonType valueOfNextField = null;
         if(someField.isJsonNull()) {
             valueOfNextField = NULL_OBJECT;
         }
         if(someField.isJsonObject()) {
-            valueOfNextField = createObjectJsonType(someField);
+            valueOfNextField = createObjectJsonType(someField, propertyKey);
         }
         if(someField.isJsonArray()) {
-            valueOfNextField = createArrayJsonType(someField);
+            valueOfNextField = createArrayJsonType(someField, propertyKey);
         }
         if(someField.isJsonPrimitive()) {
             return new StringJsonType(someField.toString());
@@ -112,48 +119,48 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
         return valueOfNextField;
     }
 
-    private AbstractJsonType convertToAbstractJsonType(JsonElement someField) {
+    private AbstractJsonType convertToAbstractJsonType(JsonElement someField, String propertyKey) {
         AbstractJsonType valueOfNextField = null;
         if(someField.isJsonNull()) {
             valueOfNextField = NULL_OBJECT;
         }
         if(someField.isJsonObject()) {
-            valueOfNextField = createObjectJsonType(someField);
+            valueOfNextField = createObjectJsonType(someField, propertyKey);
         }
         if(someField.isJsonArray()) {
-            valueOfNextField = createArrayJsonType(someField);
+            valueOfNextField = createArrayJsonType(someField, propertyKey);
         }
         if(someField.isJsonPrimitive()) {
             JsonPrimitive jsonPrimitive = someField.getAsJsonPrimitive();
             if(jsonPrimitive.isString()) {
-                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsString());
+                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsString(), propertyKey);
             } else if(jsonPrimitive.isNumber()) {
                 String numberAsText = jsonPrimitive.getAsNumber().toString();
-                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(convertToNumber(numberAsText));
+                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(convertToNumber(numberAsText), propertyKey);
             } else if(jsonPrimitive.isBoolean()) {
-                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsBoolean());
+                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsBoolean(), propertyKey);
             }
         }
         return valueOfNextField;
     }
 
-    private ObjectJsonType createObjectJsonType(JsonElement parsedJson) {
+    private ObjectJsonType createObjectJsonType(JsonElement parsedJson , String propertyKey) {
         ObjectJsonType objectJsonType = new ObjectJsonType();
         JsonObject asJsonObject = parsedJson.getAsJsonObject();
         for(Map.Entry<String, JsonElement> entry : asJsonObject.entrySet()) {
             JsonElement someField = entry.getValue();
-            AbstractJsonType valueOfNextField = convertToAbstractJsonType(someField);
+            AbstractJsonType valueOfNextField = convertToAbstractJsonType(someField, propertyKey);
             objectJsonType.addField(entry.getKey(), valueOfNextField, null);
         }
         return objectJsonType;
     }
 
-    private ArrayJsonType createArrayJsonType(JsonElement parsedJson) {
+    private ArrayJsonType createArrayJsonType(JsonElement parsedJson, String propertyKey) {
         ArrayJsonType arrayJsonType = new ArrayJsonType();
         JsonArray asJsonArray = parsedJson.getAsJsonArray();
         int index = 0;
         for(JsonElement element : asJsonArray) {
-            arrayJsonType.addElement(index, convertToAbstractJsonType(element), null);
+            arrayJsonType.addElement(index, convertToAbstractJsonType(element, propertyKey), null);
             index++;
         }
         return arrayJsonType;

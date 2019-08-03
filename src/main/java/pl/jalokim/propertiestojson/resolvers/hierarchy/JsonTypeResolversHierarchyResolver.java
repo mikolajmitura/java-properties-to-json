@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 import static pl.jalokim.propertiestojson.resolvers.primitives.JsonNullReferenceTypeResolver.NULL_RESOLVER;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG;
 
@@ -58,8 +59,9 @@ public class JsonTypeResolversHierarchyResolver {
         }
 
         if (resolvers.size() > 1 && instanceClass != String.class) {
-            // TODO test this
-            throw new RuntimeException("Found: " + resolvers + " for type" + instanceClass);
+            throw new ParsePropertiesException("Found: " + resolvers.stream()
+                                                                    .map(object -> object.getClass())
+                                                                    .collect(toList()) + " for type" + instanceClass + " expected only one!");
         }
 
         if (resolvers.size() == 1 || instanceClass == String.class) {

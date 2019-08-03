@@ -14,7 +14,7 @@ public class BooleanJsonTypeResolver extends PrimitiveJsonTypeResolver<Boolean>{
     }
 
     @Override
-    public Boolean returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+    public Boolean returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         if (TRUE.equalsIgnoreCase(propertyValue) || FALSE.equalsIgnoreCase(propertyValue)){
             return getBoolean(propertyValue);
         }
@@ -22,7 +22,7 @@ public class BooleanJsonTypeResolver extends PrimitiveJsonTypeResolver<Boolean>{
     }
 
     @Override
-    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Boolean propertyValue) {
+    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Boolean propertyValue, String propertyKey) {
         return new BooleanJsonType(propertyValue);
     }
 }
