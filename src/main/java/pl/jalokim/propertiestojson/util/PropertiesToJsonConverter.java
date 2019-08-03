@@ -92,11 +92,34 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
+     * It generates Json from properties file stored in provided path as string.
+     * Every property value will tries resolve to concrete object by given resolvers...
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
+     *
+     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     *
+     * @param pathToFile path to File
+     * @return simple String with json
+     * @throws ReadInputException       when cannot find file
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public String convertPropertiesFromFileToJson(String pathToFile) throws ReadInputException, ParsePropertiesException {
+        return convertPropertiesFromFileToJson(new File(pathToFile));
+    }
+
+    /**
      * It generates Json from properties file stored in provided path as string and will converts only included keys or parts of property keys provided by second parameter.
      * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
      * if not then will looks for closets parent class or parent interface.
@@ -122,11 +145,11 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * It generates Json from properties file stored in provided path as string.
+     * It generates Json from properties file stored in provided File.
      * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
      * if not then will looks for closets parent class or parent interface.
@@ -135,13 +158,18 @@ public final class PropertiesToJsonConverter {
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
-     * @param pathToFile path to File
+     * @param file file with properties
      * @return simple String with json
      * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String convertPropertiesFromFileToJson(String pathToFile) throws ReadInputException, ParsePropertiesException {
-        return convertPropertiesFromFileToJson(new File(pathToFile));
+    public String convertPropertiesFromFileToJson(File file) throws ReadInputException, ParsePropertiesException {
+        try {
+            InputStream targetStream = new FileInputStream(file);
+            return convertToJson(targetStream);
+        } catch(FileNotFoundException e) {
+            throw new ReadInputException(e);
+        }
     }
 
     /**
@@ -149,7 +177,7 @@ public final class PropertiesToJsonConverter {
      * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
      * if not then will looks for closets parent class or parent interface.
@@ -180,11 +208,11 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * It generates Json from properties file stored in provided File.
+     * It generates Json from properties stored in provided InputStream.
      * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
      * if not then will looks for closets parent class or parent interface.
@@ -193,18 +221,13 @@ public final class PropertiesToJsonConverter {
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
-     * @param file file with properties
+     * @param inputStream InputStream with properties
      * @return simple String with json
      * @throws ReadInputException       when cannot find file
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
-    public String convertPropertiesFromFileToJson(File file) throws ReadInputException, ParsePropertiesException {
-        try {
-            InputStream targetStream = new FileInputStream(file);
-            return convertToJson(targetStream);
-        } catch(FileNotFoundException e) {
-            throw new ReadInputException(e);
-        }
+    public String convertToJson(InputStream inputStream) throws ReadInputException, ParsePropertiesException {
+        return convertToJson(inputStreamToProperties(inputStream));
     }
 
     /**
@@ -212,7 +235,7 @@ public final class PropertiesToJsonConverter {
      * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
      * if not then will looks for closets parent class or parent interface.
@@ -235,29 +258,6 @@ public final class PropertiesToJsonConverter {
      */
     public String convertToJson(InputStream inputStream, String... includeDomainKeys) throws ReadInputException, ParsePropertiesException {
         return convertToJson(inputStreamToProperties(inputStream), includeDomainKeys);
-    }
-
-    /**
-     * It generates Json from properties stored in provided InputStream and will converts only included keys or parts of property keys provided by second parameter.
-     * Every property value will tries resolve to concrete object by given resolvers...
-     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
-     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
-     *
-     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
-     * if not then will looks for closets parent class or parent interface.
-     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
-     * If will find only closets super interfaces (at the same level) then will throw exception...
-     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
-     *
-     * @param inputStream InputStream with properties
-     * @return simple String with json
-     * @throws ReadInputException       when cannot find file
-     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
-     */
-    public String convertToJson(InputStream inputStream) throws ReadInputException, ParsePropertiesException {
-        return convertToJson(inputStreamToProperties(inputStream));
     }
 
     /**
@@ -287,11 +287,37 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
+     * It generates Json from given Java Properties instance and will converts only included keys or parts of property keys provided by second parameter.
+     * If property value will be string then will not try convert it to another type.
+     *
+     * It will only looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     *
+     * @param properties        Java Properties
+     * @param includeDomainKeys domain head keys which should be parsed to json <br>
+     *                          example properties:<br>
+     *                          object1.field1=value1<br>
+     *                          object1.field2=value2<br>
+     *                          someObject2.field2=value3<br>
+     *                          filter "object1"<br>
+     *                          will parse only nested domain for "object1"<br>
+     * @return Simple String with json
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public String convertToJson(Properties properties, String... includeDomainKeys) throws ParsePropertiesException {
+        return convertFromValuesAsObjectMap(propertiesToMap(properties), includeDomainKeys);
+    }
+
+    /**
      * It generates Json from given Map&lt;String,String&gt; instance.
      * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
      *
      * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
      * if not then will looks for closets parent class or parent interface.
@@ -307,6 +333,35 @@ public final class PropertiesToJsonConverter {
     public String convertToJson(Map<String, String> properties) throws ParsePropertiesException {
         return convertFromValuesAsObjectMap(stringValueMapToObjectValueMap(properties));
 
+    }
+
+    /**
+     * It generates Json from given Map&lt;String,String&gt; instance and will converts only included keys or parts of property keys provided by second parameter.
+     * Every property value will tries resolve to concrete object by given resolvers...
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * The order of resolvers is important because on that depends on which resolver as first will convert from string to some given object...
+     *
+     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
+     *
+     * @param properties        Java Map with properties
+     * @param includeDomainKeys domain head keys which should be parsed to json <br>
+     *                          example properties:<br>
+     *                          object1.field1=value1<br>
+     *                          object1.field2=value2<br>
+     *                          someObject2.field2=value3<br>
+     *                          filter "object1"<br>
+     *                          will parse only nested domain for "object1"<br>
+     * @return simple String with json
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public String convertToJson(Map<String, String> properties, String... includeDomainKeys) throws ParsePropertiesException {
+        return convertFromValuesAsObjectMap(stringValueMapToObjectValueMap(properties), includeDomainKeys);
     }
 
     /**
@@ -343,35 +398,6 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * It generates Json from given Map&lt;String,String&gt; instance and will converts only included keys or parts of property keys provided by second parameter.
-     * Every property value will tries resolve to concrete object by given resolvers...
-     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
-     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
-     *
-     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
-     * if not then will looks for closets parent class or parent interface.
-     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
-     * If will find only closets super interfaces (at the same level) then will throw exception...
-     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
-     *
-     * @param properties        Java Map with properties
-     * @param includeDomainKeys domain head keys which should be parsed to json <br>
-     *                          example properties:<br>
-     *                          object1.field1=value1<br>
-     *                          object1.field2=value2<br>
-     *                          someObject2.field2=value3<br>
-     *                          filter "object1"<br>
-     *                          will parse only nested domain for "object1"<br>
-     * @return simple String with json
-     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
-     */
-    public String convertToJson(Map<String, String> properties, String... includeDomainKeys) throws ParsePropertiesException {
-        return convertFromValuesAsObjectMap(stringValueMapToObjectValueMap(properties), includeDomainKeys);
-    }
-
-    /**
      * It generates Json given Map&lt;String,Object&gt; instance and will converts only included keys or parts of property keys provided by second parameter.
      * If property value will be string then will not try convert it to another type.
      *
@@ -401,32 +427,6 @@ public final class PropertiesToJsonConverter {
             }
         }
         return convertFromValuesAsObjectMap(filteredProperties);
-    }
-
-    /**
-     * It generates Json from given Java Properties instance and will converts only included keys or parts of property keys provided by second parameter.
-     * If property value will be string then will not try convert it to another type.
-     *
-     * It will only looks for sufficient resolver, firstly will looks for exactly match class type,
-     * if not then will looks for closets parent class or parent interface.
-     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
-     * If will find only closets super interfaces (at the same level) then will throw exception...
-     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
-     *
-     * @param properties        Java Properties
-     * @param includeDomainKeys domain head keys which should be parsed to json <br>
-     *                          example properties:<br>
-     *                          object1.field1=value1<br>
-     *                          object1.field2=value2<br>
-     *                          someObject2.field2=value3<br>
-     *                          filter "object1"<br>
-     *                          will parse only nested domain for "object1"<br>
-     * @return Simple String with json
-     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
-     */
-    public String convertToJson(Properties properties, String... includeDomainKeys) throws ParsePropertiesException {
-        return convertFromValuesAsObjectMap(propertiesToMap(properties), includeDomainKeys);
     }
 
     /**
