@@ -52,7 +52,6 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
             if(oldObject instanceof MergableObject && elementToAdd instanceof MergableObject) {
                 mergeObjectIfPossible(oldObject, elementToAdd, currentPathMetadata);
             } else {
-                // TODO test this
                  throw new CannotOverrideFieldException(currentPathMetadata.getOriginalFieldName(), oldObject, currentPathMetadata.getOriginalPropertyKey());
             }
         } else {

@@ -11,7 +11,6 @@ public interface MergableObject<T extends AbstractJsonType> {
         if (oldObject.getClass().isAssignableFrom(elementToAdd.getClass())) {
             oldObject.merge(elementToAdd, currentPathMetadata);
         } else {
-            // TODO test this
             throw new MergeObjectException(oldJsonElement, elementToAdd, currentPathMetadata);
         }
     }

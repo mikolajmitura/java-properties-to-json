@@ -91,14 +91,18 @@ public final class PropertiesToJsonConverter {
         return allPrimitiveResolvers;
     }
 
-    // TODO fix documentation and remove info canResolveThisObject...
     /**
-     * Generate Json by given path to file with properties with only included domain keys.
-     * Every every property value will try resolve to concrete object by given resolvers...
+     * It generates Json from properties file stored in provided path as string and will converts only included keys or parts of property keys provided by second parameter.
+     * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     *
+     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param pathToFile        path to File
@@ -118,12 +122,17 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * Generate Json by given path to file with properties.
-     * Every every property value will try resolve to concrete object by given resolvers...
+     * It generates Json from properties file stored in provided path as string.
+     * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     *
+     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param pathToFile path to File
@@ -136,12 +145,17 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * Generate Json by given file with properties with only included domain keys.
-     * Every every property value will try resolve to concrete object by given resolvers...
+     * It generates Json from properties file stored in provided File and will converts only included keys or parts of property keys provided by second parameter.
+     * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     *
+     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param file              file with properties
@@ -166,12 +180,17 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * Generate Json by given file with properties.
-     * Every every property value will try resolve to concrete object by given resolvers...
+     * It generates Json from properties file stored in provided File.
+     * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     *
+     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param file file with properties
@@ -189,12 +208,17 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * generate Json by given InputStream and given filter.
-     * Every every property value will try resolve to concrete object by given resolvers...
+     * It generates Json from properties stored in provided InputStream and will converts only included keys or parts of property keys provided by second parameter.
+     * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     *
+     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param inputStream       InputStream with properties
@@ -214,12 +238,17 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * generate Json by given InputStream.
-     * Every every property value will try resolve to concrete object by given resolvers...
+     * It generates Json from properties stored in provided InputStream and will converts only included keys or parts of property keys provided by second parameter.
+     * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     *
+     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param inputStream InputStream with properties
@@ -232,10 +261,14 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * generate Json by given Java Properties
-     * If property value will be string then will not try resolve it as another type.
-     * It will only check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * It generates Json from given Java Properties instance.
+     * If property value will be string then will not try convert it to another type.
+     *
+     * It will only looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties Java Properties
@@ -254,12 +287,17 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * generate Json by given Map&lt;String,String&gt;
-     * Every every property value will try resolve to concrete object by given resolvers...
+     * It generates Json from given Map&lt;String,String&gt; instance.
+     * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     *
+     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties Java Map with properties
@@ -272,10 +310,14 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * generate Json by given Map&lt;String,Object&gt;
-     * If property value will be string then will not try resolve it as another type.
-     * It will only check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * It generates Json given Map&lt;String,Object&gt; instance.
+     * If property value will be string then will not try convert it to another type.
+     *
+     * It will only looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties Java Map with properties
@@ -301,12 +343,17 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * generate Json by given Map&lt;String,String&gt; and given filter
-     * Every every property value will try resolve to concrete object by given resolvers...
+     * It generates Json from given Map&lt;String,String&gt; instance and will converts only included keys or parts of property keys provided by second parameter.
+     * Every property value will tries resolve to concrete object by given resolvers...
      * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
      * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
-     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * The order of resolvers is important because on that depends which resolver as first will convert from string to some given object...
+     *
+     * Next will looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties        Java Map with properties
@@ -325,10 +372,14 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * generate Json by given Map&lt;String,String&gt; and given filter
-     * If property value will be string then will not try resolve it as another type.
-     * It will only check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * It generates Json given Map&lt;String,Object&gt; instance and will converts only included keys or parts of property keys provided by second parameter.
+     * If property value will be string then will not try convert it to another type.
+     *
+     * It will only looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties        Java Map with properties
@@ -353,10 +404,14 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * generate Json by given Java Properties and given filter
-     * If property value will be string then will not try resolve it as another type.
-     * It will only check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
-     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * It generates Json from given Java Properties instance and will converts only included keys or parts of property keys provided by second parameter.
+     * If property value will be string then will not try convert it to another type.
+     *
+     * It will only looks for sufficient resolver, firstly will looks for exactly match class type,
+     * if not then will looks for closets parent class or parent interface.
+     * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
+     * If will find only closets super interfaces (at the same level) then will throw exception...
+     * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
      * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties        Java Properties
