@@ -6,6 +6,7 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -72,8 +73,15 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
 
     @Override
     public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {
-        if(canResolveThisObject(propertyValue.getClass())) {
-            return returnConcreteJsonType(primitiveJsonTypesResolver, (Collection<?>) propertyValue);
+        if(hasElements(propertyValue.getClass())) {
+            Collection<?> collection;
+            if (propertyValue.getClass().isArray()) {
+                Object[] rawArray = (Object[]) propertyValue;
+                collection  = new ArrayList<>(Arrays.asList(rawArray));
+            } else {
+                collection = (Collection<?>) propertyValue;
+            }
+            return returnConcreteJsonType(primitiveJsonTypesResolver, collection);
         }
         return returnConcreteJsonType(primitiveJsonTypesResolver, singletonList(propertyValue));
     }
@@ -88,7 +96,12 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
         return Collection.class;
     }
 
-    public boolean canResolveThisObject(Class<?> classToTest) {
+    @Override
+    public List<Class<?>> getClassesWhichCanResolve() {
+        return Arrays.asList(Collection.class, Object[].class);
+    }
+
+    public boolean hasElements(Class<?> classToTest) {
         return canResolveClass.isAssignableFrom(classToTest) || classToTest.isArray();
     }
 }

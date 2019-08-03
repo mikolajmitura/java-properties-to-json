@@ -232,6 +232,108 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         jsonObject.man.pojoObject.value2 == 12.3
     }
 
+    def "when Properties has Raw array will convert to array"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        Properties properties = new Properties()
+        Object[] objects = [12, 123, "test", [12, 14]]
+        Integer[] integers = [12, 123]
+        String[] strings = ["test", "test2"]
+        properties.put("man.array", objects)
+        properties.put("man.integers", integers)
+        properties.put("man.strings", strings)
+        String json = converter.convertToJson(properties)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.man.array == [12, 123, "test", [12, 14]]
+        jsonObject.man.integers == [12, 123]
+        jsonObject.man.strings == ["test", "test2"]
+    }
+
+    def "given only ObjectFromTextJsonTypeResolver and BooleanJsonTypeResolver convert from Properties then expected will convert simple value to string or boolean"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
+                new ObjectFromTextJsonTypeResolver(),
+                new BooleanJsonTypeResolver()
+        )
+
+        Properties properties = new Properties()
+        properties.put("object.number", 12)
+        properties.put("object.boolean", true)
+        properties.put("object.booleanAsText", "true")
+        properties.put("object.array", [12, true, "test"])
+        properties.put("object.text", "value")
+
+        String json = converter.convertToJson(properties)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.number == "12"
+        jsonObject.object.boolean == true
+        jsonObject.object.booleanAsText == "true"
+        jsonObject.object.array == [12, true, "test"]
+        jsonObject.object.text == "value"
+    }
+
+    def "given only ObjectFromTextJsonTypeResolver and BooleanJsonTypeResolver convert from Map<String, Object> then expected will convert simple value to string or boolean"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
+                new ObjectFromTextJsonTypeResolver(),
+                new BooleanJsonTypeResolver()
+        )
+
+        Map<String, Object> properties = new HashMap<>()
+        properties.put("object.number", 12)
+        properties.put("object.boolean", true)
+        properties.put("object.booleanAsText", "true")
+        properties.put("object.array", [12, true, "test"])
+        properties.put("object.text", "value")
+
+        String json = converter.convertFromValuesAsObjectMap(properties)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.number == "12"
+        jsonObject.object.boolean == true
+        jsonObject.object.booleanAsText == "true"
+        jsonObject.object.array == [12, true, "test"]
+        jsonObject.object.text == "value"
+    }
+
+    def "given only ObjectFromTextJsonTypeResolver and BooleanJsonTypeResolver convert from Map<String, String> then expected will convert simple value to string or boolean"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
+                new ObjectFromTextJsonTypeResolver(),
+                new BooleanJsonTypeResolver()
+        )
+
+        Map<String, String> properties = new HashMap<>()
+        properties.put("object.number", "12")
+        properties.put("object.boolean", "true")
+        properties.put("object.booleanAsText", "true")
+        properties.put("object.arrayInvalid1", "[12, true, test]")
+        properties.put("object.arrayInvalid2", "12, true, test")
+        properties.put("object.array", "[12, true, \"test\"]")
+        properties.put("object.text", "value")
+
+        String json = converter.convertToJson(properties)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.number == "12"
+        jsonObject.object.boolean == true
+        jsonObject.object.booleanAsText == true
+        jsonObject.object.arrayInvalid1 == [12, true, "test"]
+        jsonObject.object.arrayInvalid2 == "12, true, test"
+        jsonObject.object.array == [12, true, "test"]
+        jsonObject.object.text == "value"
+    }
+
     private Properties createExtendedProperties() {
         Properties properties = createProperties()
         properties.put("man.pojoObject", new PojoObject("test1", "12.3"))

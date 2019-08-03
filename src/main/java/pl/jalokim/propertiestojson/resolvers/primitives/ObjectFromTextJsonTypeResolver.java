@@ -4,12 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.object.StringJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
@@ -26,7 +26,7 @@ import static pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeRes
 
 /**
  * When given text contains parsable json value, json object or json array then try build instance of ObjectJsonType or ArrayJsonType
- * TODO when will invoke  public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {????
+ * TODO when will invoke public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue) {????
  */
 public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Object> {
 
@@ -92,7 +92,24 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeResolver<Ob
         if(ObjectJsonType.class.isAssignableFrom(propertyValue.getClass()) ||  ArrayJsonType.class.isAssignableFrom(propertyValue.getClass())) {
             return (AbstractJsonType) propertyValue;
         }
-        return convertToAbstractJsonType(jp.parse(gson.toJson(propertyValue)));
+        return convertToObjectArrayOrJsonText(jp.parse(gson.toJson(propertyValue)));
+    }
+
+    private AbstractJsonType convertToObjectArrayOrJsonText(JsonElement someField) {
+        AbstractJsonType valueOfNextField = null;
+        if(someField.isJsonNull()) {
+            valueOfNextField = NULL_OBJECT;
+        }
+        if(someField.isJsonObject()) {
+            valueOfNextField = createObjectJsonType(someField);
+        }
+        if(someField.isJsonArray()) {
+            valueOfNextField = createArrayJsonType(someField);
+        }
+        if(someField.isJsonPrimitive()) {
+            return new StringJsonType(someField.toString());
+        }
+        return valueOfNextField;
     }
 
     private AbstractJsonType convertToAbstractJsonType(JsonElement someField) {

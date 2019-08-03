@@ -6,6 +6,7 @@ import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonTypeResolver
+import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver
 import spock.lang.Specification
 
 import static PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOrder
@@ -239,7 +240,32 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         map.put("test","0_, 1_, 2_ , 3_ , 4_")
         return map
     }
-    
+
+    def "only simple text resolver but objects and array will have numbers, boolean etc"() {
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
+                new ObjectFromTextJsonTypeResolver(),
+                new StringJsonTypeResolver())
+
+        Map<String, String> map = new HashMap<>()
+        map.put("field","true")
+        map.put("number","9")
+        map.put("object.array","[true, \"test\", 12, 12.0]")
+        map.put("object.array[4]","true")
+        map.put("object.nextObject","{\"numberField\": 12, \"boolField\": true, \"textField\": \"Some_text\"}")
+
+        def json = converter.convertToJson(map)
+        print(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.field == "true"
+        jsonObject.number == "9"
+        jsonObject.object.array == [true, "test", 12, 12.0, "true"]
+        jsonObject.object.nextObject.numberField == 12
+        jsonObject.object.nextObject.boolField == true
+        jsonObject.object.nextObject.textField == "Some_text"
+    }
+
     def "return array with text elements when provided others resolvers and PrimitiveArrayJsonTypeResolver(false)"() {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(

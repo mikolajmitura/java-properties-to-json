@@ -13,9 +13,6 @@ import java.io.InputStream;
 
 public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConverterTest {
 
-    // TODO that when json comes from text will parse booleans and numbers when converted will have only parse from object and only strings...
-    // then array with comma will be string too...
-
     @Test
     public void returnExpectedJsonFromGivenFile() {
         //when

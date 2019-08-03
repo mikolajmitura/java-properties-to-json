@@ -5,6 +5,8 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 public abstract class PrimitiveJsonTypeResolver<T> {
@@ -34,12 +36,12 @@ public abstract class PrimitiveJsonTypeResolver<T> {
                                                     propertyValue == null ? null : propertyValue.trim());
     }
 
+    // TODO as argument should be PathMetadata
     protected abstract T returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue);
 
     public abstract AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, T propertyValue);
 
-    public boolean canResolveThisObject(Class<?> classToTest) {
-        return canResolveClass.isAssignableFrom(classToTest);
+    public List<Class<?>> getClassesWhichCanResolve() {
+        return Collections.singletonList(canResolveClass);
     }
-
-}
+ }

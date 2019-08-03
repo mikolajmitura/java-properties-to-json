@@ -6,24 +6,24 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
+import pl.jalokim.propertiestojson.resolvers.hierarchy.JsonTypeResolversHierarchyResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
-import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.util.List;
 
-import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.checkThatGivenArrayHasExpectedStructure;
 import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isArrayJson;
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG;
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     private final List<PrimitiveJsonTypeResolver> primitiveResolvers;
+    private final JsonTypeResolversHierarchyResolver resolversHierarchyResolver;
 
     public PrimitiveJsonTypesResolver(List<PrimitiveJsonTypeResolver> primitiveResolvers) {
         this.primitiveResolvers = ImmutableList.copyOf(primitiveResolvers);
+        this.resolversHierarchyResolver = new JsonTypeResolversHierarchyResolver(primitiveResolvers);
     }
 
     @Override
@@ -41,13 +41,13 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     private void addPrimitiveFieldToCurrentJsonObject(PathMetadata currentPathMetaData) {
         String field = currentPathMetaData.getFieldName();
         Object propertyValue = properties.get(propertyKey);
-        if (currentPathMetaData.isArrayField()) {
+        if(currentPathMetaData.isArrayField()) {
             addFieldToArray(currentPathMetaData, propertyValue);
         } else {
-            if (currentObjectJsonType.containsField(field) && isArrayJson(currentObjectJsonType.getField(field))) {
-                AbstractJsonType abstractJsonType = resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers);
+            if(currentObjectJsonType.containsField(field) && isArrayJson(currentObjectJsonType.getField(field))) {
+                AbstractJsonType abstractJsonType = resolvePrimitiveTypeAndReturn(propertyValue);
                 ArrayJsonType currentArrayInObject = currentObjectJsonType.getJsonArray(field);
-                if (isArrayJson(abstractJsonType)) {
+                if(isArrayJson(abstractJsonType)) {
                     ArrayJsonType newArray = (ArrayJsonType) abstractJsonType;
                     List<AbstractJsonType> abstractJsonTypes = newArray.convertToListWithoutRealNull();
                     for(int i = 0; i < abstractJsonTypes.size(); i++) {
@@ -57,40 +57,31 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
                     throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), currentArrayInObject, propertyKey);
                 }
             } else {
-                currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers), currentPathMetaData);
+                currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue), currentPathMetaData);
             }
         }
     }
 
     public Object getResolvedObject(String propertyValue) {
         Object object = null;
-        for (PrimitiveJsonTypeResolver primitiveResolver : primitiveResolvers) {
-            if (object == null) {
+        for(PrimitiveJsonTypeResolver primitiveResolver : primitiveResolvers) {
+            if(object == null) {
                 object = primitiveResolver.returnConvertedValueForClearedText(this, propertyValue);
             }
         }
         return object;
     }
 
-    public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue, List<PrimitiveJsonTypeResolver> resolvers) {
-        if (propertyValue == null) {
+    public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue) {
+        if(propertyValue == null) {
             return NULL_OBJECT;
         }
-        Class<?> propertyValueClass = propertyValue.getClass();
-        for (PrimitiveJsonTypeResolver<?> resolver : resolvers) {
-            if (resolver.canResolveThisObject(propertyValueClass)) {
-                return resolver.returnJsonType(this, propertyValue);
-            }
-        }
-        throw new ParsePropertiesException(format(CANNOT_FIND_TYPE_RESOLVER_MSG, propertyValue.getClass()));
-    }
-
-    public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue) {
-        return resolvePrimitiveTypeAndReturn(propertyValue, primitiveResolvers);
+        PrimitiveJsonTypeResolver<?> primitiveJsonTypeResolver = resolversHierarchyResolver.returnConcreteResolver(propertyValue);
+        return primitiveJsonTypeResolver.returnJsonType(this, propertyValue);
     }
 
     protected void addFieldToArray(PathMetadata currentPathMetaData, Object propertyValue) {
-        if (arrayWithGivenFieldNameExist(currentPathMetaData.getFieldName())) {
+        if(arrayWithGivenFieldNameExist(currentPathMetaData.getFieldName())) {
             fetchArrayAndAddElement(currentPathMetaData, propertyValue);
         } else {
             createArrayAndAddElement(currentPathMetaData, propertyValue);

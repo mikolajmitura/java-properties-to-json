@@ -240,6 +240,8 @@ By default constructor Every array element will be try parse by others primitive
 
 ```bash
 arraytexts=1,23.0,5,false,text
+or
+arraytexts=[1,23.0,5,false,text]
 ```
 Will result (when DoubleJsonTypeResolver, IntegerJsonTypeResolver, BooleanJsonTypeResolver are added to resolvers)
 ```json
@@ -434,7 +436,7 @@ Will result
 Requirements
 ---------------------------------------------
 
-- java 7
+- java 8
 
 - properties structure must have structure compatible with json
 
@@ -443,14 +445,16 @@ For example properties from below will throws ParsePropertiesException!
 object.man.name=John
 object.man=simpleValue
 
-## reason: in first key 'man' is consider as json object type and so on.
+## reason: in first key 'man' is consider as json object and has field 'name'
 
 object.array[0]=simpleValue
 object.array[0].someField=someObjectSomeFieldValue
 object.array[0].someField2=someObjectSomeFieldValue2
 
-## reason: in first key 'object.array[0]' is consider as array element with primitive type not for Json Object. The key 'object.array[0].someField' try add object in array with index 0 where already is primitive JSON type with value: 'simpleValue'.
+## reason: in first key 'object.array[0]' contains primitive value 'simpleValue' doesn't have json object. The key 'object.array[0].someField' try add new field 'someField' to element at object.array[0] which is primitive type now.
 
+TODO write about changed resolvers API
+TODO write about merge objects and arrays
 
 ```
 Maven dependency

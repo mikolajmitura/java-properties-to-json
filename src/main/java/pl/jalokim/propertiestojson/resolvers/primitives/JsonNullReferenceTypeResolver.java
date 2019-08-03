@@ -9,6 +9,8 @@ import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_VALU
 
 public class JsonNullReferenceTypeResolver extends PrimitiveJsonTypeResolver<JsonNullReferenceType> {
 
+    public static final JsonNullReferenceTypeResolver NULL_RESOLVER = new JsonNullReferenceTypeResolver();
+
     @Override
     public JsonNullReferenceType returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
         if (propertyValue == null || isStringType(propertyValue) && propertyValue.equals(NULL_VALUE)) {

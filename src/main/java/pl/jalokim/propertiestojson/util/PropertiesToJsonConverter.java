@@ -40,6 +40,7 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
+import static pl.jalokim.propertiestojson.resolvers.primitives.JsonNullReferenceTypeResolver.NULL_RESOLVER;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING_RESOLVER_AS_NOT_LAST;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE;
 
@@ -47,7 +48,6 @@ public final class PropertiesToJsonConverter {
 
     public static final StringJsonTypeResolver STRING_RESOLVER = new StringJsonTypeResolver();
     private static final List<PrimitiveJsonTypeResolver> DEFAULT_PRIMITIVE_RESOLVERS;
-    private static final JsonNullReferenceTypeResolver NULL_RESOLVER = new JsonNullReferenceTypeResolver();
     private static final EmptyStringJsonTypeResolver EMPTY_TEXT_RESOLVER = new EmptyStringJsonTypeResolver();
 
     static {
@@ -61,8 +61,6 @@ public final class PropertiesToJsonConverter {
     private PropertyKeysOrderResolver propertyKeysOrderResolver = new PropertyKeysOrderResolver();
     private final Map<AlgorithmType, JsonTypeResolver> algorithms = new HashMap<>();
     private final PrimitiveJsonTypesResolver primitiveResolvers;
-    // TODO implement this...
-    private final boolean jsonFieldsOverrideAllowed;
 
     /**
      * This constructor allow to give a resolvers, the order of resolvers is important.
@@ -70,16 +68,6 @@ public final class PropertiesToJsonConverter {
      * @param primitiveResolvers ordered list
      */
     public PropertiesToJsonConverter(PrimitiveJsonTypeResolver... primitiveResolvers) {
-        this(false, primitiveResolvers);
-    }
-
-    /**
-     * This constructor allow to give a resolvers, the order of resolvers is important.
-     *
-     * @param primitiveResolvers ordered list
-     */
-    public PropertiesToJsonConverter(boolean jsonFieldsOverrideAllowed, PrimitiveJsonTypeResolver... primitiveResolvers) {
-        this.jsonFieldsOverrideAllowed = jsonFieldsOverrideAllowed;
         validateTypeResolverOrder(primitiveResolvers);
         this.primitiveResolvers = new PrimitiveJsonTypesResolver(buildAllPrimitiveResolvers(primitiveResolvers));
         algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());
@@ -103,8 +91,15 @@ public final class PropertiesToJsonConverter {
         return allPrimitiveResolvers;
     }
 
+    // TODO fix documentation and remove info canResolveThisObject...
     /**
      * Generate Json by given path to file with properties with only included domain keys.
+     * Every every property value will try resolve to concrete object by given resolvers...
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param pathToFile        path to File
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -124,6 +119,12 @@ public final class PropertiesToJsonConverter {
 
     /**
      * Generate Json by given path to file with properties.
+     * Every every property value will try resolve to concrete object by given resolvers...
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param pathToFile path to File
      * @return simple String with json
@@ -136,6 +137,12 @@ public final class PropertiesToJsonConverter {
 
     /**
      * Generate Json by given file with properties with only included domain keys.
+     * Every every property value will try resolve to concrete object by given resolvers...
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param file              file with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -160,6 +167,12 @@ public final class PropertiesToJsonConverter {
 
     /**
      * Generate Json by given file with properties.
+     * Every every property value will try resolve to concrete object by given resolvers...
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param file file with properties
      * @return simple String with json
@@ -177,6 +190,12 @@ public final class PropertiesToJsonConverter {
 
     /**
      * generate Json by given InputStream and given filter.
+     * Every every property value will try resolve to concrete object by given resolvers...
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param inputStream       InputStream with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -196,6 +215,12 @@ public final class PropertiesToJsonConverter {
 
     /**
      * generate Json by given InputStream.
+     * Every every property value will try resolve to concrete object by given resolvers...
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param inputStream InputStream with properties
      * @return simple String with json
@@ -208,6 +233,10 @@ public final class PropertiesToJsonConverter {
 
     /**
      * generate Json by given Java Properties
+     * If property value will be string then will not try resolve it as another type.
+     * It will only check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties Java Properties
      * @return simple String with json
@@ -226,6 +255,12 @@ public final class PropertiesToJsonConverter {
 
     /**
      * generate Json by given Map&lt;String,String&gt;
+     * Every every property value will try resolve to concrete object by given resolvers...
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties Java Map with properties
      * @return simple String with json
@@ -238,6 +273,10 @@ public final class PropertiesToJsonConverter {
 
     /**
      * generate Json by given Map&lt;String,Object&gt;
+     * If property value will be string then will not try resolve it as another type.
+     * It will only check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties Java Map with properties
      * @return simple String with json
@@ -263,6 +302,12 @@ public final class PropertiesToJsonConverter {
 
     /**
      * generate Json by given Map&lt;String,String&gt; and given filter
+     * Every every property value will try resolve to concrete object by given resolvers...
+     * It will try convert to some object (number, boolean, list etc, depends on generic type of given {@link PrimitiveJsonTypeResolver}) from string value through method:
+     * {@link PrimitiveJsonTypeResolver#returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue)}
+     * Next will check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties        Java Map with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -281,6 +326,10 @@ public final class PropertiesToJsonConverter {
 
     /**
      * generate Json by given Map&lt;String,String&gt; and given filter
+     * If property value will be string then will not try resolve it as another type.
+     * It will only check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties        Java Map with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -305,6 +354,10 @@ public final class PropertiesToJsonConverter {
 
     /**
      * generate Json by given Java Properties and given filter
+     * If property value will be string then will not try resolve it as another type.
+     * It will only check through method {@link PrimitiveJsonTypeResolver#canResolveThisObject(Class)} that can
+     * convert from given object if can then will convert to some instance which extends AbstractJsonType
+     * through method {@link PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue)}
      *
      * @param properties        Java Properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -322,7 +375,7 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
-     * It change implementation of ordered gathering keys from properties
+     * It change implementation of order gathering keys from properties
      *
      * @param propertyKeysOrderResolver another implementation of get ordered properties keys
      */
