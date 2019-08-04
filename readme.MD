@@ -555,7 +555,7 @@ but for properties
 
 ```properties
 object.array=[0, 1, 2, "3"]
-object.array[4]=4
+object.array[3]=4
 ```
 
 it throws a exception because was try of override index in array:
