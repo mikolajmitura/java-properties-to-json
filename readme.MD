@@ -563,7 +563,7 @@ object.array[0].someField2=someObjectSomeFieldValue2
 ```
 
 
-Json Object merges and Json array merge
+Json Object merge or Json Array merge
 ---------------------------------------------
 
 <h4>1) primitive array merge and indexed property key </h4>
@@ -601,7 +601,7 @@ it throws a exception because was try of override index in array:
 CannotOverrideFieldException: Cannot override value at path: 'object.array[3]', current value is: '"3"', problematic property key: 'object.array[3]'
 ```
 
-<h4>1) merge of json object from text (json object was provided from property value) and normal property </h4>
+<h4>2) merge of json object from text (json object was provided from property value) and normal property </h4>
 
 ```properties
 object.someAnotherObject={"field1":"fieldValue"}
