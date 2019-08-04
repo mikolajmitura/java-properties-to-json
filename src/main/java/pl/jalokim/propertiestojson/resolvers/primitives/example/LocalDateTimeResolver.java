@@ -1,4 +1,4 @@
-package pl.jalokim.propertiestojson.example;
+package pl.jalokim.propertiestojson.resolvers.primitives.example;
 
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.JsonNullReferenceType;
@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * results of this resolver you can see in test class LocalDateTimeResolverTest
  *
- * @see <a href="https://github.com/mikolajmitura/java-properties-to-json/blob/65da56f621fdef705f72061f86a356f036fa1ecd/src/test/java/pl/jalokim/propertiestojson/example/LocalDateTimeResolverTest.java">LocalDateTimeResolverTest</a>
+ * @see <a href="https://github.com/mikolajmitura/java-properties-to-json/blob/v5.0.0/src/test/java/pl/jalokim/propertiestojson/resolvers/primitives/example/LocalDateTimeResolverTest.java">LocalDateTimeResolverTest</a>
  */
 public class LocalDateTimeResolver extends PrimitiveJsonTypeResolver<LocalDate> {
 
