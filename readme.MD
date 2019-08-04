@@ -145,6 +145,12 @@ Example code below for custom Resolver type which converts from text to LocalDat
     import java.time.format.DateTimeFormatter;
     import java.util.Optional;
 
+
+    /**
+     * results of this resolver you can see in test class LocalDateTimeResolverTest
+     *
+     * @see <a href="https://github.com/mikolajmitura/java-properties-to-json/blob/65da56f621fdef705f72061f86a356f036fa1ecd/src/test/java/pl/jalokim/propertiestojson/example/LocalDateTimeResolverTest.java">LocalDateTimeResolverTest</a>
+     */
     public class LocalDateTimeResolver extends PrimitiveJsonTypeResolver<LocalDate> {
 
         private static final String DATE_FORMAT = "dd-MM-yyyy";
