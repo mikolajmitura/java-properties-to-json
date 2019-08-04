@@ -26,7 +26,7 @@ public class AbstractPropertiesToJsonConverterTest {
     protected static final String EMAIL_1 = "example@gg.com";
     protected static final String EMAIL_2 = "example2@cc.com";
     protected static final String EMAIL_3 = "example3@gg.com";
-    protected static final String EMAILS = String.format(" %s ,%s, %s,%s", EMAIL_1, EMAIL_2, EMAIL_3, EMAIL_3);
+    protected static final String EMAILS = String.format("%s,%s,%s,%s", EMAIL_1, EMAIL_2, EMAIL_3, EMAIL_3);
     protected static final String GROUP_1 = "group1";
     protected static final String COMMERCIAL = "Commercial";
     protected static final String GROUP_3 = "group3";
@@ -81,7 +81,7 @@ public class AbstractPropertiesToJsonConverterTest {
         properties.put("insurance.cost", COST_INT_VALUE);
         properties.put("field1", FIELD1_VALUE);
         properties.put("field2", FIELD2_VALUE);
-        properties.put("man.emails", Arrays.asList(EMAILS.split(",")));
+        properties.put("man.emails", Arrays.asList(EMAIL_1, EMAIL_2, EMAIL_3, EMAIL_3));
         properties.put("man.groups[0].name", GROUP_1);
         properties.put("man.groups[0].type", COMMERCIAL);
         properties.put("man.groups[2].name", GROUP_3);

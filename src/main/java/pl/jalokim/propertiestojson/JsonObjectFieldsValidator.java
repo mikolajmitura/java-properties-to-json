@@ -2,79 +2,59 @@ package pl.jalokim.propertiestojson;
 
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
+import pl.jalokim.propertiestojson.object.JsonNullReferenceType;
+import pl.jalokim.propertiestojson.object.MergableObject;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
-import pl.jalokim.propertiestojson.object.StringJsonType;
-import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
-
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.*;
-
+import pl.jalokim.propertiestojson.object.PrimitiveJsonType;
+import pl.jalokim.propertiestojson.path.PathMetadata;
+import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
 public class JsonObjectFieldsValidator {
 
-
-    public static void checkEarlierWasJsonPrimitiveType(ObjectJsonType currentObjectJson, String field, String propertiesKey) {
-
-        if (currentObjectJson.containsField(field)) {
-            AbstractJsonType jsonType = currentObjectJson.getJsonTypeByFieldName(field);
-            whenWasArrayTypeThenThrowException(currentObjectJson, field, propertiesKey, jsonType);
-            whenWasObjectTypeThenThrowException(propertiesKey, field, jsonType);
+    public static void checkThatFieldCanBeSet(ObjectJsonType currentObjectJson, PathMetadata currentPathMetaData, String propertyKey) {
+        if(currentObjectJson.containsField(currentPathMetaData.getFieldName())) {
+            AbstractJsonType abstractJsonType = currentObjectJson.getField(currentPathMetaData.getFieldName());
+            if(currentPathMetaData.isArrayField()) {
+                if(isArrayJson(abstractJsonType)) {
+                    ArrayJsonType jsonArray = currentObjectJson.getJsonArray(currentPathMetaData.getFieldName());
+                    AbstractJsonType elementByDimArray = jsonArray.getElementByGivenDimIndexes(currentPathMetaData);
+                    if(elementByDimArray != null) {
+                        throwErrorWhenCannotMerge(currentPathMetaData, propertyKey, elementByDimArray);
+                    }
+                } else {
+                    throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPathWithoutIndexes(), abstractJsonType, propertyKey);
+                }
+            } else {
+                throwErrorWhenCannotMerge(currentPathMetaData, propertyKey, abstractJsonType);
+            }
         }
     }
 
-    public static void checkEalierWasArrayJson(String propertiesKey, String field, AbstractJsonType jsonType) {
-
-        whenWasStringTypeThenThrowException(propertiesKey, field, jsonType);
-        whenWasObjectTypeThenThrowException(propertiesKey, field, jsonType);
-
-    }
-
-    public static void checkEarlierWasJsonObject(String propertiesKey, String field, AbstractJsonType jsonType) {
-
-        whenWasStringTypeThenThrowException(propertiesKey, field, jsonType);
-    }
-
-    public static void checkThatArrayElementIsPrimitiveType(String propertiesKey, String field, ArrayJsonType arrayJsonType,
-                                                            int index) {
-
-        if (arrayJsonType.getElement(index) != null && !(arrayJsonType.getElement(index) instanceof StringJsonType)) {
-            throwException(EXPECTED_ELEMENT_ARRAY_JSON_OBJECT_TYPES, field, index, propertiesKey, arrayJsonType);
+    private static void throwErrorWhenCannotMerge(PathMetadata currentPathMetaData, String propertyKey, AbstractJsonType oldJsonValue) {
+        if (!isMergableJsonType(oldJsonValue) ) {
+            throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), oldJsonValue, propertyKey);
         }
     }
 
-    public static void checkThatArrayElementIsObjectJsonType(String field, ArrayJsonType arrayJsonType, AbstractJsonType element,
-                                                             String propertiesKey, int index) {
-        if (!(element instanceof ObjectJsonType)) {
-            throwException(EXPECTED_ELEMENT_ARRAY_PRIMITIVE_TYPES, field, index, propertiesKey, arrayJsonType);
-        }
+    public static void checkEarlierWasJsonObject(String propertyKey, PathMetadata currentPathMetaData, AbstractJsonType jsonType) {
+         if (!isObjectJson(jsonType)) {
+             throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), jsonType, propertyKey);
+         }
     }
 
-    private static void throwException(String message, String field, String propertiesKey, AbstractJsonType jsonType) {
-        throw new ParsePropertiesException(String.format(message, field, jsonType.toStringJson(), propertiesKey));
+    public static boolean isObjectJson(AbstractJsonType jsonType) {
+        return ObjectJsonType.class.isAssignableFrom(jsonType.getClass());
     }
 
-    private static void throwException(String message, String field, int index, String propertiesKey, AbstractJsonType jsonType) {
-        throw new ParsePropertiesException(String.format(message, field, index, ((ArrayJsonType) jsonType).getElement(index).toStringJson(), propertiesKey));
+    public static boolean isPrimitiveValue(AbstractJsonType jsonType) {
+        return PrimitiveJsonType.class.isAssignableFrom(jsonType.getClass()) || JsonNullReferenceType.class.isAssignableFrom(jsonType.getClass());
     }
 
-    private static void whenWasStringTypeThenThrowException(String propertiesKey, String field, AbstractJsonType jsonType) {
-        if (isExpectedType(jsonType, StringJsonType.class)) {
-            throwException(EXPECTED_PRIMITIVE_JSON_TYPE, field, propertiesKey, jsonType);
-        }
+    public static boolean isArrayJson(AbstractJsonType jsonType) {
+        return ArrayJsonType.class.isAssignableFrom(jsonType.getClass());
     }
 
-    private static void whenWasObjectTypeThenThrowException(String propertiesKey, String field, AbstractJsonType jsonType) {
-        if (isExpectedType(jsonType, ObjectJsonType.class)) {
-            throwException(EXPECTED_OBJECT_JSON_TYPE, field, propertiesKey, jsonType);
-        }
-    }
-
-    private static void whenWasArrayTypeThenThrowException(ObjectJsonType currentObjectJson, String field, String propertiesKey, AbstractJsonType jsonType) {
-        if (isExpectedType(jsonType, ArrayJsonType.class)) {
-            throwException(EXPECTED_ARRAY_JSON_TYPE, field, propertiesKey, currentObjectJson.getJsonTypeByFieldName(field));
-        }
-    }
-
-    private static boolean isExpectedType(AbstractJsonType object, Class<?> type) {
-        return object.getClass().equals(type);
+    public static boolean isMergableJsonType(Object jsonType) {
+        return MergableObject.class.isAssignableFrom(jsonType.getClass());
     }
 }
