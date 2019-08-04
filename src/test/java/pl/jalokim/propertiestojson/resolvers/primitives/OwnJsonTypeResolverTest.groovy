@@ -95,16 +95,16 @@ class OwnJsonTypeResolverTest extends Specification {
     private static class OwnBeanPrimitiveJsonTypeResolver extends PrimitiveJsonTypeResolver<OwnBean> {
 
         @Override
-        protected OwnBean returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+        protected Optional<OwnBean> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
             if (propertyKey == ("deprecated.one")) {
                 throw new RuntimeException("property: deprecated.one is not supported!")
             }
 
             if (propertyValue.matches("^package.OwnBean:.*,.*")) {
                 String[] values = propertyValue.replaceFirst("^package.OwnBean:", "").split(",")
-                return new OwnBean(values[0], LocalDate.of(Integer.parseInt(values[1]), 1, 12))
+                return Optional.ofNullable(new OwnBean(values[0], LocalDate.of(Integer.parseInt(values[1]), 1, 12)))
             }
-            return null
+            return Optional.empty()
         }
 
         @Override

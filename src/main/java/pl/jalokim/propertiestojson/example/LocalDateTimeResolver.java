@@ -1,45 +1,39 @@
-package pl.jalokim.propertiestojson.resolvers.primitives;
+package pl.jalokim.propertiestojson.example;
 
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.JsonNullReferenceType;
+import pl.jalokim.propertiestojson.object.NumberJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.hierarchy.JsonTypeResolversHierarchyResolver;
-import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
+import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-@SuppressWarnings("unchecked")
-public abstract class PrimitiveJsonTypeResolver<T> {
+public class LocalDateTimeResolver extends PrimitiveJsonTypeResolver<LocalDate> {
 
-    protected final Class<?> canResolveClass = resolveTypeOfResolver();
+    private static final String DATE_FORMAT = "dd-MM-yyyy";
+    private final DateTimeFormatter formatter;
+    private final boolean asTimestampInUTC;
 
-    protected Class<?> resolveTypeOfResolver() {
-        Class<?> currentClass = getClass();
-        while(currentClass != null) {
-            try {
-                return (Class<T>) ((ParameterizedType) currentClass
-                        .getGenericSuperclass()).getActualTypeArguments()[0];
-            } catch(Exception ccx) {
-                currentClass = currentClass.getSuperclass();
-            }
-        }
-        throw new ParsePropertiesException("Cannot find generic type for resolver: " + getClass() + " You can resolve it by one of below:"
-                                           + "\n 1. override method resolveTypeOfResolver() for provide explicit class type " +
-                                           "\n 2. add generic type during extension of PrimitiveJsonTypeResolver "
-                                           + "'class " + getClass().getSimpleName() + " extends PrimitiveJsonTypeResolver<GIVEN_TYPE>'");
+    LocalDateTimeResolver() {
+        this(DATE_FORMAT, false);
     }
 
-    public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey) {
-        return returnConcreteJsonType(primitiveJsonTypesResolver, (T) propertyValue, propertyKey);
+    LocalDateTimeResolver(boolean asTimestampInUTC) {
+        this(DATE_FORMAT, asTimestampInUTC);
     }
 
+    LocalDateTimeResolver(String formatOfDate) {
+        this(formatOfDate, false);
+    }
 
-    public Optional<T> returnConvertedValueForClearedText(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
-        return returnConcreteValueWhenCanBeResolved(primitiveJsonTypesResolver,
-                                                    propertyValue == null ? null : propertyValue.trim(), propertyKey);
+    LocalDateTimeResolver(String formatOfDate, boolean asTimestampInUTC) {
+        formatter = DateTimeFormatter.ofPattern(formatOfDate);
+        this.asTimestampInUTC = asTimestampInUTC;
     }
 
     /**
@@ -54,7 +48,16 @@ public abstract class PrimitiveJsonTypeResolver<T> {
      * @return optional value
      */
 
-    protected abstract Optional<T> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey);
+    @Override
+    protected Optional<LocalDate> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                                                       String propertyValue,
+                                                                       String propertyKey) {
+        try {
+            return Optional.ofNullable(LocalDate.parse(propertyValue, formatter)); // if parse then will return LocalDate
+        } catch(Exception ex) {
+            return Optional.empty(); // if not
+        }
+    }
 
     /**
      * This method will be called in second phase processing step (from some java Object to some implementation of AbstractJsonType)
@@ -78,9 +81,13 @@ public abstract class PrimitiveJsonTypeResolver<T> {
      * @return optional value
      */
 
-    public abstract AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, T convertedValue, String propertyKey);
-
-    public List<Class<?>> getClassesWhichCanResolve() {
-        return Collections.singletonList(canResolveClass);
+    @Override
+    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                                   LocalDate convertedValue,
+                                                   String propertyKey) {
+        if(asTimestampInUTC) {
+            return new NumberJsonType(convertedValue.atStartOfDay(ZoneOffset.UTC).toEpochSecond());
+        }
+        return ObjectFromTextJsonTypeResolver.convertFromObjectToJson(convertedValue, propertyKey);
     }
 }

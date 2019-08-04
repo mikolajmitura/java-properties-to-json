@@ -4,6 +4,8 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.BooleanJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
+import java.util.Optional;
+
 public class BooleanJsonTypeResolver extends PrimitiveJsonTypeResolver<Boolean>{
 
     private static final String TRUE = "true";
@@ -14,11 +16,11 @@ public class BooleanJsonTypeResolver extends PrimitiveJsonTypeResolver<Boolean>{
     }
 
     @Override
-    public Boolean returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+    public Optional<Boolean> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         if (TRUE.equalsIgnoreCase(propertyValue) || FALSE.equalsIgnoreCase(propertyValue)){
-            return getBoolean(propertyValue);
+            return Optional.of(getBoolean(propertyValue));
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

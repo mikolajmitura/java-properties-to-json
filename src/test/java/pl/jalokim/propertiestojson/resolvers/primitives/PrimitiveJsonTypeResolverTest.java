@@ -8,6 +8,8 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
+import java.util.Optional;
+
 public class PrimitiveJsonTypeResolverTest {
 
     @Rule
@@ -28,8 +30,8 @@ public class PrimitiveJsonTypeResolverTest {
     private static class SomePrimitiveJsonTypeResolver extends PrimitiveJsonTypeResolver {
 
         @Override
-        protected Object returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
-            return null;
+        protected Optional<Object> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+            return Optional.empty();
         }
 
         @Override

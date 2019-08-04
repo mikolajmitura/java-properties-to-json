@@ -11,6 +11,7 @@ import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolve
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isArrayJson;
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
@@ -62,13 +63,13 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     }
 
     public Object getResolvedObject(String propertyValue, String propertyKey) {
-        Object object = null;
+        Optional<?> objectOptional = Optional.empty();
         for(PrimitiveJsonTypeResolver primitiveResolver : primitiveResolvers) {
-            if(object == null) {
-                object = primitiveResolver.returnConvertedValueForClearedText(this, propertyValue, propertyKey);
+            if(!objectOptional.isPresent()) {
+                objectOptional = primitiveResolver.returnConvertedValueForClearedText(this, propertyValue, propertyKey);
             }
         }
-        return object;
+        return objectOptional.orElse(null);
     }
 
     public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue, String propertyKey) {

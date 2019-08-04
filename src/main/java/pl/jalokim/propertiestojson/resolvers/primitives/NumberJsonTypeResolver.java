@@ -6,6 +6,7 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Optional;
 
 public class NumberJsonTypeResolver extends PrimitiveJsonTypeResolver<Number> {
 
@@ -18,8 +19,8 @@ public class NumberJsonTypeResolver extends PrimitiveJsonTypeResolver<Number> {
     }
 
     @Override
-    public Number returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
-        return convertToNumber(propertyValue);
+    public Optional<Number> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+        return Optional.ofNullable(convertToNumber(propertyValue));
     }
 
     @Override

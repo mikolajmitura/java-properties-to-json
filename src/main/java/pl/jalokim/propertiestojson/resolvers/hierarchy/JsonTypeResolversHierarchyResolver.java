@@ -14,7 +14,7 @@ import static pl.jalokim.propertiestojson.resolvers.primitives.JsonNullReference
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG;
 
 /**
- * It looks for sufficient resolver, firstly will looks for exactly match class type,
+ * It looks for sufficient resolver, firstly will looks for exactly match class type provided by method {@link PrimitiveJsonTypeResolver#getClassesWhichCanResolve()}
  * if not then will looks for closets parent class or parent interface.
  * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
  * If will find only closets super interfaces (at the same level) then will throw exception...

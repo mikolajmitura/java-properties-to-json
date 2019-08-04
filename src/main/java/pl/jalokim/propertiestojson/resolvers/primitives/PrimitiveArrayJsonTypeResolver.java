@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.String.join;
 import static java.util.Collections.singletonList;
@@ -41,7 +42,7 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
     }
 
     @Override
-    public Collection<?> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+    public Optional<Collection<?>> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         if(isSimpleArray(propertyValue) && !isValidJsonObjectOrArray(propertyValue)) {
 
             if(hasJsonArraySignature(propertyValue)) {
@@ -65,9 +66,9 @@ public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeResolver<Co
                     elements.add(element);
                 }
             }
-            return elements;
+            return Optional.of(elements);
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

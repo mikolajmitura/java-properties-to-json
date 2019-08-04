@@ -356,10 +356,10 @@ class PropertiesToJsonConverterResolversTest extends Specification {
     private static class AnotherNumberResolver extends PrimitiveJsonTypeResolver<Number> {
 
         @Override
-        protected Number returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+        protected Optional<Number> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
                                                               String propertyValue,
                                                               String propertyKey) {
-            return null
+            return Optional.empty()
         }
 
         @Override
