@@ -58,49 +58,80 @@ object3.arrayWithDelimeter=value1,value2,value3
 object3.simpleString=stringValue
 object3.emptyValue=
 object3.nullValue=null
+multiDimArray[0][0]=00
+multiDimArray[0][1]=01
+multiDimArray[1][0]=10
+multiDimArray[1][1]=11
+objectFromText={"fieldName": "value"}
+objectFromText.anotherField=anotherField_value
+anotherMultiDimArray=[[12, true], [12, 123]]
 ```
 
 Will result:
 
 ```json
 {
-   "object2":{
-      "simpleArray":[
-         "value1",
-         "value2",
-         "value3",
-         "value4"
-      ],
-      "objectArray":[
-         {
-            "field1":"value1",
-            "field3":"value3",
-            "field2":"value2"
-         }
-      ]
-   },
-   "object3":{
-      "arrayWithDelimeter":[
-         "value1",
-         "value2",
-         "value3"
-      ],
-      "simpleString":"stringValue",
-      "emptyValue":"",
-      "nullValue":null
-   },
-   "object":{
-      "doubleNumber":1.2345,
-      "integerNumber":12,
-      "booleanValue1":true,
-      "booleanValue2":true,
-      "booleanValue3":false,
-      "man":{
-         "surname":"Doe",
-         "name":"John"
-      },
-      "type":"SOMETYPE"
-   }
+  "object2": {
+    "simpleArray": [
+      "value1",
+      "value2",
+      "value3",
+      "value4"
+    ],
+    "objectArray": [
+      {
+        "field1": "value1",
+        "field3": "value3",
+        "field2": "value2"
+      }
+    ]
+  },
+  "object3": {
+    "emptyValue": "",
+    "arrayWithDelimeter": [
+      "value1",
+      "value2",
+      "value3"
+    ],
+    "simpleString": "stringValue",
+    "nullValue": null
+  },
+  "anotherMultiDimArray": [
+    [
+      12,
+      true
+    ],
+    [
+      12,
+      123
+    ]
+  ],
+  "objectFromText": {
+    "fieldName": "value",
+    "anotherField": "anotherField_value"
+  },
+  "multiDimArray": [
+    [
+      "00",
+      "01"
+    ],
+    [
+      10,
+      11
+    ]
+  ],
+  "object": {
+    "booleanValue3": false,
+    "booleanValue1": true,
+    "booleanValue2": true,
+    "integerNumber": 12,
+    "doubleNumber": 1.2345,
+    "man": {
+      "surname": "Doe",
+      "name": "John"
+    },
+    "type": "SOMETYPE"
+  }
 }
 ```
 
@@ -476,85 +507,37 @@ insurance.type=Medical
 insurance.cost=123
 field1=someValue2
 field2=someValue3
-multiDimArray[0][0]=00
-multiDimArray[0][1]=01
-multiDimArray[1][0]=10
-multiDimArray[1][1]=11
-objectFromText={"fieldName": "value"}
-objectFromText.anotherField=anotherField_value
-anotherMultiDimArray=[[12, true], [12, 123]]
+
 ```
 
 Will result
 ```json
 {
-  "insurance": {
-    "cost": 123,
-    "type": "Medical"
-  },
-  "field1": "someValue2",
-  "anotherMultiDimArray": [
-    [
-      12,
-      true
-    ],
-    [
-      12,
-      123
-    ]
-  ],
-  "objectFromText": {
-    "fieldName": "value",
-    "anotherField": "anotherField_value"
-  },
-  "man": {
-    "insurance": {
-      "cost": 126.543
-    },
-    "emails": [
-      "example@gg.com",
-      "example2@cc.com",
-      "example3@gg.com",
-      "example3@gg.com"
-    ],
-    "hoobies": [
-      "cars",
-      "science",
-      "women",
-      "computers"
-    ],
-    "address": {
-      "city": "Waraw",
-      "street": "Jp2"
-    },
-    "surname": "Surname",
-    "name": "John",
-    "groups": [
-      {
-        "name": "group1",
-        "type": "Commercial"
-      },
-      {
-        "name": "group2",
-        "type": "Free"
-      },
-      {
-        "name": "group3",
-        "type": "Commercial"
-      }
-    ]
-  },
-  "multiDimArray": [
-    [
-      "00",
-      "01"
-    ],
-    [
-      10,
-      11
-    ]
-  ],
-  "field2": "someValue3"
+   "insurance":{
+      "cost":123.0
+   },
+   "man":{
+      "hoobies":[
+         "cars",
+         "science",
+         "women",
+         "computers"
+      ],
+      "groups":[
+         {
+            "name":"group1",
+            "type":"Commercial"
+         },
+         {
+            "name":"group2",
+            "type":"Free"
+         },
+         {
+            "name":"group3",
+            "type":"Commercial"
+         }
+      ]
+   }
 }
 ```
 
