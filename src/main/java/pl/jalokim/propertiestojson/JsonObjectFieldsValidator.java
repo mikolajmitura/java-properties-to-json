@@ -9,9 +9,6 @@ import pl.jalokim.propertiestojson.object.PrimitiveJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
-import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
-import static pl.jalokim.propertiestojson.Constants.NORMAL_DOT;
-
 public class JsonObjectFieldsValidator {
 
     public static void checkThatFieldCanBeSet(ObjectJsonType currentObjectJson, PathMetadata currentPathMetaData, String propertyKey) {
@@ -25,8 +22,7 @@ public class JsonObjectFieldsValidator {
                         throwErrorWhenCannotMerge(currentPathMetaData, propertyKey, elementByDimArray);
                     }
                 } else {
-                    String parentFullPath = currentPathMetaData.isRoot() ? EMPTY_STRING : currentPathMetaData.getParent().getCurrentFullPath() + NORMAL_DOT;
-                    throw new CannotOverrideFieldException(parentFullPath + currentPathMetaData.getFieldName(), abstractJsonType, propertyKey);
+                    throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPathWithoutIndexes(), abstractJsonType, propertyKey);
                 }
             } else {
                 throwErrorWhenCannotMerge(currentPathMetaData, propertyKey, abstractJsonType);

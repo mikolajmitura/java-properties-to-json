@@ -15,17 +15,18 @@ public abstract class PrimitiveJsonTypeResolver<T> {
 
     protected Class<?> resolveTypeOfResolver() {
         Class<?> currentClass = getClass();
-        while (currentClass != null) {
+        while(currentClass != null) {
             try {
                 return (Class<T>) ((ParameterizedType) currentClass
                         .getGenericSuperclass()).getActualTypeArguments()[0];
-            } catch (Exception ccx) {
+            } catch(Exception ccx) {
                 currentClass = currentClass.getSuperclass();
             }
         }
-        // TODO test this
-        throw new ParsePropertiesException("Cannot find generic type for resolver: " + getClass() +
-                " Please override method resolveTypeOfResolver() for provide explicit class type");
+        throw new ParsePropertiesException("Cannot find generic type for resolver: " + getClass() + " You can resolve it by one of below:"
+                                           + "\n 1. override method resolveTypeOfResolver() for provide explicit class type " +
+                                           "\n 2. add generic type during extension of PrimitiveJsonTypeResolver "
+                                           + "'class " + getClass().getSimpleName() + " extends PrimitiveJsonTypeResolver<GIVEN_TYPE>'");
     }
 
     public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey) {
@@ -44,4 +45,4 @@ public abstract class PrimitiveJsonTypeResolver<T> {
     public List<Class<?>> getClassesWhichCanResolve() {
         return Collections.singletonList(canResolveClass);
     }
- }
+}

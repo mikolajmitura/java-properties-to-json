@@ -22,25 +22,25 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         print(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
-        jsonObject.someObject.array[0][0]==[12, 13, 14, "test", true]
-        jsonObject.someObject.array[0][1]==[1, 1.1, true, "arrayValue1"]
-        jsonObject.someObject.array[0][2]==[2, 2.2, true, "arrayValue2"]
-        jsonObject.someObject.array[1]=="test"
-        jsonObject.someObject.array[2][0]=="test1"
-        jsonObject.someObject.array[2][1]=="test2"
-        jsonObject.someObject.array[3][0].field=="value1"
-        jsonObject.someObject.array[3][1].field=="value2"
-        jsonObject.someObject.array[3][2]=="simpleText"
-        jsonObject.someObject.array[3][3][0]==1
-        jsonObject.someObject.array[3][3][1]==2
-        jsonObject.someObject.array[3][3][2]==[true, "boolean"]
+        jsonObject.someObject.array[0][0] == [12, 13, 14, "test", true]
+        jsonObject.someObject.array[0][1] == [1, 1.1, true, "arrayValue1"]
+        jsonObject.someObject.array[0][2] == [2, 2.2, true, "arrayValue2"]
+        jsonObject.someObject.array[1] == "test"
+        jsonObject.someObject.array[2][0] == "test1"
+        jsonObject.someObject.array[2][1] == "test2"
+        jsonObject.someObject.array[3][0].field == "value1"
+        jsonObject.someObject.array[3][1].field == "value2"
+        jsonObject.someObject.array[3][2] == "simpleText"
+        jsonObject.someObject.array[3][3][0] == 1
+        jsonObject.someObject.array[3][3][1] == 2
+        jsonObject.someObject.array[3][3][2] == [true, "boolean"]
 
-        jsonObject.someObject.array[3][3][2][0]==true
-        jsonObject.someObject.array[3][3][2][1]=="boolean"
+        jsonObject.someObject.array[3][3][2][0] == true
+        jsonObject.someObject.array[3][3][2][1] == "boolean"
 
-        jsonObject.someObject.array[3][3][3].nextObjectField=="value_02"
-        jsonObject.someObject.array[4].some_field=="value3"
-        jsonObject.someObject.array[5]==["test", true]
+        jsonObject.someObject.array[3][3][3].nextObjectField == "value_02"
+        jsonObject.someObject.array[4].some_field == "value3"
+        jsonObject.someObject.array[5] == ["test", true]
     }
 
     def "multi dimensional array with simple values"() {
@@ -61,12 +61,12 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         print(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
-        jsonObject.arrayWitObjects[0][0].somefield.nextField=="test00"
-        jsonObject.arrayWitObjects[0][1].somefield.nextField1=="test01_field1"
-        jsonObject.arrayWitObjects[0][1].somefield.nextField2=="test01_field2"
-        jsonObject.arrayWitObjects[1][0].somefield.nextField=="test10"
-        jsonObject.arrayWitObjects[1][1].somefield.nextField1=="test11_field1"
-        jsonObject.arrayWitObjects[1][1].somefield.nextField2=="test11_field2"
+        jsonObject.arrayWitObjects[0][0].somefield.nextField == "test00"
+        jsonObject.arrayWitObjects[0][1].somefield.nextField1 == "test01_field1"
+        jsonObject.arrayWitObjects[0][1].somefield.nextField2 == "test01_field2"
+        jsonObject.arrayWitObjects[1][0].somefield.nextField == "test10"
+        jsonObject.arrayWitObjects[1][1].somefield.nextField1 == "test11_field1"
+        jsonObject.arrayWitObjects[1][1].somefield.nextField2 == "test11_field2"
     }
 
     def "multi dimensional array with object values"() {
@@ -76,12 +76,12 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         print(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
-        jsonObject.arrayWitObjects[0][0].somefield.nextField=="test00"
-        jsonObject.arrayWitObjects[0][1].somefield.nextField1=="test01_field1"
-        jsonObject.arrayWitObjects[0][1].somefield.nextField2=="test01_field2"
-        jsonObject.arrayWitObjects[1][0].somefield.nextField=="test10"
-        jsonObject.arrayWitObjects[1][1].somefield.nextField1=="test11_field1"
-        jsonObject.arrayWitObjects[1][1].somefield.nextField2=="test11_field2"
+        jsonObject.arrayWitObjects[0][0].somefield.nextField == "test00"
+        jsonObject.arrayWitObjects[0][1].somefield.nextField1 == "test01_field1"
+        jsonObject.arrayWitObjects[0][1].somefield.nextField2 == "test01_field2"
+        jsonObject.arrayWitObjects[1][0].somefield.nextField == "test10"
+        jsonObject.arrayWitObjects[1][1].somefield.nextField1 == "test11_field1"
+        jsonObject.arrayWitObjects[1][1].somefield.nextField2 == "test11_field2"
     }
 
     def "primitive arrays elements resolved to multi dim array"() {
@@ -91,14 +91,14 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         print(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
-        jsonObject.array[0][0]=="value1"
-        jsonObject.array[0][1]=="value2"
+        jsonObject.array[0][0] == "value1"
+        jsonObject.array[0][1] == "value2"
 
-        jsonObject.array[1][0]=="value3"
-        jsonObject.array[1][1]=="value4"
+        jsonObject.array[1][0] == "value3"
+        jsonObject.array[1][1] == "value4"
 
-        jsonObject.array[2][0]=="value5"
-        jsonObject.array[2][1]=="value6"
+        jsonObject.array[2][0] == "value5"
+        jsonObject.array[2][1] == "value6"
     }
 
     def "return array with mixin types (primitives and objects)"() {
@@ -138,8 +138,8 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
                 "object.test",
-                "object.test[6]",\
-                "object.test[7]",
+                "object.test[6]", \
+                 "object.test[7]",
                 "object.test[9]",
                 "object.test[10]",
                 "object.test[11]",
@@ -189,6 +189,83 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         jsonObject.object.test[11] == [1, 2, 3, 4]
     }
 
+    def "merge object in 2 dim array element"() {
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        setUpMockPickupKeysOrder(converter,
+                "object.test[2][2]",
+                "object.test[2][2].field2")
+
+        Map<String, String> properties = new HashMap<>()
+        properties.put("object.test[2][2]", "{\"field1\":\"field_text\"}")
+        properties.put("object.test[2][2].field2", "2")
+
+        String json = converter.convertToJson(properties)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.test[0] == null
+        jsonObject.object.test[1] == null
+        jsonObject.object.test[2][2].field1 == "field_text"
+        jsonObject.object.test[2][2].field2 == 2
+    }
+
+    def "merge object in array element"() {
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        setUpMockPickupKeysOrder(converter,
+                "object.test[2]",
+                "object.test[2].field2")
+
+        Map<String, String> properties = new HashMap<>()
+        properties.put("object.test[2]", "{\"field1\":\"field_text\"}")
+        properties.put("object.test[2].field2", "2")
+
+        String json = converter.convertToJson(properties)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.test[0] == null
+        jsonObject.object.test[1] == null
+        jsonObject.object.test[2].field1 == "field_text"
+        jsonObject.object.test[2].field2 == 2
+    }
+
+    def "merge array as second element in 2 dim array (first primitive array)"() {
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        setUpMockPickupKeysOrder(converter,
+                "object.test[2][2]",
+                "object.test[2][2][3]")
+
+        Map<String, String> properties = new HashMap<>()
+        properties.put("object.test[2][2]", "[0, 1, 2]")
+        properties.put("object.test[2][2][3]", "true")
+
+        String json = converter.convertToJson(properties)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.test[0] == null
+        jsonObject.object.test[1] == null
+        jsonObject.object.test[2][2] == [0, 1, 2, true]
+    }
+
+    def "merge array as second element in 2 dim array (first array index)"() {
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        setUpMockPickupKeysOrder(converter,
+                "object.test[2][2][3]",
+                "object.test[2][2]")
+
+        Map<String, String> properties = new HashMap<>()
+        properties.put("object.test[2][2]", "[0, 1, 2]")
+        properties.put("object.test[2][2][3]", "true")
+
+        String json = converter.convertToJson(properties)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.test[0] == null
+        jsonObject.object.test[1] == null
+        jsonObject.object.test[2][2] == [0, 1, 2, true]
+    }
 
     def "array json from text as first will be merged with indexed elements"() {
         when:
@@ -231,13 +308,13 @@ class PropertiesToJsonConverterArraysTest extends Specification {
 
     private Map<String, String> getOverrideArraysProperties() {
         Map<String, String> map = new HashMap<>()
-        map.put("object.test[7]","asdf7")
-        map.put("object.test[6]","asdf6")
-        map.put("object.test[9]","asdf9")
-        map.put("object.test[10]","asdf101")
-        map.put("object.test[11]","1,2,3,4")
-        map.put("object.test","0_, 1_, 2_ , 3_ , 4_")
-        map.put("test","0_, 1_, 2_ , 3_ , 4_")
+        map.put("object.test[7]", "asdf7")
+        map.put("object.test[6]", "asdf6")
+        map.put("object.test[9]", "asdf9")
+        map.put("object.test[10]", "asdf101")
+        map.put("object.test[11]", "1,2,3,4")
+        map.put("object.test", "0_, 1_, 2_ , 3_ , 4_")
+        map.put("test", "0_, 1_, 2_ , 3_ , 4_")
         return map
     }
 
@@ -248,11 +325,11 @@ class PropertiesToJsonConverterArraysTest extends Specification {
                 new StringJsonTypeResolver())
 
         Map<String, String> map = new HashMap<>()
-        map.put("field","true")
-        map.put("number","9")
-        map.put("object.array","[true, \"test\", 12, 12.0]")
-        map.put("object.array[4]","true")
-        map.put("object.nextObject","{\"numberField\": 12, \"boolField\": true, \"textField\": \"Some_text\"}")
+        map.put("field", "true")
+        map.put("number", "9")
+        map.put("object.array", "[true, \"test\", 12, 12.0]")
+        map.put("object.array[4]", "true")
+        map.put("object.nextObject", "{\"numberField\": 12, \"boolField\": true, \"textField\": \"Some_text\"}")
 
         def json = converter.convertToJson(map)
         print(json)

@@ -25,14 +25,6 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
-    // TODO check tests for
-    // array element in 2 dim -> object
-    // array element in 2 dim -> primitive
-    // array element in 2 dim -> array
-    // array element in 3 dim -> object
-    // array element in 3 dim -> primitive
-    // array element in 3 dim -> array
-
     @Test
     public void throwWhenCannotOverrideObjectByPrimitiveValue() {
         //then
@@ -196,6 +188,183 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         properties.put(1555, 123L);
         //when
         new PropertiesToJsonConverter().convertToJson(properties);
+    }
+
+    @Test
+    public void cannotOverridePrimitiveJsonAsSecondElementIn2DimArrayByObject() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2]", "\"simpleText\"", "some.someArray[1][2].field").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2]", "some.someArray[1][2].field");
+        Properties properties = new Properties();
+        properties.put("some.someArray[1][2]", "simpleText");
+        properties.put("some.someArray[1][2].field", "fieldVakue");
+        //when
+        converter.convertToJson(properties);
+    }
+
+    @Test
+    public void cannotOverrideObjectAsSecondElementIn2DimArrayByPrimitiveJsonValue() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2]", "{\"field\":\"fieldValue\"}", "some.someArray[1][2]").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2].field", "some.someArray[1][2]");
+        Properties properties = new Properties();
+        properties.put("some.someArray[1][2]", "simpleText");
+        properties.put("some.someArray[1][2].field", "fieldValue");
+        //when
+        converter.convertToJson(properties);
+    }
+
+    @Test
+    public void cannotOverrideArrayAsSecondElementIn2DimArrayByObject() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2]", "[12,13,14]", "some.someArray[1][2].field").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2]", "some.someArray[1][2].field");
+        Map<String, String> map = new HashMap<>();
+        map.put("some.someArray[1][2]", "[12, 13, 14]");
+        map.put("some.someArray[1][2].field", "fieldValue");
+        //when
+        converter.convertToJson(map);
+    }
+
+    @Test
+    public void cannotOverrideArrayAsSecondElementIn2DimArrayByPrimitiveJsonValue() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2]", "[12,13]", "some.someArray[1][2].field").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2][0]", "some.someArray[1][2][1]", "some.someArray[1][2].field");
+        Map<String, String> map = new HashMap<>();
+        map.put("some.someArray[1][2][0]", "12");
+        map.put("some.someArray[1][2][1]", "13");
+        map.put("some.someArray[1][2].field", "fieldValue");
+        //when
+        converter.convertToJson(map);
+    }
+
+    @Test
+    public void cannotOverridePrimitiveAsSecondElementIn2DimArrayByArray() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2]", "\"test\"", "some.someArray[1][2][0]").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2]", "some.someArray[1][2][0]");
+        Map<String, String> properties = new HashMap<>();
+        properties.put("some.someArray[1][2][0]", "someValueImArray");
+        properties.put("some.someArray[1][2]", "test");
+        //when
+        converter.convertToJson(properties);
+    }
+
+    @Test
+    public void cannotOverridePrimitiveJsonAsSecondElementIn3DimArrayByObject() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2][0]", "\"simpleText\"", "some.someArray[1][2][0].field").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2][0]", "some.someArray[1][2][0].field");
+        Properties properties = new Properties();
+        properties.put("some.someArray[1][2][0]", "simpleText");
+        properties.put("some.someArray[1][2][0].field", "fieldValue");
+        //when
+        converter.convertToJson(properties);
+    }
+
+    @Test
+    public void cannotOverrideObjectAsSecondElementIn3DimArrayByPrimitiveJsonValue() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2][0]", "{\"field\":\"fieldValue\"}", "some.someArray[1][2][0]").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2][0].field", "some.someArray[1][2][0]");
+        Properties properties = new Properties();
+        properties.put("some.someArray[1][2][0].field", "fieldValue");
+        properties.put("some.someArray[1][2][0]", "simpleText");
+        //when
+        converter.convertToJson(properties);
+    }
+
+    @Test
+    public void cannotOverrideObjectAsSecondElementIn3DimArrayByArray() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2][0]", "{\"field\":\"fieldValue\"}", "some.someArray[1][2][0]").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2][0].field", "some.someArray[1][2][0]");
+        Properties properties = new Properties();
+        properties.put("some.someArray[1][2][0].field", "fieldValue");
+        properties.put("some.someArray[1][2][0]", "12, 14");
+        //when
+        converter.convertToJson(properties);
+    }
+
+    @Test
+    public void cannotOverrideArrayAsSecondElementIn3DimArrayByObject() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2][0]", "[12,14]", "some.someArray[1][2][0].field").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2][0]", "some.someArray[1][2][0].field");
+        Map<String, String> properties = new HashMap<>();
+        properties.put("some.someArray[1][2][0].field", "fieldValue");
+        properties.put("some.someArray[1][2][0]", "12, 14");
+        //when
+        converter.convertToJson(properties);
+    }
+
+    @Test
+    public void cannotOverridePrimitiveAsSecondElementIn3DimArrayByArray() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2][0]", "\"test\"", "some.someArray[1][2][0][0]").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2][0]", "some.someArray[1][2][0][0]");
+        Map<String, String> properties = new HashMap<>();
+        properties.put("some.someArray[1][2][0][0]", "someValueImArray");
+        properties.put("some.someArray[1][2][0]", "test");
+        //when
+        converter.convertToJson(properties);
+    }
+
+    @Test
+    public void cannotOverridePrimitiveAsSecondElementIn3DimArrayByArray_() {
+        // then
+        expectedEx.expect(CannotOverrideFieldException.class);
+        String expectedMsg = new CannotOverrideFieldException("some.someArray[1][2]", "[[\"someValueImArray\"]]", "some.someArray[1][2]").getMessage();
+        expectedEx.expectMessage(expectedMsg);
+        //given
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
+        setUpMockPickupKeysOrder(converter, "some.someArray[1][2][0][0]", "some.someArray[1][2]");
+        Map<String, String> properties = new HashMap<>();
+        properties.put("some.someArray[1][2][0][0]", "someValueImArray");
+        properties.put("some.someArray[1][2]", "test");
+        //when
+        converter.convertToJson(properties);
     }
 
     public static void setUpMockPickupKeysOrder(PropertiesToJsonConverter converter, String... keys) {

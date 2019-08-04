@@ -3,6 +3,7 @@ package pl.jalokim.propertiestojson.path;
 import lombok.Data;
 import pl.jalokim.propertiestojson.PropertyArrayHelper;
 
+import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.Constants.NORMAL_DOT;
 
 
@@ -67,6 +68,11 @@ public class PathMetadata {
             current = current.getParent();
         }
         return current;
+    }
+
+    public String getCurrentFullPathWithoutIndexes() {
+        String parentFullPath = isRoot() ? EMPTY_STRING : getParent().getCurrentFullPath() + NORMAL_DOT;
+        return parentFullPath + getFieldName();
     }
 
     @Override

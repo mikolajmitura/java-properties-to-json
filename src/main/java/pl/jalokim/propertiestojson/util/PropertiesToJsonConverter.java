@@ -103,7 +103,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param pathToFile path to File
      * @return simple String with json
@@ -126,7 +126,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param pathToFile        path to File
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -156,7 +156,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param file file with properties
      * @return simple String with json
@@ -184,7 +184,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param file              file with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -219,7 +219,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param inputStream InputStream with properties
      * @return simple String with json
@@ -242,7 +242,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param inputStream       InputStream with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -269,7 +269,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param properties Java Properties
      * @return simple String with json
@@ -295,7 +295,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param properties        Java Properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -324,7 +324,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param properties Java Map with properties
      * @return simple String with json
@@ -347,7 +347,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param properties        Java Map with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>
@@ -373,7 +373,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param properties Java Map with properties
      * @return simple String with json
@@ -406,7 +406,7 @@ public final class PropertiesToJsonConverter {
      * If will find resolver for parent class or parent interface at the same level, then will get parent super class as first.
      * If will find only closets super interfaces (at the same level) then will throw exception...
      * after successful found resolver it converts from given object to some instance which extends AbstractJsonType
-     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey))}
+     * through method {@link pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver#returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
      *
      * @param properties        Java Map with properties
      * @param includeDomainKeys domain head keys which should be parsed to json <br>

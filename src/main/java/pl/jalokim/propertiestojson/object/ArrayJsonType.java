@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import static java.lang.String.format;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
@@ -52,7 +51,7 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
             if(oldObject instanceof MergableObject && elementToAdd instanceof MergableObject) {
                 mergeObjectIfPossible(oldObject, elementToAdd, currentPathMetadata);
             } else {
-                throw new CannotOverrideFieldException(currentPathMetadata.getOriginalFieldName(), oldObject, currentPathMetadata.getOriginalPropertyKey());
+                throw new CannotOverrideFieldException(currentPathMetadata.getCurrentFullPath(), oldObject, currentPathMetadata.getOriginalPropertyKey());
             }
         } else {
             elements[index] = elementToAdd;
@@ -72,22 +71,21 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
         }
     }
 
-    public static ArrayJsonType createOrGetNextDimensionOfArray(ArrayJsonType currentArray, List<Integer> indexes, int index, PathMetadata currentPathMetadata) {
-        if(currentArray.existElementByGivenIndex(indexes.get(index))) {
-            AbstractJsonType element = currentArray.getElement(indexes.get(index));
+    public static ArrayJsonType createOrGetNextDimensionOfArray(ArrayJsonType currentArray, List<Integer> indexes, int indexToTest, PathMetadata currentPathMetadata) {
+        if(currentArray.existElementByGivenIndex(indexes.get(indexToTest))) {
+            AbstractJsonType element = currentArray.getElement(indexes.get(indexToTest));
             if(element instanceof ArrayJsonType) {
                 return (ArrayJsonType) element;
             } else {
-                // TODO done it and test this one
-                // expected type which is in (AbstractJsonType element)  at given array in given path...
-                //throwException();
-                List<Integer> currentIndexes = indexes.subList(0, index);
-                throw new RuntimeException("current type " + element.getClass() + " with value: " + element
-                                           + " at given array in given path " + currentIndexes);
+                List<Integer> currentIndexes = indexes.subList(0, indexToTest + 1);
+                String indexesAsText = currentIndexes.stream()
+                                                     .map(Object::toString)
+                                                     .reduce(EMPTY_STRING, (oldText, index) -> oldText + ARRAY_START_SIGN + index + ARRAY_END_SIGN);
+                throw new CannotOverrideFieldException(currentPathMetadata.getCurrentFullPathWithoutIndexes() + indexesAsText, element, currentPathMetadata.getOriginalPropertyKey());
             }
         } else {
             ArrayJsonType newArray = new ArrayJsonType();
-            currentArray.addElement(indexes.get(index), newArray, currentPathMetadata);
+            currentArray.addElement(indexes.get(indexToTest), newArray, currentPathMetadata);
             return newArray;
         }
     }
@@ -108,11 +106,11 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
                 if(element instanceof ArrayJsonType) {
                     currentArray = (ArrayJsonType) element;
                 } else {
-                    // TODO done it and test this one
-                    // expected type which is in (AbstractJsonType element)  at given array in given path...
-                    //throwException();
-                    List<Integer> currentIndexes = indexes.subList(0, i);
-                    throw new RuntimeException("expected type " + element.getClass() + " at given array in given path: " + currentPathMetaData.getCurrentFullPath() + " current indexes: " + currentIndexes);
+                    List<Integer> currentIndexes = indexes.subList(0, i + 1);
+                    String indexesAsText = currentIndexes.stream()
+                                                         .map(Object::toString)
+                                                         .reduce(EMPTY_STRING, (oldText, index) -> oldText + ARRAY_START_SIGN + index + ARRAY_END_SIGN);
+                    throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPathWithoutIndexes() + indexesAsText, element, currentPathMetaData.getOriginalPropertyKey());
                 }
             }
         }
