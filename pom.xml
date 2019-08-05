@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>Java properties to Json</name>
-    <description>Library used to convert java properties to json in application</description>
+    <description>Library used to convert from java properties to json</description>
     <url>https://github.com/mikolajmitura/java-properties-to-json</url>
 
     <licenses>
@@ -135,7 +135,7 @@
            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
+                <version>1.6</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
