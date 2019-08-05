@@ -4,7 +4,7 @@ public abstract class AbstractJsonType {
     public abstract String toStringJson();
 
     @Override
-    public String toString() {
+    public final String toString() {
         return toStringJson();
     }
 }

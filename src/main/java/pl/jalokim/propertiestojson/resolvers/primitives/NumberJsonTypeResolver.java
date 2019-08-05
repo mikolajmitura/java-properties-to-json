@@ -6,8 +6,11 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Optional;
 
 public class NumberJsonTypeResolver extends PrimitiveJsonTypeResolver<Number> {
+
+
 
     private static BigInteger getIntegerNumber(String toParse) {
         return new BigInteger(toParse);
@@ -18,7 +21,25 @@ public class NumberJsonTypeResolver extends PrimitiveJsonTypeResolver<Number> {
     }
 
     @Override
-    public Number returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue) {
+    public Optional<Number> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+        return Optional.ofNullable(convertToNumber(propertyValue));
+    }
+
+    @Override
+    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Number propertyValue, String propertyKey) {
+        return new NumberJsonType(propertyValue);
+    }
+
+    public static Number convertToNumber(String propertyValue) {
+        Number number = convertToNumberFromText(propertyValue);
+        if (number!= null && number.toString().equals(propertyValue)) {
+            return number;
+        }
+        return null;
+    }
+
+    private static Number convertToNumberFromText(String propertyValue) {
+
         try {
             return getIntegerNumber(propertyValue);
         } catch (NumberFormatException exc) {
@@ -28,10 +49,5 @@ public class NumberJsonTypeResolver extends PrimitiveJsonTypeResolver<Number> {
         } catch (NumberFormatException exc) {
         }
         return null;
-    }
-
-    @Override
-    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Number propertyValue) {
-        return new NumberJsonType(propertyValue);
     }
 }

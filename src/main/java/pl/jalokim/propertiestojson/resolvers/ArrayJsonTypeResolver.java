@@ -5,22 +5,26 @@ import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.path.PathMetadata;
+
+import java.util.List;
+
+import static pl.jalokim.propertiestojson.object.ArrayJsonType.createOrGetNextDimensionOfArray;
+import static pl.jalokim.propertiestojson.util.ListUtil.isLastIndex;
 
 public class ArrayJsonTypeResolver extends JsonTypeResolver {
 
     @Override
-    public ObjectJsonType traverse(String field) {
-        fetchJsonObjectAndCreateArrayWhenNotExist(field);
+    public ObjectJsonType traverse(PathMetadata currentPathMetaData) {
+        fetchJsonObjectAndCreateArrayWhenNotExist(currentPathMetaData);
         return currentObjectJsonType;
     }
 
-    private void fetchJsonObjectAndCreateArrayWhenNotExist(String field) {
-        PropertyArrayHelper propertyArrayHelper = new PropertyArrayHelper(field);
-        field = propertyArrayHelper.getArrayFieldName();
-        if (isArrayExist(field)) {
-            fetchArrayAndAddElement(field, propertyArrayHelper);
+    private void fetchJsonObjectAndCreateArrayWhenNotExist(PathMetadata currentPathMetaData) {
+        if(isArrayExist(currentPathMetaData.getFieldName())) {
+            fetchArrayAndAddElement(currentPathMetaData);
         } else {
-            createArrayAndAddElement(field, propertyArrayHelper);
+            createArrayAndAddElement(currentPathMetaData);
         }
     }
 
@@ -28,36 +32,42 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
         return currentObjectJsonType.containsField(field);
     }
 
-    private void fetchArrayAndAddElement(String field, PropertyArrayHelper propertyArrayHelper) {
-        ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(field);
-        if (existElementInArrayByGivenIndex(arrayJsonType, propertyArrayHelper.getIndexArray())) {
-            fetchJsonObjectWhenIsValid(field, propertyArrayHelper, arrayJsonType);
-        } else {
-            createJsonObjectAndAddToArray(propertyArrayHelper, arrayJsonType);
+    private void fetchArrayAndAddElement(PathMetadata currentPathMetaData) {
+        PropertyArrayHelper propertyArrayHelper = currentPathMetaData.getPropertyArrayHelper();
+        ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(currentPathMetaData);
+        List<Integer> dimIndexes = propertyArrayHelper.getDimensionalIndexes();
+        ArrayJsonType currentArray = arrayJsonType;
+        for(int index = 0; index < dimIndexes.size(); index++) {
+            if(isLastIndex(dimIndexes, index)) {
+                int lastDimIndex = dimIndexes.get(index);
+                if(currentArray.existElementByGivenIndex(lastDimIndex)) {
+                    fetchJsonObjectWhenIsValid(currentPathMetaData, lastDimIndex, currentArray);
+                } else {
+                    createJsonObjectAndAddToArray(lastDimIndex, currentArray, currentPathMetaData);
+                }
+            } else {
+                currentArray = createOrGetNextDimensionOfArray(currentArray, dimIndexes, index, currentPathMetaData);
+            }
         }
     }
 
-    private boolean existElementInArrayByGivenIndex(ArrayJsonType arrayJsonType, int index) {
-        return arrayJsonType.getElement(index) != null;
-    }
-
-    private void createJsonObjectAndAddToArray(PropertyArrayHelper propertyArrayHelper, ArrayJsonType arrayJsonType) {
+    private void createJsonObjectAndAddToArray(int index, ArrayJsonType arrayJsonType, PathMetadata currentPathMetaData) {
         ObjectJsonType nextObjectJsonType = new ObjectJsonType();
-        arrayJsonType.addElement(propertyArrayHelper.getIndexArray(), nextObjectJsonType);
+        arrayJsonType.addElement(index, nextObjectJsonType, currentPathMetaData);
         currentObjectJsonType = nextObjectJsonType;
     }
 
-    private void fetchJsonObjectWhenIsValid(String field, PropertyArrayHelper propertyArrayHelper, ArrayJsonType arrayJsonType) {
-        AbstractJsonType element = arrayJsonType.getElement(propertyArrayHelper.getIndexArray());
-        JsonObjectFieldsValidator.checkThatArrayElementIsObjectJsonType(field, arrayJsonType, element, propertiesKey, propertyArrayHelper.getIndexArray());
+    private void fetchJsonObjectWhenIsValid(PathMetadata currentPathMetaData, int index, ArrayJsonType arrayJsonType) {
+        AbstractJsonType element = arrayJsonType.getElement(index);
+        JsonObjectFieldsValidator.checkEarlierWasJsonObject(currentPathMetaData.getOriginalPropertyKey(), currentPathMetaData, element);
         currentObjectJsonType = (ObjectJsonType) element;
     }
 
-    private void createArrayAndAddElement(String field, PropertyArrayHelper propertyArrayHelper) {
+    private void createArrayAndAddElement(PathMetadata currentPathMetaData) {
         ArrayJsonType arrayJsonTypeObject = new ArrayJsonType();
         ObjectJsonType nextObjectJsonType = new ObjectJsonType();
-        arrayJsonTypeObject.addElement(propertyArrayHelper.getIndexArray(), nextObjectJsonType);
-        currentObjectJsonType.addField(field, arrayJsonTypeObject);
+        arrayJsonTypeObject.addElement(currentPathMetaData.getPropertyArrayHelper(), nextObjectJsonType, currentPathMetaData);
+        currentObjectJsonType.addField(currentPathMetaData.getFieldName(), arrayJsonTypeObject, currentPathMetaData);
         currentObjectJsonType = nextObjectJsonType;
     }
 }

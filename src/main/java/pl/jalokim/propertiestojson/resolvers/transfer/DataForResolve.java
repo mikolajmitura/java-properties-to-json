@@ -1,21 +1,22 @@
 package pl.jalokim.propertiestojson.resolvers.transfer;
 
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.path.PathMetadata;
 
 import java.util.Map;
 
 public class DataForResolve {
 
     private final Map<String, Object> properties;
-    private final String propertiesKey;
+    private final String propertyKey;
     private final ObjectJsonType currentObjectJsonType;
-    private final String field;
+    private final PathMetadata currentPathMetaData;
 
-    public DataForResolve(Map<String, Object> properties, String propertiesKey, ObjectJsonType currentObjectJsonType, String field) {
+    public DataForResolve(Map<String, Object> properties, String propertyKey, ObjectJsonType currentObjectJsonType, PathMetadata currentPathMetaData) {
         this.properties = properties;
-        this.propertiesKey = propertiesKey;
+        this.propertyKey = propertyKey;
         this.currentObjectJsonType = currentObjectJsonType;
-        this.field = field;
+        this.currentPathMetaData = currentPathMetaData;
     }
 
     public Map<String, Object> getProperties() {
@@ -23,14 +24,14 @@ public class DataForResolve {
     }
 
     public String getPropertiesKey() {
-        return propertiesKey;
+        return propertyKey;
     }
 
     public ObjectJsonType getCurrentObjectJsonType() {
         return currentObjectJsonType;
     }
 
-    public String getField() {
-        return field;
+    public PathMetadata getCurrentPathMetaData() {
+        return currentPathMetaData;
     }
 }
