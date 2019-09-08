@@ -145,6 +145,7 @@ EmptyStringJsonTypeResolver
 PrimitiveArrayJsonTypeResolver
 ObjectFromTextJsonTypeResolver
 NumberJsonTypeResolver
+CharacterJsonTypeResolver
 BooleanJsonTypeResolver
 StringJsonTypeResolver
 ```
@@ -441,7 +442,20 @@ Will result
   }
 }
 ```
-<h4>6) BooleanJsonTypeResolver </h4>
+<h4>6) CharacterJsonTypeResolver </h4>
+
+```bash
+some.value=c
+```
+Will result
+```json
+{
+  "some": {
+    "value": "c"
+  }
+}
+```
+<h4>7) BooleanJsonTypeResolver </h4>
 
 ```bash
 some.value=true
@@ -454,7 +468,7 @@ Will result
   }
 }
 ```
-<h4>7) StringJsonTypeResolver </h4>
+<h4>8) StringJsonTypeResolver </h4>
 
 
 Important to note here is that this type resolver will always convert to text!
@@ -628,7 +642,7 @@ Maven dependency
     <dependency>
         <groupId>pl.jalokim.propertiestojson</groupId>
         <artifactId>java-properties-to-json</artifactId>
-        <version>5.0.0</version>
+        <version>5.0.1</version>
     </dependency>
 ```
 
