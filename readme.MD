@@ -1,7 +1,7 @@
 Java Properties to JSON
 ---------------------------------------------
 
-This 5.0.0 version is not backward compatible!
+From 5 version is not backward compatible!
 The way creation of own json type resolvers has been changed!
 But if you used only simple uses cases, migration (from 4.0) should pass without problems.
 
