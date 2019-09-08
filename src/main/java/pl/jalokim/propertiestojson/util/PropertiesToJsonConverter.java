@@ -15,6 +15,7 @@ import pl.jalokim.propertiestojson.resolvers.JsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.ObjectJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.CharacterJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.EmptyStringJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.JsonNullReferenceTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver;
@@ -55,6 +56,7 @@ public final class PropertiesToJsonConverter {
         DEFAULT_PRIMITIVE_RESOLVERS.add(new PrimitiveArrayJsonTypeResolver());
         DEFAULT_PRIMITIVE_RESOLVERS.add(new ObjectFromTextJsonTypeResolver());
         DEFAULT_PRIMITIVE_RESOLVERS.add(new NumberJsonTypeResolver());
+        DEFAULT_PRIMITIVE_RESOLVERS.add(new CharacterJsonTypeResolver());
         DEFAULT_PRIMITIVE_RESOLVERS.add(new BooleanJsonTypeResolver());
     }
 

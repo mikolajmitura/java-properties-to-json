@@ -336,6 +336,23 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         jsonObject.object.text == "value"
     }
 
+    def "return Char As Simple String in json"() {
+        def jsonSlurper = new JsonSlurper()
+        char charAsValue = 'c'
+        given:
+        Properties properties = new Properties()
+        properties.put("object.field1", new Character(charAsValue))
+
+        when:
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
+        String json = converter.convertToJson(properties)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.field1 == "c"
+        jsonObject.object.field2 == null
+    }
+
     def "found too match resolvers for given bean type"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
