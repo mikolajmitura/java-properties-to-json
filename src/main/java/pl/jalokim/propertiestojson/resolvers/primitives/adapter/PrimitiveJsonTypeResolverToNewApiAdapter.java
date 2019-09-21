@@ -75,10 +75,8 @@ public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJso
     }
 
     @Override // from ObjectToJsonTypeResolver
-    public AbstractJsonType convertToJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                              Object convertedValue,
-                                              String propertyKey) {
-        return oldImplementation.returnConcreteJsonType(primitiveJsonTypesResolver, convertedValue, propertyKey);
+    public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object convertedValue, String propertyKey) {
+        return Optional.of(oldImplementation.returnJsonType(primitiveJsonTypesResolver, convertedValue, propertyKey));
     }
 
     @Override // from ObjectToJsonTypeResolver and PrimitiveJsonTypeResolver

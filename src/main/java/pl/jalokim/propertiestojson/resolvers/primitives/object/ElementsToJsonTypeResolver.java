@@ -8,18 +8,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 
 public class ElementsToJsonTypeResolver extends AbstractObjectToJsonTypeResolver<Collection<?>> {
 
     @Override
-    public AbstractJsonType convertToJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements, String propertyKey) {
-        return new ArrayJsonType(primitiveJsonTypesResolver, elements, null, propertyKey);
+    public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements, String propertyKey) {
+        return Optional.of(new ArrayJsonType(primitiveJsonTypesResolver, elements, null, propertyKey));
     }
 
     @Override
-    public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey) {
+    public Optional<AbstractJsonType> returnOptionalJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey) {
         if(hasElements(propertyValue.getClass())) {
             Collection<?> collection;
             if (propertyValue.getClass().isArray()) {
@@ -28,9 +29,9 @@ public class ElementsToJsonTypeResolver extends AbstractObjectToJsonTypeResolver
             } else {
                 collection = (Collection<?>) propertyValue;
             }
-            return convertToJsonType(primitiveJsonTypesResolver, collection, propertyKey);
+            return convertToJsonTypeOrEmpty(primitiveJsonTypesResolver, collection, propertyKey);
         }
-        return convertToJsonType(primitiveJsonTypesResolver, singletonList(propertyValue), propertyKey);
+        return convertToJsonTypeOrEmpty(primitiveJsonTypesResolver, singletonList(propertyValue), propertyKey);
     }
 
     public boolean hasElements(Class<?> classToTest) {

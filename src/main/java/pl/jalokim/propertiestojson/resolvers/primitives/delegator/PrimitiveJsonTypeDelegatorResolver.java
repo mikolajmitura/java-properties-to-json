@@ -35,7 +35,10 @@ public class PrimitiveJsonTypeDelegatorResolver<T> extends PrimitiveJsonTypeReso
     public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
                                                    T convertedValue,
                                                    String propertyKey) {
-        return toJsonResolver.returnJsonType(primitiveJsonTypesResolver, convertedValue, propertyKey);
+        Optional<AbstractJsonType> optional = toJsonResolver.convertToJsonTypeOrEmpty(primitiveJsonTypesResolver,
+                                                                                      convertedValue,
+                                                                                      propertyKey);
+        return optional.get();
     }
 
     @Override

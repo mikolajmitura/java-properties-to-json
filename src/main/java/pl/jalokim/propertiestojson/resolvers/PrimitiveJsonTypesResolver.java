@@ -76,10 +76,9 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue, String propertyKey) {
         if(propertyValue == null) {
-            return NULL_OBJECT;
+            return NULL_OBJECT; // TODO should invoke on null resolver, because user can want another thing with null reference
         }
-        ObjectToJsonTypeResolver<?> primitiveJsonTypeResolver = resolversHierarchyResolver.returnConcreteResolver(propertyValue);
-        return primitiveJsonTypeResolver.returnJsonType(this, propertyValue, propertyKey);
+        return resolversHierarchyResolver.returnConcreteJsonTypeObject(this, propertyValue, propertyKey);
     }
 
     protected void addFieldToArray(PathMetadata currentPathMetaData, Object propertyValue) {

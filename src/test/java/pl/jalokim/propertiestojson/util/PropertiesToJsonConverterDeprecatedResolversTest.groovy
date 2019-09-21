@@ -146,7 +146,6 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
         }
     }
 
-    // TODO what should be here? How user can achieve null as text???
     def "extended JsonNullReferenceTypeResolver"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(

@@ -4,12 +4,14 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.NumberJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
+import java.util.Optional;
+
 public class NumberToJsonTypeResolver extends AbstractObjectToJsonTypeResolver<Number> {
 
     @Override
-    public AbstractJsonType convertToJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                              Number convertedValue,
-                                              String propertyKey) {
-        return new NumberJsonType(convertedValue);
+    public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                                               Number convertedValue,
+                                                               String propertyKey) {
+        return Optional.of(new NumberJsonType(convertedValue));
     }
 }

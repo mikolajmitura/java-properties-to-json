@@ -7,6 +7,8 @@ import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.object.StringJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
+import java.util.Optional;
+
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
 import static pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper.createArrayJsonType;
 import static pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper.createObjectJsonType;
@@ -25,13 +27,13 @@ public class SuperObjectToJsonTypeResolver extends AbstractObjectToJsonTypeResol
      */
 
     @Override
-    public AbstractJsonType convertToJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+    public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
                                               Object propertyValue,
                                               String propertyKey) {
         if(ObjectJsonType.class.isAssignableFrom(propertyValue.getClass()) || ArrayJsonType.class.isAssignableFrom(propertyValue.getClass())) {
-            return (AbstractJsonType) propertyValue;
+            return Optional.of((AbstractJsonType) propertyValue);
         }
-        return convertFromObjectToJson(propertyValue, propertyKey);
+        return Optional.of(convertFromObjectToJson(propertyValue, propertyKey));
     }
 
     /**
@@ -62,6 +64,4 @@ public class SuperObjectToJsonTypeResolver extends AbstractObjectToJsonTypeResol
         }
         return valueOfNextField;
     }
-
-
 }

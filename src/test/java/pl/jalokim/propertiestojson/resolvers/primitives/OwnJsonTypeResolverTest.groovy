@@ -243,6 +243,12 @@ class OwnJsonTypeResolverTest extends Specification {
         }
 
         @Override
+        AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object convertedValue, String propertyKey) {
+            invocationMap.get("returnConcreteJsonType").incrementAndGet()
+            return new StringJsonType(convertedValue.toString() + ":MAIN_HASH: " + HASH)
+        }
+
+        @Override
         protected Optional<Object> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
                                                                         String propertyValue,
                                                                         String propertyKey) {
@@ -264,11 +270,6 @@ class OwnJsonTypeResolverTest extends Specification {
             return returnConcreteValueWhenCanBeResolved(primitiveJsonTypesResolver, propertyValue, propertyKey)
         }
 
-        @Override
-        AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object convertedValue, String propertyKey) {
-            invocationMap.get("returnConcreteJsonType").incrementAndGet()
-            return new StringJsonType(convertedValue.toString() + ":MAIN_HASH: " + HASH)
-        }
 
         @Override
         List<Class<?>> getClassesWhichCanResolve() {
