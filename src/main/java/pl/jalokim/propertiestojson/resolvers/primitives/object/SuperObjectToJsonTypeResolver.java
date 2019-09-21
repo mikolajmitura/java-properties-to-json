@@ -30,7 +30,7 @@ public class SuperObjectToJsonTypeResolver extends AbstractObjectToJsonTypeResol
     public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
                                               Object propertyValue,
                                               String propertyKey) {
-        if(ObjectJsonType.class.isAssignableFrom(propertyValue.getClass()) || ArrayJsonType.class.isAssignableFrom(propertyValue.getClass())) {
+        if(AbstractJsonType.class.isAssignableFrom(propertyValue.getClass())) {
             return Optional.of((AbstractJsonType) propertyValue);
         }
         return Optional.of(convertFromObjectToJson(propertyValue, propertyKey));

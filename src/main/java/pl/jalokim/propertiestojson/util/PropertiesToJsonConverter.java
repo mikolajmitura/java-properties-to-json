@@ -126,7 +126,6 @@ public final class PropertiesToJsonConverter {
         algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeResolver());
     }
 
-    // TODO tests for that, check that can one resolver can resolve a lot of classes itp.
     public PropertiesToJsonConverter(List<ObjectToJsonTypeResolver> toJsonTypeResolvers,
                                      List<TextToConcreteObjectResolver> toObjectsResolvers) {
         validateTypeResolverOrder(toJsonTypeResolvers);
