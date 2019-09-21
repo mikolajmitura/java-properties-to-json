@@ -34,6 +34,7 @@ public class HierarchyClassResolver {
                     addToFoundWhenIsClosetsMatch(searchContext, resolverClass, difference);
                 }
                 if(resolverClass.isInterface()) {
+                    findDifferenceInSuperClasses(searchContext, resolverClass, instanceClass);
                     findDifferenceForSuperInterfaces(searchContext, resolverClass, getSuperInterfaces(instanceClass));
                 }
             }
@@ -92,18 +93,31 @@ public class HierarchyClassResolver {
         return counter;
     }
 
+    private void findDifferenceInSuperClasses(final SearchContext searchContext,final Class<?> resolverClass, final Class<?> instanceClass) {
+        Class<?> currentClass = instanceClass;
+        while(currentClass != null) {
+            searchContext.searchHierarchyLevel++;
+            currentClass = currentClass.getSuperclass();
+            if (currentClass == null) {
+                break;
+            }
+            findDifferenceForSuperInterfaces(searchContext, resolverClass, getSuperInterfaces(currentClass));
+        }
+        searchContext.searchHierarchyLevel = 0;
+    }
+
     private void findDifferenceForSuperInterfaces(final SearchContext searchContext, final Class<?> resolverClass, List<Class<?>> interfaceClasses) {
-        searchContext.interFaceLevel++;
+        searchContext.searchHierarchyLevel++;
         for(Class<?> interfaceClass : interfaceClasses) {
             List<Class<?>> superInterfaces = getSuperInterfaces(interfaceClass);
             if(!superInterfaces.isEmpty()) {
                 findDifferenceForSuperInterfaces(searchContext, resolverClass, superInterfaces);
             }
             if (interfaceClass.getCanonicalName().equals(resolverClass.getCanonicalName())) {
-                addToFoundWhenIsClosetsMatch(searchContext, resolverClass, searchContext.interFaceLevel);
+                addToFoundWhenIsClosetsMatch(searchContext, resolverClass, searchContext.searchHierarchyLevel);
             }
         }
-        searchContext.interFaceLevel--;
+        searchContext.searchHierarchyLevel--;
     }
 
     private List<Class<?>> getSuperInterfaces(Class<?> type) {
@@ -115,7 +129,7 @@ public class HierarchyClassResolver {
     private static class SearchContext {
         final List<Class<?>> foundClasses = new ArrayList<>();
         int currentNearCounter = Integer.MAX_VALUE;
-        int interFaceLevel = 0;
+        int searchHierarchyLevel = 0;
 
         public void add(Class<?> type) {
             if (!foundClasses.contains(type)) {

@@ -7,7 +7,8 @@ import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.hierarchy.JsonTypeResolversHierarchyResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
 import java.util.List;
@@ -18,12 +19,13 @@ import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJE
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
-    private final List<PrimitiveJsonTypeResolver> primitiveResolvers;
+    private final List<TextToConcreteObjectResolver> toObjectsResolvers;
     private final JsonTypeResolversHierarchyResolver resolversHierarchyResolver;
 
-    public PrimitiveJsonTypesResolver(List<PrimitiveJsonTypeResolver> primitiveResolvers) {
-        this.primitiveResolvers = ImmutableList.copyOf(primitiveResolvers);
-        this.resolversHierarchyResolver = new JsonTypeResolversHierarchyResolver(primitiveResolvers);
+    public PrimitiveJsonTypesResolver(List<ObjectToJsonTypeResolver> toJsonResolvers,
+                                      List<TextToConcreteObjectResolver> toObjectsResolvers) {
+        this.toObjectsResolvers = ImmutableList.copyOf(toObjectsResolvers);
+        this.resolversHierarchyResolver = new JsonTypeResolversHierarchyResolver(toJsonResolvers);
     }
 
     @Override
@@ -64,7 +66,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     public Object getResolvedObject(String propertyValue, String propertyKey) {
         Optional<?> objectOptional = Optional.empty();
-        for(PrimitiveJsonTypeResolver primitiveResolver : primitiveResolvers) {
+        for(TextToConcreteObjectResolver primitiveResolver : toObjectsResolvers) {
             if(!objectOptional.isPresent()) {
                 objectOptional = primitiveResolver.returnConvertedValueForClearedText(this, propertyValue, propertyKey);
             }
@@ -76,7 +78,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         if(propertyValue == null) {
             return NULL_OBJECT;
         }
-        PrimitiveJsonTypeResolver<?> primitiveJsonTypeResolver = resolversHierarchyResolver.returnConcreteResolver(propertyValue);
+        ObjectToJsonTypeResolver<?> primitiveJsonTypeResolver = resolversHierarchyResolver.returnConcreteResolver(propertyValue);
         return primitiveJsonTypeResolver.returnJsonType(this, propertyValue, propertyKey);
     }
 

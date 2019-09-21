@@ -5,6 +5,9 @@ import org.junit.Test;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static junit.framework.TestCase.fail;
@@ -24,6 +27,17 @@ public class HierarchyClassResolverTest {
         Class<?> aClass = hierarchyClassResolver.searchResolverClass(bigDecimal);
         // then
         assertThat(aClass).isEqualTo(BigDecimal.class);
+    }
+
+    @Test
+    public void foundCollectionInResolverTypeForArrayList() {
+        // given
+        HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(asList(Collection.class, Double.class));
+        List<String> arrayList = Arrays.asList("test1", "test2");
+        // when
+        Class<?> aClass = hierarchyClassResolver.searchResolverClass(arrayList);
+        // then
+        assertThat(aClass).isEqualTo(Collection.class);
     }
 
     @Test
@@ -103,6 +117,83 @@ public class HierarchyClassResolverTest {
     }
 
     @Test
+    public void foundSuperSuperObjectBecauseIsMoreSufficientThanOthers() {
+        // given
+        HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(asList(Object.class, Alien.class, HasLegs.class));
+        Alien alien = new SuperSuperAlien();
+        // when
+        Class<?> aClass = hierarchyClassResolver.searchResolverClass(alien);
+        // then
+        assertThat(aClass).isEqualTo(Alien.class);
+    }
+
+    @Test
+    public void foundInterfaceBecauseIsMoreSufficientThanOthers() {
+        // given
+        HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(asList(Object.class, SuperSuperAlienFunc.class, HasLegs.class));
+        Alien alien = new SuperSuperAlien();
+        // when
+        Class<?> aClass = hierarchyClassResolver.searchResolverClass(alien);
+        // then
+        assertThat(aClass).isEqualTo(SuperSuperAlienFunc.class);
+    }
+
+    @Test
+    public void foundObjectBecauseIsMoreSufficientThanOthers() {
+        // given
+        HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(asList(Object.class, Alien.class, HasLegs.class));
+        Alien alien = new Super3xAlien();
+        // when
+        Class<?> aClass = hierarchyClassResolver.searchResolverClass(alien);
+        // then
+        assertThat(aClass).isEqualTo(Alien.class);
+    }
+
+    @Test
+    public void foundInterfaceFromSuperClassBecauseIsMoreSufficientThanOthers() {
+        // given
+        HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(asList(Object.class, SuperSuperAlienFunc.class, HasLegs.class, Alien.class));
+        Alien alien = new Super3xAlien();
+        // when
+        Class<?> aClass = hierarchyClassResolver.searchResolverClass(alien);
+        // then
+        assertThat(aClass).isEqualTo(SuperSuperAlienFunc.class);
+    }
+
+    @Test
+    public void foundInterfaceFromSuperClassBecauseIsMoreSufficientThanObject() {
+        // given
+        HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(asList(Object.class, HasBrain.class, HasMind.class));
+        Alien alien = new SuperAlien();
+        // when
+        Class<?> aClass = hierarchyClassResolver.searchResolverClass(alien);
+        // then
+        assertThat(aClass).isEqualTo(HasMind.class);
+    }
+
+    @Test
+    public void foundSuperClassBecauseIsMoreSufficientThanObject() {
+        // given
+        HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(asList(Object.class, Alien.class, HasLegs.class));
+        Alien alien = new SuperAlien();
+        // when
+        Class<?> aClass = hierarchyClassResolver.searchResolverClass(alien);
+        // then
+        assertThat(aClass).isEqualTo(Alien.class);
+    }
+
+    @Test
+    public void foundInterfaceBecauseIsMoreSufficientThanInterfacesOfSuperClass() {
+        // given
+        HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(asList(Object.class, HasMind.class, HasLegs.class));
+        Alien alien = new SuperAlien();
+        // when
+        Class<?> aClass = hierarchyClassResolver.searchResolverClass(alien);
+        // then
+        assertThat(aClass).isEqualTo(HasLegs.class);
+    }
+
+    @Test
     public void foundTowInterfacesBecauseIsMoreSufficientThanObject() {
         // given
         HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(asList(Object.class, HasBrain.class, HasMind.class, CanFly.class));
@@ -161,6 +252,26 @@ public class HierarchyClassResolverTest {
     }
 
     private class Human extends Animal implements HasMind, HasHair, HasLegs, CanStartMoving {
+
+    }
+
+    private class SuperAlien extends Alien implements HasLegs {
+
+    }
+
+    private interface SuperSuperAlienFunc {
+
+    }
+
+    private class SuperSuperAlien extends SuperAlien implements SuperSuperAlienFunc {
+
+    }
+
+    private class Super3xAlien extends SuperSuperAlien implements Super3xAlienFunc {
+
+    }
+
+    private interface Super3xAlienFunc {
 
     }
 }

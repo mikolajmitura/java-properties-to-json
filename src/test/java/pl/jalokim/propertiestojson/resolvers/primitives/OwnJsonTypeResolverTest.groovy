@@ -11,6 +11,7 @@ import spock.lang.Specification
 
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.concurrent.atomic.AtomicInteger
 
 class OwnJsonTypeResolverTest extends Specification {
 
@@ -131,6 +132,190 @@ class OwnJsonTypeResolverTest extends Specification {
         OwnBeanJsonType(String textField, Long timestamp) {
             addField("textField", new StringJsonType(textField), null)
             addField("timestamp", new NumberJsonType(timestamp), null)
+        }
+    }
+
+    def "resolver will serve for 3 classes and extends all methods from old api resolver from beans"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        SecureResolver tested = new SecureResolver()
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
+                tested,
+                new BooleanJsonTypeResolver()
+        )
+
+        String secHash = " space _ _ xx "
+        Properties properties = new Properties()
+        properties.put("object.sec1", new SecureBean1("test1", "test2"))
+        properties.put("object.sec2", new SecureBean2(secHash))
+        properties.put("object.sec3", new SecureBean3("hash_*@#"))
+        properties.put("object.boolean1", true)
+        properties.put("object.numberAsText", "12")
+
+        String json = converter.convertToJson(properties)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.sec1 == "hash1:#1:hash2:#2" + ":MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.sec2 == "hash:" + secHash + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.sec3 == "hash3:#3" + ":MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.boolean1 == true
+        jsonObject.object.numberAsText == "12"
+        assertInvocations(tested, "resolveTypeOfResolver", 2)
+        assertInvocations(tested, "returnJsonType", 3)
+        assertInvocations(tested, "returnConcreteValueWhenCanBeResolved", 0)
+        assertInvocations(tested, "returnConvertedValueForClearedText", 0)
+        assertInvocations(tested, "returnConcreteJsonType", 3)
+        assertInvocations(tested, "getClassesWhichCanResolve", 2)
+    }
+
+    def "resolver will serve for 3 classes and extends all methods from old api resolver from raw text"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        SecureResolver tested = new SecureResolver()
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
+                tested,
+                new BooleanJsonTypeResolver()
+        )
+
+        Map<String, String> properties = new HashMap<>()
+        properties.put("object.sec_1", "sec_hash: _^ _^ _ ")
+        properties.put("object.sec_2", "sec_hash: _^1_^2_ ")
+        properties.put("object.boolean1", "true")
+        properties.put("object.numberAsText", "12")
+
+        String json = converter.convertToJson(properties)
+        println(json)
+        def jsonObject = jsonSlurper.parseText(json)
+        then:
+        jsonObject.object.sec_1 == "hash:" +  " _^ _^ _ " + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.sec_2 == "hash:" +  " _^1_^2_ " + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.boolean1 == true
+        jsonObject.object.numberAsText == "12"
+        assertInvocations(tested, "resolveTypeOfResolver", 2)
+        assertInvocations(tested, "returnJsonType", 2)
+        assertInvocations(tested, "returnConcreteValueWhenCanBeResolved", 4)
+        assertInvocations(tested, "returnConvertedValueForClearedText", 4)
+        assertInvocations(tested, "returnConcreteJsonType", 2)
+        assertInvocations(tested, "getClassesWhichCanResolve", 2)
+    }
+
+    private static boolean assertInvocations(SecureResolver instance, String method, int expected) {
+        println(method + " " + instance.invocationMap.get(method))
+        return instance.invocationMap.get(method).get() == expected
+    }
+
+    private static class SecureResolver extends PrimitiveJsonTypeResolver {
+
+        static final String HASH = "sfgskdjg09384"
+        static final Map<SecureResolver, AtomicInteger> resolveTypeOfResolverMap = new HashMap<>()
+        private Map<String, AtomicInteger> invocationMap = invocationMap()
+
+        Map<String, AtomicInteger> invocationMap() {
+            Map<String, AtomicInteger> invocationMap = new HashMap<>()
+            invocationMap.put("resolveTypeOfResolver", resolveTypeOfResolverMap.get(this))
+            invocationMap.put("returnJsonType", new AtomicInteger())
+            invocationMap.put("returnConcreteValueWhenCanBeResolved", new AtomicInteger())
+            invocationMap.put("returnConvertedValueForClearedText", new AtomicInteger())
+            invocationMap.put("returnConcreteJsonType", new AtomicInteger())
+            invocationMap.put("getClassesWhichCanResolve", new AtomicInteger())
+            return invocationMap
+        }
+
+        @Override
+        Class<?> resolveTypeOfResolver() {
+            resolveTypeOfResolverMap.putIfAbsent(this, new AtomicInteger())
+            resolveTypeOfResolverMap.get(this).incrementAndGet()
+            return Object.class
+        }
+
+        @Override
+        AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                        Object propertyValue,
+                                        String propertyKey) {
+            invocationMap.get("returnJsonType").incrementAndGet()
+            if (propertyValue instanceof SecureBean1 ||
+                    propertyValue instanceof SecureBean2 ||
+                    propertyValue instanceof SecureBean3) {
+                return super.returnJsonType(primitiveJsonTypesResolver, propertyValue, propertyKey)
+            }
+            throw new UnsupportedOperationException("Cannot support type: " + propertyValue.getClass())
+        }
+
+        @Override
+        protected Optional<Object> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                                                        String propertyValue,
+                                                                        String propertyKey) {
+            invocationMap.get("returnConcreteValueWhenCanBeResolved").incrementAndGet()
+            if (propertyValue.contains("sec_hash:")) {
+                return Optional.of(new SecureBean2(propertyValue.replace("sec_hash:", "")))
+            }
+            return Optional.empty()
+        }
+
+        @Override
+        Optional<Object> returnConvertedValueForClearedText(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                                            String propertyValue,
+                                                            String propertyKey) {
+            invocationMap.get("returnConvertedValueForClearedText").incrementAndGet()
+            if (propertyValue == null) {
+                return Optional.empty()
+            }
+            return returnConcreteValueWhenCanBeResolved(primitiveJsonTypesResolver, propertyValue, propertyKey)
+        }
+
+        @Override
+        AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object convertedValue, String propertyKey) {
+            invocationMap.get("returnConcreteJsonType").incrementAndGet()
+            return new StringJsonType(convertedValue.toString() + ":MAIN_HASH: " + HASH)
+        }
+
+        @Override
+        List<Class<?>> getClassesWhichCanResolve() {
+            invocationMap.get("getClassesWhichCanResolve").incrementAndGet()
+            return Arrays.asList(SecureBean1.class, SecureBean2.class, SecureBean3.class)
+        }
+    }
+
+    private static class SecureBean1 {
+        private final String hash1
+        private final String hash2
+
+        SecureBean1(String hash1, String hash2) {
+            this.hash1 = hash1
+            this.hash2 = hash2
+        }
+
+
+        @Override
+        String toString() {
+            return "hash1:#1:hash2:#2"
+        }
+    }
+
+    private static class SecureBean2 {
+        private final String hash
+
+        SecureBean2(String hash) {
+            this.hash = hash
+        }
+
+        @Override
+        String toString() {
+            return "hash:" + hash + "#1"
+        }
+    }
+
+    private static class SecureBean3 {
+        private final String hash3
+
+        SecureBean3(String hash3) {
+            this.hash3 = hash3
+        }
+
+        @Override
+        String toString() {
+            return "hash3:#3"
         }
     }
 }

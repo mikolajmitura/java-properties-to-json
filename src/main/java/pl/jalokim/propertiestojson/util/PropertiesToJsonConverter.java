@@ -14,15 +14,23 @@ import pl.jalokim.propertiestojson.resolvers.ArrayJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.JsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.ObjectJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.CharacterJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.EmptyStringJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.JsonNullReferenceTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.adapter.PrimitiveJsonTypeResolverToNewApiAdapter;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.BooleanToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.CharacterToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ElementsToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.StringToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.SuperObjectToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToBooleanResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToCharacterResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToElementsResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToEmptyStringResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToObjectResolver;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 import pl.jalokim.propertiestojson.util.exception.ReadInputException;
 
@@ -32,32 +40,59 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
-import static pl.jalokim.propertiestojson.resolvers.primitives.JsonNullReferenceTypeResolver.NULL_RESOLVER;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING_RESOLVER_AS_NOT_LAST;
+import static pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeConverter.NULL_TO_JSON_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.object.StringToJsonTypeResolver.STRING_TO_JSON_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJsonNullReferenceResolver.TEXT_TO_NULL_JSON_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToStringResolver.TO_STRING_RESOLVER;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING_RESOLVER_AS_NOT_LAST;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING__TO_JSON_RESOLVER_AS_NOT_LAST;
+
+// TODO builder for that
+// allDefaults / /as default config
+// var args for toJson
+// var args for toObject
+// only custom toJson
+// only custom toObject
+// override null resolver
+// override empty resolver
+// skipNull <- will not add fields to json with null...
+
+// TODO implementation for not add field to json from resolver... (it will not add field to json when skipNull is false
 
 public final class PropertiesToJsonConverter {
 
-    public static final StringJsonTypeResolver STRING_RESOLVER = new StringJsonTypeResolver();
-    private static final List<PrimitiveJsonTypeResolver> DEFAULT_PRIMITIVE_RESOLVERS;
-    private static final EmptyStringJsonTypeResolver EMPTY_TEXT_RESOLVER = new EmptyStringJsonTypeResolver();
+    private static final TextToEmptyStringResolver EMPTY_TEXT_RESOLVER = new TextToEmptyStringResolver();
+
+    private static final List<ObjectToJsonTypeResolver> TO_JSON_TYPE_RESOLVERS;
+    private static final List<TextToConcreteObjectResolver> TO_OBJECT_RESOLVERS;
 
     static {
-        DEFAULT_PRIMITIVE_RESOLVERS = new ArrayList<>();
-        DEFAULT_PRIMITIVE_RESOLVERS.add(new PrimitiveArrayJsonTypeResolver());
-        DEFAULT_PRIMITIVE_RESOLVERS.add(new ObjectFromTextJsonTypeResolver());
-        DEFAULT_PRIMITIVE_RESOLVERS.add(new NumberJsonTypeResolver());
-        DEFAULT_PRIMITIVE_RESOLVERS.add(new CharacterJsonTypeResolver());
-        DEFAULT_PRIMITIVE_RESOLVERS.add(new BooleanJsonTypeResolver());
+        TO_JSON_TYPE_RESOLVERS = new ArrayList<>();
+        TO_JSON_TYPE_RESOLVERS.add(new ElementsToJsonTypeResolver());
+        TO_JSON_TYPE_RESOLVERS.add(new SuperObjectToJsonTypeResolver());
+        TO_JSON_TYPE_RESOLVERS.add(new NumberToJsonTypeResolver());
+        TO_JSON_TYPE_RESOLVERS.add(new CharacterToJsonTypeResolver());
+        TO_JSON_TYPE_RESOLVERS.add(new BooleanToJsonTypeResolver());
+
+        // order is crucial
+        TO_OBJECT_RESOLVERS = new ArrayList<>();
+        TO_OBJECT_RESOLVERS.add(new TextToElementsResolver());
+        TO_OBJECT_RESOLVERS.add(new TextToObjectResolver());
+        TO_OBJECT_RESOLVERS.add(new TextToNumberResolver());
+        TO_OBJECT_RESOLVERS.add(new TextToCharacterResolver());
+        TO_OBJECT_RESOLVERS.add(new TextToBooleanResolver());
     }
 
     private PropertyKeysOrderResolver propertyKeysOrderResolver = new PropertyKeysOrderResolver();
@@ -65,32 +100,57 @@ public final class PropertiesToJsonConverter {
     private final PrimitiveJsonTypesResolver primitiveResolvers;
 
     /**
+     * Default implementation of json primitive type resolvers.
+     */
+    public PropertiesToJsonConverter() {
+        this(TO_JSON_TYPE_RESOLVERS, TO_OBJECT_RESOLVERS);
+    }
+
+    /**
      * This constructor allow to give a resolvers, the order of resolvers is important.
      *
-     * @param primitiveResolvers ordered list
+     * @param customPrimitiveResolvers ordered list
      */
-    public PropertiesToJsonConverter(PrimitiveJsonTypeResolver... primitiveResolvers) {
-        validateTypeResolverOrder(primitiveResolvers);
-        this.primitiveResolvers = new PrimitiveJsonTypesResolver(buildAllPrimitiveResolvers(primitiveResolvers));
+    @Deprecated
+    public PropertiesToJsonConverter(PrimitiveJsonTypeResolver... customPrimitiveResolvers) {
+        validateTypeResolverOrder(customPrimitiveResolvers);
+
+        List<PrimitiveJsonTypeResolverToNewApiAdapter> adapters = Arrays.stream(customPrimitiveResolvers)
+                                                                        .map(PrimitiveJsonTypeResolverToNewApiAdapter::new)
+                                                                        .collect(Collectors.toList());
+
+        this.primitiveResolvers = new PrimitiveJsonTypesResolver(buildAllToJsonResolvers(new ArrayList<>(adapters)),
+                                                                 buildAllToObjectResolvers(new ArrayList<>(adapters)));
         algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());
         algorithms.put(AlgorithmType.PRIMITIVE, this.primitiveResolvers);
         algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeResolver());
     }
 
-    /**
-     * Default implementation of json primitive type resolvers.
-     */
-    public PropertiesToJsonConverter() {
-        this(fromListToArray(DEFAULT_PRIMITIVE_RESOLVERS));
+    // TODO tests for that, check that can one resolver can resolve a lot of classes itp.
+    public PropertiesToJsonConverter(List<ObjectToJsonTypeResolver> toJsonTypeResolvers,
+                                     List<TextToConcreteObjectResolver> toObjectsResolvers) {
+        validateTypeResolverOrder(toJsonTypeResolvers);
+        this.primitiveResolvers = new PrimitiveJsonTypesResolver(buildAllToJsonResolvers(toJsonTypeResolvers),
+                                                                 buildAllToObjectResolvers(toObjectsResolvers));
+        algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());
+        algorithms.put(AlgorithmType.PRIMITIVE, this.primitiveResolvers);
+        algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeResolver());
     }
 
-    private List<PrimitiveJsonTypeResolver> buildAllPrimitiveResolvers(PrimitiveJsonTypeResolver... primitiveResolvers) {
-        List<PrimitiveJsonTypeResolver> allPrimitiveResolvers = new ArrayList<>();
-        allPrimitiveResolvers.add(NULL_RESOLVER);
-        allPrimitiveResolvers.add(EMPTY_TEXT_RESOLVER);
-        allPrimitiveResolvers.addAll(asList(primitiveResolvers));
-        allPrimitiveResolvers.add(STRING_RESOLVER);
-        return allPrimitiveResolvers;
+    private List<ObjectToJsonTypeResolver> buildAllToJsonResolvers(List<ObjectToJsonTypeResolver> toJsonTypeResolvers) {
+        List<ObjectToJsonTypeResolver> mergedToJsonTypeResolvers = new ArrayList<>(toJsonTypeResolvers);
+        mergedToJsonTypeResolvers.add(STRING_TO_JSON_RESOLVER);
+        mergedToJsonTypeResolvers.add(NULL_TO_JSON_RESOLVER);
+        return mergedToJsonTypeResolvers;
+    }
+
+    private List<TextToConcreteObjectResolver> buildAllToObjectResolvers(List<TextToConcreteObjectResolver> resolvers) {
+        List<TextToConcreteObjectResolver> allResolvers = new ArrayList<>();
+        allResolvers.add(TEXT_TO_NULL_JSON_RESOLVER);
+        allResolvers.add(EMPTY_TEXT_RESOLVER);
+        allResolvers.addAll(resolvers);
+        allResolvers.add(TO_STRING_RESOLVER);
+        return allResolvers;
     }
 
     /**
@@ -501,24 +561,32 @@ public final class PropertiesToJsonConverter {
         return map;
     }
 
-
-    private static PrimitiveJsonTypeResolver[] fromListToArray(List<PrimitiveJsonTypeResolver> resolversAsList) {
-        PrimitiveJsonTypeResolver[] resolvers = new PrimitiveJsonTypeResolver[resolversAsList.size()];
-        return resolversAsList.toArray(resolvers);
-    }
-
     private static void validateTypeResolverOrder(PrimitiveJsonTypeResolver... primitiveResolvers) {
         List<PrimitiveJsonTypeResolver> resolvers = asList(primitiveResolvers);
         boolean containStringResolverType = false;
         for(PrimitiveJsonTypeResolver resolver : resolvers) {
-            if(resolver instanceof StringJsonTypeResolver) {
+            if(resolver.getClass().equals(StringJsonTypeResolver.class)) {
                 containStringResolverType = true;
             }
         }
         if(containStringResolverType) {
             PrimitiveJsonTypeResolver lastResolver = resolvers.get(resolvers.size() - 1);
-            if(!(lastResolver instanceof StringJsonTypeResolver)) {
+            if(!(lastResolver.getClass().equals(StringJsonTypeResolver.class))) {
                 throw new ParsePropertiesException(STRING_RESOLVER_AS_NOT_LAST);
+            }
+        }
+    }
+    private static void validateTypeResolverOrder(List<ObjectToJsonTypeResolver> resolvers) {
+        boolean containStringResolverType = false;
+        for(ObjectToJsonTypeResolver<?> resolver : resolvers) {
+            if(resolver.getClass().equals(StringToJsonTypeResolver.class)) {
+                containStringResolverType = true;
+            }
+        }
+        if(containStringResolverType) {
+            ObjectToJsonTypeResolver<?> lastResolver = resolvers.get(resolvers.size() - 1);
+            if(!(lastResolver.getClass().equals(StringToJsonTypeResolver.class))) {
+                throw new ParsePropertiesException(STRING__TO_JSON_RESOLVER_AS_NOT_LAST);
             }
         }
     }
