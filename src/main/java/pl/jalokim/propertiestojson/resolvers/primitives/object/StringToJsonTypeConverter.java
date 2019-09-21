@@ -6,12 +6,14 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 import java.util.Optional;
 
-public class CharacterToJsonTypeResolver extends AbstractObjectToJsonTypeResolver<Character> {
+public class StringToJsonTypeConverter extends AbstractObjectToJsonTypeConverter<String> {
+
+    public static final StringToJsonTypeConverter STRING_TO_JSON_RESOLVER = new StringToJsonTypeConverter();
 
     @Override
     public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                              Character convertedValue,
+                                              String convertedValue,
                                               String propertyKey) {
-        return Optional.of(new StringJsonType(convertedValue.toString()));
+        return Optional.of(new StringJsonType(convertedValue));
     }
 }

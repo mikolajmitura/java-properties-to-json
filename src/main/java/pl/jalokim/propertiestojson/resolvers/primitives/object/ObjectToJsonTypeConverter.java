@@ -6,7 +6,7 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import java.util.List;
 import java.util.Optional;
 
-public interface ObjectToJsonTypeResolver<T> extends HasGenricType<T> {
+public interface ObjectToJsonTypeConverter<T> extends HasGenricType<T> {
 
     @SuppressWarnings("unchecked")
     default Optional<AbstractJsonType> returnOptionalJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object propertyValue, String propertyKey) {

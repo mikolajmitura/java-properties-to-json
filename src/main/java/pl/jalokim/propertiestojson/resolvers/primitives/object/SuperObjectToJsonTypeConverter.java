@@ -2,8 +2,6 @@ package pl.jalokim.propertiestojson.resolvers.primitives.object;
 
 import com.google.gson.JsonElement;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
-import pl.jalokim.propertiestojson.object.ArrayJsonType;
-import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.object.StringJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
@@ -15,7 +13,7 @@ import static pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectH
 import static pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper.toJson;
 import static pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper.toJsonElement;
 
-public class SuperObjectToJsonTypeResolver extends AbstractObjectToJsonTypeResolver<Object> {
+public class SuperObjectToJsonTypeConverter extends AbstractObjectToJsonTypeConverter<Object> {
 
     /**
      * It return instance of ArrayJsonType or ObjectJsonType

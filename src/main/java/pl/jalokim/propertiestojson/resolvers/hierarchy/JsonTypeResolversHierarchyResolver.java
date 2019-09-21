@@ -4,7 +4,7 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.adapter.PrimitiveJsonTypeResolverToNewApiAdapter;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
-import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_JSON_TYPE_OBJ;
 import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.CANNOT_FIND_TYPE_RESOLVER_MSG;
 
@@ -28,15 +27,15 @@ import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesExceptio
  */
 public class JsonTypeResolversHierarchyResolver {
 
-    private final Map<Class<?>, List<ObjectToJsonTypeResolver<?>>> resolversByType = new HashMap<>();
+    private final Map<Class<?>, List<ObjectToJsonTypeConverter<?>>> resolversByType = new HashMap<>();
     private final HierarchyClassResolver hierarchyClassResolver;
 
-    public JsonTypeResolversHierarchyResolver(List<ObjectToJsonTypeResolver> resolvers) {
-        for(ObjectToJsonTypeResolver<?> resolver : resolvers) {
+    public JsonTypeResolversHierarchyResolver(List<ObjectToJsonTypeConverter> resolvers) {
+        for(ObjectToJsonTypeConverter<?> resolver : resolvers) {
             for(Class<?> canResolveType : resolver.getClassesWhichCanResolve()) {
-                List<ObjectToJsonTypeResolver<?>> resolversByClass = resolversByType.get(canResolveType);
+                List<ObjectToJsonTypeConverter<?>> resolversByClass = resolversByType.get(canResolveType);
                 if(resolversByClass == null) {
-                    List<ObjectToJsonTypeResolver<?>> newResolvers = new ArrayList<>();
+                    List<ObjectToJsonTypeConverter<?>> newResolvers = new ArrayList<>();
                     newResolvers.add(resolver);
                     resolversByType.put(canResolveType, newResolvers);
                 } else {
@@ -45,7 +44,7 @@ public class JsonTypeResolversHierarchyResolver {
             }
         }
         List<Class<?>> typesWhichCanResolve = new ArrayList<>();
-        for(ObjectToJsonTypeResolver<?> resolver : resolvers) {
+        for(ObjectToJsonTypeConverter<?> resolver : resolvers) {
             typesWhichCanResolve.addAll(resolver.getClassesWhichCanResolve());
         }
         hierarchyClassResolver = new HierarchyClassResolver(typesWhichCanResolve);
@@ -54,9 +53,9 @@ public class JsonTypeResolversHierarchyResolver {
     public AbstractJsonType returnConcreteJsonTypeObject(PrimitiveJsonTypesResolver mainResolver,
                                                          Object instance,
                                                          String propertyKey) {
-        Objects.nonNull(instance);
+        Objects.requireNonNull(instance);
         Class<?> instanceClass = instance.getClass();
-        List<ObjectToJsonTypeResolver<?>> resolvers = resolversByType.get(instanceClass);
+        List<ObjectToJsonTypeConverter<?>> resolvers = resolversByType.get(instanceClass);
         if(resolvers == null) {
             Class<?> typeWhichCanResolve = hierarchyClassResolver.searchResolverClass(instance);
             if(typeWhichCanResolve == null) {
@@ -80,7 +79,7 @@ public class JsonTypeResolversHierarchyResolver {
                 throw new ParsePropertiesException("Found: " + new ArrayList<>(resolversClasses) + " for type" + instanceClass + " expected only one!");
             }
 
-            for(ObjectToJsonTypeResolver<?> resolver : resolvers) {
+            for(ObjectToJsonTypeConverter<?> resolver : resolvers) {
                 Optional<AbstractJsonType> abstractJsonType = resolver.returnOptionalJsonType(mainResolver, instance, propertyKey);
                 if(abstractJsonType.isPresent()) {
                     return abstractJsonType.get();

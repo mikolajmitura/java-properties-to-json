@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.delegator.PrimitiveJsonTypeDelegatorResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.SuperObjectToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.SuperObjectToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToObjectResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
@@ -21,7 +21,7 @@ import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeDelegatorResolver<Object> {
 
     public ObjectFromTextJsonTypeResolver() {
-        super(new TextToObjectResolver(), new SuperObjectToJsonTypeResolver());
+        super(new TextToObjectResolver(), new SuperObjectToJsonTypeConverter());
     }
 
 

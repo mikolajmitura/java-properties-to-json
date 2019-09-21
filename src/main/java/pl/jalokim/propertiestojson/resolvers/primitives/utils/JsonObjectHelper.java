@@ -10,9 +10,9 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.BooleanToJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.BooleanToJsonTypeConverter;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeConverter;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToBooleanResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver;
@@ -26,7 +26,8 @@ import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
-import static pl.jalokim.propertiestojson.resolvers.primitives.object.StringToJsonTypeResolver.STRING_TO_JSON_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeConverter.NULL_TO_JSON_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.object.StringToJsonTypeConverter.STRING_TO_JSON_RESOLVER;
 import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver.convertToNumber;
 import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToStringResolver.TO_STRING_RESOLVER;
 
@@ -37,16 +38,16 @@ public class JsonObjectHelper {
     private static final Gson gson = new Gson();
 
     static {
-        List<ObjectToJsonTypeResolver> toJsonResolvers = new ArrayList<>();
-        toJsonResolvers.add(new NumberToJsonTypeResolver());
-        toJsonResolvers.add(new BooleanToJsonTypeResolver());
+        List<ObjectToJsonTypeConverter> toJsonResolvers = new ArrayList<>();
+        toJsonResolvers.add(new NumberToJsonTypeConverter());
+        toJsonResolvers.add(new BooleanToJsonTypeConverter());
         toJsonResolvers.add(STRING_TO_JSON_RESOLVER);
 
         List<TextToConcreteObjectResolver> toObjectsResolvers = new ArrayList<>();
         toObjectsResolvers.add(new TextToNumberResolver());
         toObjectsResolvers.add(new TextToBooleanResolver());
         toObjectsResolvers.add(TO_STRING_RESOLVER);
-        primitiveJsonTypesResolver = new PrimitiveJsonTypesResolver(toJsonResolvers, toObjectsResolvers);
+        primitiveJsonTypesResolver = new PrimitiveJsonTypesResolver(toJsonResolvers, toObjectsResolvers, false, NULL_TO_JSON_RESOLVER);
     }
 
     public static String toJson(Object object) {

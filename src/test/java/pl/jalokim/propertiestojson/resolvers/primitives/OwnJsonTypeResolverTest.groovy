@@ -161,7 +161,7 @@ class OwnJsonTypeResolverTest extends Specification {
         jsonObject.object.sec3 == "hash3:#3" + ":MAIN_HASH: " + SecureResolver.HASH
         jsonObject.object.boolean1 == true
         jsonObject.object.numberAsText == "12"
-        assertInvocations(tested, "resolveTypeOfResolver", 2)
+        assertInvocations(tested, "resolveTypeOfResolver", 3)
         assertInvocations(tested, "returnJsonType", 3)
         assertInvocations(tested, "returnConcreteValueWhenCanBeResolved", 0)
         assertInvocations(tested, "returnConvertedValueForClearedText", 0)
@@ -192,7 +192,7 @@ class OwnJsonTypeResolverTest extends Specification {
         jsonObject.object.sec_2 == "hash:" +  " _^1_^2_ " + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
         jsonObject.object.boolean1 == true
         jsonObject.object.numberAsText == "12"
-        assertInvocations(tested, "resolveTypeOfResolver", 2)
+        assertInvocations(tested, "resolveTypeOfResolver", 3)
         assertInvocations(tested, "returnJsonType", 2)
         assertInvocations(tested, "returnConcreteValueWhenCanBeResolved", 4)
         assertInvocations(tested, "returnConvertedValueForClearedText", 4)

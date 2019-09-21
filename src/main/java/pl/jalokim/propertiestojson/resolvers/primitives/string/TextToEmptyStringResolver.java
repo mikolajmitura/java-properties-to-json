@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public class TextToEmptyStringResolver implements TextToConcreteObjectResolver {
 
+    public static final TextToEmptyStringResolver EMPTY_TEXT_RESOLVER = new TextToEmptyStringResolver();
     private final static String EMPTY_VALUE = "";
 
     @Override

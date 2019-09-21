@@ -6,7 +6,7 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 import java.util.Optional;
 
-public class NullToJsonTypeConverter extends AbstractObjectToJsonTypeResolver<JsonNullReferenceType> {
+public class NullToJsonTypeConverter extends AbstractObjectToJsonTypeConverter<JsonNullReferenceType> {
 
     public static final NullToJsonTypeConverter NULL_TO_JSON_RESOLVER = new NullToJsonTypeConverter();
 

@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-public abstract class AbstractObjectToJsonTypeResolver<T> implements ObjectToJsonTypeResolver<T> {
+public abstract class AbstractObjectToJsonTypeConverter<T> implements ObjectToJsonTypeConverter<T> {
 
     protected final Class<?> canResolveClass = resolveTypeOfResolver();
 

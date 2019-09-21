@@ -4,10 +4,13 @@ import com.google.common.collect.ImmutableList;
 import pl.jalokim.propertiestojson.JsonObjectFieldsValidator;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
+import pl.jalokim.propertiestojson.object.JsonNullReferenceType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.object.SkipJsonField;
 import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.hierarchy.JsonTypeResolversHierarchyResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeConverter;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
@@ -21,11 +24,18 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     private final List<TextToConcreteObjectResolver> toObjectsResolvers;
     private final JsonTypeResolversHierarchyResolver resolversHierarchyResolver;
+    private final Boolean skipNulls;
+    private final NullToJsonTypeConverter nullToJsonTypeConverter;
 
-    public PrimitiveJsonTypesResolver(List<ObjectToJsonTypeResolver> toJsonResolvers,
-                                      List<TextToConcreteObjectResolver> toObjectsResolvers) {
+    public PrimitiveJsonTypesResolver(List<ObjectToJsonTypeConverter> toJsonResolvers,
+                                      List<TextToConcreteObjectResolver> toObjectsResolvers,
+                                      Boolean skipNulls,
+                                      NullToJsonTypeConverter nullToJsonTypeConverter
+                                     ) {
         this.toObjectsResolvers = ImmutableList.copyOf(toObjectsResolvers);
         this.resolversHierarchyResolver = new JsonTypeResolversHierarchyResolver(toJsonResolvers);
+        this.skipNulls = skipNulls;
+        this.nullToJsonTypeConverter = nullToJsonTypeConverter;
     }
 
     @Override
@@ -75,10 +85,18 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     }
 
     public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue, String propertyKey) {
+        AbstractJsonType result;
         if(propertyValue == null) {
-            return NULL_OBJECT; // TODO should invoke on null resolver, because user can want another thing with null reference
+            result = nullToJsonTypeConverter.convertToJsonTypeOrEmpty(this, NULL_OBJECT, propertyKey).get();
+        } else {
+            result = resolversHierarchyResolver.returnConcreteJsonTypeObject(this, propertyValue, propertyKey);
         }
-        return resolversHierarchyResolver.returnConcreteJsonTypeObject(this, propertyValue, propertyKey);
+
+        if(skipNulls && result instanceof JsonNullReferenceType) {
+            result = SkipJsonField.SKIP_JSON_FIELD;
+        }
+
+        return result;
     }
 
     protected void addFieldToArray(PathMetadata currentPathMetaData, Object propertyValue) {

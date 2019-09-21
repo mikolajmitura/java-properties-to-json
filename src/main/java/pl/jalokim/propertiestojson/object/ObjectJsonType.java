@@ -19,6 +19,10 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
     private Map<String, AbstractJsonType> fields = new HashMap<>();
 
     public void addField(final String field, final AbstractJsonType object, PathMetadata currentPathMetaData) {
+        if (object instanceof SkipJsonField) {
+            return;
+        }
+
         AbstractJsonType oldFieldValue = fields.get(field);
         if(oldFieldValue != null) {
             if(oldFieldValue instanceof MergableObject && object instanceof MergableObject) {

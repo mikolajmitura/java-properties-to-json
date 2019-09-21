@@ -1,7 +1,7 @@
 package pl.jalokim.propertiestojson.resolvers.primitives;
 
 import pl.jalokim.propertiestojson.resolvers.primitives.delegator.PrimitiveJsonTypeDelegatorResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.ElementsToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ElementsToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToElementsResolver;
 
 import java.util.Collection;
@@ -15,10 +15,10 @@ import java.util.Collection;
 public class PrimitiveArrayJsonTypeResolver extends PrimitiveJsonTypeDelegatorResolver<Collection<?>> {
 
     public PrimitiveArrayJsonTypeResolver() {
-        super(new TextToElementsResolver(), new ElementsToJsonTypeResolver());
+        super(new TextToElementsResolver(), new ElementsToJsonTypeConverter());
     }
 
     public PrimitiveArrayJsonTypeResolver(boolean resolveTypeOfEachElement) {
-        super(new TextToElementsResolver(resolveTypeOfEachElement), new ElementsToJsonTypeResolver());
+        super(new TextToElementsResolver(resolveTypeOfEachElement), new ElementsToJsonTypeConverter());
     }
 }

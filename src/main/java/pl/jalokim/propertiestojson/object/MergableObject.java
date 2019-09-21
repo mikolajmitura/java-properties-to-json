@@ -3,6 +3,7 @@ package pl.jalokim.propertiestojson.object;
 import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.util.exception.MergeObjectException;
 
+@SuppressWarnings("unchecked")
 public interface MergableObject<T extends AbstractJsonType> {
     void merge(T mergeWith, PathMetadata currentPathMetadata);
 

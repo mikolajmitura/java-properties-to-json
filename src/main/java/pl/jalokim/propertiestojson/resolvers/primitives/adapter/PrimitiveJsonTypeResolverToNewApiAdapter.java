@@ -3,7 +3,7 @@ package pl.jalokim.propertiestojson.resolvers.primitives.adapter;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
 import pl.jalokim.propertiestojson.util.ReflectionUtils;
 
@@ -15,7 +15,7 @@ import static pl.jalokim.propertiestojson.util.ReflectionUtils.invokeMethod;
 
 @SuppressWarnings("unchecked")
 public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJsonTypeResolver
-        implements TextToConcreteObjectResolver, ObjectToJsonTypeResolver {
+        implements TextToConcreteObjectResolver, ObjectToJsonTypeConverter {
 
     private final PrimitiveJsonTypeResolver oldImplementation;
 
@@ -24,7 +24,7 @@ public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJso
         ReflectionUtils.setValue(this, "canResolveClass", resolveTypeOfResolver());
     }
 
-    @Override // from PrimitiveJsonTypeResolver and ObjectToJsonTypeResolver
+    @Override // from PrimitiveJsonTypeResolver and ObjectToJsonTypeConverter
     public Class<?> resolveTypeOfResolver() {
         if (oldImplementation != null) {
             return oldImplementation.resolveTypeOfResolver();
@@ -32,7 +32,7 @@ public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJso
         return null;
     }
 
-    @Override // from PrimitiveJsonTypeResolver and ObjectToJsonTypeResolver
+    @Override // from PrimitiveJsonTypeResolver and ObjectToJsonTypeConverter
     public AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
                                            Object propertyValue,
                                            String propertyKey) {
@@ -74,12 +74,12 @@ public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJso
         return Optional.ofNullable(optional.orElse(null));
     }
 
-    @Override // from ObjectToJsonTypeResolver
+    @Override // from ObjectToJsonTypeConverter
     public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Object convertedValue, String propertyKey) {
         return Optional.of(oldImplementation.returnJsonType(primitiveJsonTypesResolver, convertedValue, propertyKey));
     }
 
-    @Override // from ObjectToJsonTypeResolver and PrimitiveJsonTypeResolver
+    @Override // from ObjectToJsonTypeConverter and PrimitiveJsonTypeResolver
     public List<Class<?>> getClassesWhichCanResolve() {
         return oldImplementation.getClassesWhichCanResolve();
     }

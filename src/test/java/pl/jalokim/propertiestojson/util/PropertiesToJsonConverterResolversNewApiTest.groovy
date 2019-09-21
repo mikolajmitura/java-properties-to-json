@@ -1,15 +1,15 @@
 package pl.jalokim.propertiestojson.util
 
+
+import com.google.gson.JsonObject
 import groovy.json.JsonSlurper
-import pl.jalokim.propertiestojson.object.AbstractJsonType
-import pl.jalokim.propertiestojson.object.JsonNullReferenceType
-import pl.jalokim.propertiestojson.object.NumberJsonType
-import pl.jalokim.propertiestojson.object.StringJsonType
+import pl.jalokim.propertiestojson.object.*
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver
-import pl.jalokim.propertiestojson.resolvers.primitives.object.AbstractObjectToJsonTypeResolver
-import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeResolver
-import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeResolver
+import pl.jalokim.propertiestojson.resolvers.primitives.object.AbstractObjectToJsonTypeConverter
+import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeConverter
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver
+import pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -38,9 +38,9 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
     def "from one to object resolver create 3 types of bean, 3 converters for them"() {
         def jsonSlurper = new JsonSlurper()
         when:
-        List<ObjectToJsonTypeResolver> toJsonResolvers = [new LocalDateTimeToJson(),
-                                                          new LocalDateToJson(),
-                                                          new LocalTimeToJson()]
+        List<ObjectToJsonTypeConverter> toJsonResolvers = [new LocalDateTimeToJson(),
+                                                           new LocalDateToJson(),
+                                                           new LocalTimeToJson()]
 
         List<TextToConcreteObjectResolver> toObjectsResolvers = [new DatesOrTimeResolver()]
 
@@ -58,7 +58,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         jsonObject.some.object.time == "10:12:00"
     }
 
-    private static class LocalDateTimeToJson extends AbstractObjectToJsonTypeResolver<LocalDateTime> {
+    private static class LocalDateTimeToJson extends AbstractObjectToJsonTypeConverter<LocalDateTime> {
 
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
@@ -68,7 +68,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         }
     }
 
-    private static class LocalDateToJson extends AbstractObjectToJsonTypeResolver<LocalDate> {
+    private static class LocalDateToJson extends AbstractObjectToJsonTypeConverter<LocalDate> {
 
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
@@ -78,7 +78,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         }
     }
 
-    private static class LocalTimeToJson extends AbstractObjectToJsonTypeResolver<LocalTime> {
+    private static class LocalTimeToJson extends AbstractObjectToJsonTypeConverter<LocalTime> {
 
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
@@ -115,9 +115,9 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
     def "additional number resolver"() {
         def jsonSlurper = new JsonSlurper()
         when:
-        List<ObjectToJsonTypeResolver> toJsonResolvers = [new NumberToNullJsonTypeResolver(),
-                                                          new NumberToStringJsonTypeResolver(),
-                                                          new NumberToJsonTypeResolver()]
+        List<ObjectToJsonTypeConverter> toJsonResolvers = [new NumberToNullJsonTypeConverter(),
+                                                           new NumberToStringJsonTypeConverter(),
+                                                           new NumberToJsonTypeConverter()]
 
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(toJsonResolvers, [])
         Properties properties = new Properties()
@@ -137,7 +137,46 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         jsonObject.some.object.null_ == null
     }
 
-    private static class NumberToStringJsonTypeResolver extends NumberToJsonTypeResolver {
+    def "skipped field will not be added to json"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+        List<ObjectToJsonTypeConverter> toJsonResolvers = [new SkipableJsonTypeConverter(),
+                                                           new NumberToStringJsonTypeConverter(),
+                                                           new NumberToJsonTypeConverter()]
+
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(toJsonResolvers, [])
+        Properties properties = new Properties()
+        properties.put("some.object.numberAsText", 12)
+        properties.put("some.object.number3", 15)
+        properties.put("some.object2.skip.field", 13)
+        properties.put("some.skip.field", 14)
+
+        String json = converter.convertToJson(properties)
+        def jsonObject = jsonSlurper.parseText(json)
+        JsonObject jsObject = JsonObjectHelper.toJsonElement(json).getAsJsonObject()
+
+        then:
+        jsonObject.some.object.numberAsText == "12"
+        jsonObject.some.object.number3 == 15
+        jsonObject.some.object2.skip.field == null
+        jsonObject.some.skip.field == null
+        !jsObject.getAsJsonObject("some").getAsJsonObject("object2").getAsJsonObject("skip").has("field")
+        !jsObject.getAsJsonObject("some").getAsJsonObject("skip").has("field")
+    }
+
+    private static class SkipableJsonTypeConverter extends NumberToJsonTypeConverter {
+        @Override
+        Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                                            Number convertedValue,
+                                                            String propertyKey) {
+            if (propertyKey.contains("skip.field")) {
+                return Optional.of(SkipJsonField.SKIP_JSON_FIELD)
+            }
+            return Optional.empty()
+        }
+    }
+
+    private static class NumberToStringJsonTypeConverter extends NumberToJsonTypeConverter {
 
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
@@ -150,7 +189,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         }
     }
 
-    private static class NumberToNullJsonTypeResolver extends NumberToJsonTypeResolver {
+    private static class NumberToNullJsonTypeConverter extends NumberToJsonTypeConverter {
 
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,

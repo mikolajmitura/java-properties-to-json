@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 
-public class ElementsToJsonTypeResolver extends AbstractObjectToJsonTypeResolver<Collection<?>> {
+public class ElementsToJsonTypeConverter extends AbstractObjectToJsonTypeConverter<Collection<?>> {
 
     @Override
     public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements, String propertyKey) {

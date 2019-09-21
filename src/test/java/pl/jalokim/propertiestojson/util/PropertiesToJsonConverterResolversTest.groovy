@@ -5,8 +5,8 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.*
 import pl.jalokim.propertiestojson.resolvers.primitives.adapter.PrimitiveJsonTypeResolverToNewApiAdapter
-import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeResolver
-import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeResolver
+import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeConverter
+import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException
 import spock.lang.Specification
 
@@ -376,9 +376,9 @@ class PropertiesToJsonConverterResolversTest extends Specification {
 
     def "found too match resolvers for given bean type when mixin with adapter classes"() {
         given:
-        List<ObjectToJsonTypeResolver<?>> objectToJsonResolvers = [
+        List<ObjectToJsonTypeConverter<?>> objectToJsonResolvers = [
                 new PrimitiveJsonTypeResolverToNewApiAdapter(new NumberJsonTypeResolver()),
-                new NumberToJsonTypeResolver()
+                new NumberToJsonTypeConverter()
         ]
 
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
@@ -392,7 +392,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         converter.convertToJson(properties)
         then:
         ParsePropertiesException exception = thrown()
-        exception.getMessage() == "Found: " + [NumberJsonTypeResolver.class, NumberToJsonTypeResolver.class] + " for type" + Integer.class + " expected only one!"
+        exception.getMessage() == "Found: " + [NumberJsonTypeResolver.class, NumberToJsonTypeConverter.class] + " for type" + Integer.class + " expected only one!"
     }
 
     private static class AnotherNumberResolver extends PrimitiveJsonTypeResolver<Number> {

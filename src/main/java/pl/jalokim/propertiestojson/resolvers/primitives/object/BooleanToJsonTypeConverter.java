@@ -1,17 +1,17 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.object;
 
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
-import pl.jalokim.propertiestojson.object.NumberJsonType;
+import pl.jalokim.propertiestojson.object.BooleanJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 import java.util.Optional;
 
-public class NumberToJsonTypeResolver extends AbstractObjectToJsonTypeResolver<Number> {
+public class BooleanToJsonTypeConverter extends AbstractObjectToJsonTypeConverter<Boolean> {
 
     @Override
     public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                               Number convertedValue,
+                                                               Boolean convertedValue,
                                                                String propertyKey) {
-        return Optional.of(new NumberJsonType(convertedValue));
+        return Optional.of(new BooleanJsonType(convertedValue));
     }
 }
