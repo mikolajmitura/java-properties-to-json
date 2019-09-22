@@ -22,8 +22,12 @@ public class TextToElementsResolver implements TextToConcreteObjectResolver<List
     }
 
     public TextToElementsResolver(boolean resolveTypeOfEachElement) {
+        this(resolveTypeOfEachElement, SIMPLE_ARRAY_DELIMITER);
+    }
+
+    public TextToElementsResolver(boolean resolveTypeOfEachElement, String arrayElementSeparator) {
         this.resolveTypeOfEachElement = resolveTypeOfEachElement;
-        this.arrayElementSeparator = SIMPLE_ARRAY_DELIMITER;
+        this.arrayElementSeparator = arrayElementSeparator;
     }
 
     @Override

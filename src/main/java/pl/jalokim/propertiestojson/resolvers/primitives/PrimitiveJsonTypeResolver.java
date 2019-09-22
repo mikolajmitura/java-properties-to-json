@@ -60,8 +60,8 @@ public abstract class PrimitiveJsonTypeResolver<T> implements HasGenericType<T> 
 
     /**
      * This method will be called in first phase processing step (from raw text to some object)
-     * if your condition is true then return concrete value of Object.
-     * if it not meets your's condition then return Optional.empty() for allow go to others type resolver in order.
+     * if your condition is met then return concrete value of Object.
+     * if it doesn't meet its condition then return Optional.empty() for allow go to others type resolver in order.
      * This will be called only for read properties from Map&lt;String,String&gt;, File with properties, InputStream with properties
      *
      * @param primitiveJsonTypesResolver primitiveJsonTypesResolver

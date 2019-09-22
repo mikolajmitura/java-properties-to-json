@@ -17,6 +17,17 @@ You can generate Json from:
 
 below variable "properties" as one of the above types:
 
+Maven dependency
+---------------------------------------------
+
+```xml
+    <dependency>
+        <groupId>pl.jalokim.propertiestojson</groupId>
+        <artifactId>java-properties-to-json</artifactId>
+        <version>5.1.0</version>
+    </dependency>
+```
+
 Simple Example
 ---------------------------------------------
 code snippet:
@@ -138,6 +149,27 @@ Will result:
 }
 ```
 
+Requirements
+---------------------------------------------
+
+- java 8
+
+- properties structure must have structure compatible with json
+
+For example properties from below will throws CannotOverrideFieldException!
+```properties
+object.man.name=John
+object.man=simpleValue
+
+## reason: in first key 'man' is consider as json object and has field 'name'
+
+object.array[0]=simpleValue
+object.array[0].someField=someObjectSomeFieldValue
+object.array[0].someField2=someObjectSomeFieldValue2
+
+## reason: in first key 'object.array[0]' contains primitive value 'simpleValue' doesn't have json object. The key 'object.array[0].someField' try add new field 'someField' to element at object.array[0] which is primitive type now.
+```
+
 Example of use different primitive json type resolvers:
 ---------------------------------------------
 The default constructor of class PropertiesToJsonConverter has default implementation of resolvers and converter
@@ -203,13 +235,14 @@ Then will be called only methods convertToJsonTypeOrEmpty in ObjectToJsonTypeCon
 
 <h3>Override order Resolvers for first conversion phase</h3>
 The order is important when try convert from raw text value (First phase) to some java object. When cannot convert then will try with next implementation of TextToConcreteObjectResolver&lt;T&gt;.
-If you don't want to use some of them then you can pass resolvers which you want to use.
+If you don't want to use some of defaults resolver then you can pass resolvers which you want to use.
 You can pass your own Resolver too. To do this you need to implement interface TextToConcreteObjectResolver&lt;T&gt; and provide generic type (T).
 
-You need to implement method:
-- Optional&lt;T&gt; returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver, String, String)
 
-If your resolver cannot convert from text then should return empty Optional as a result in override method returnObjectWhenCanBeResolved(..).
+You need to implement method:
+- Optional&lt;T&gt; returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)
+
+If your resolver cannot convert from text then should return empty Optional as a result in method returnObjectWhenCanBeResolved(..).
 
 Example code below for custom TextToConcreteObjectResolver which converts from text to LocalDate
 
@@ -243,8 +276,8 @@ Example code below for custom TextToConcreteObjectResolver which converts from t
 
         /**
          * This method will be called in first conversion phase
-         * if your condition is true then return concrete value of Object.
-         * if it not meets your's condition then return Optional.empty() for allow go to others type resolver in order.
+         * if your condition is met then return concrete value of Object.
+         * if it doesn't meet its condition then return Optional.empty() for allow go to others type resolver in order.
          * This will be called only for read properties from Map&lt;String,String&gt;, File with properties, InputStream with properties
          *
          * @param primitiveJsonTypesResolver primitiveJsonTypesResolver
@@ -290,8 +323,7 @@ Or you can add your own order of all instances TextToConcreteObjectResolver. The
                                                            .convertToJson(properties);
 ```
 
-Important to note here is that always will be added two resolvers before all resolvers provided by you,
-and StringJsonTypeResolver will be as last always.
+Important to note here is that always will be added two resolvers before all provided resolvers, and StringJsonTypeResolver always will be last in order.
 
 So The real order will be:
 ```bash
@@ -359,11 +391,10 @@ Then will return Optional with java.util.List with values: ["1", "23.0", "5", "f
 
 <h4>4) TextToObjectResolver </h4>
 
-This type resolver will try convert from text to json when as first letter will encounter "{" and as last letter "}" and first letter will encounter "[" and as last letter "]"
+This type resolver will try convert from text to json when as first letter will encounter "{" and as last letter "}" or first letter will encounter "[" and as last letter "]"
 If it will have invalid json structure then it will go to next type resolver.
 This resolver during convert from text to json object will use only own resolvers list for primitive types.
-The setup of resolvers in PropertiesToJsonConverter(List<TextToConcreteObjectResolver> toObjectsResolvers, ...) constructor will not have impact of those list.
-And configured resolvers list via defaultAndCustomObjectToJsonTypeConverters() or onlyCustomTextToObjectResolvers in PropertiesToJsonConverterBuilder too.
+The setup of resolvers in PropertiesToJsonConverter(List<TextToConcreteObjectResolver> toObjectsResolvers, ...) constructor or list via defaultAndCustomObjectToJsonTypeConverters() or onlyCustomTextToObjectResolvers() in PropertiesToJsonConverterBuilder will not have impact of those list.
 
 From properties file for example
 
@@ -417,7 +448,7 @@ Then will return Optional of Boolean with true value
 <h4>8) TextToStringResolver </h4>
 
 Important to note here is that this type resolver will always convert to text!
-After this type resolver other type resolver would be omitted!
+After this resolver other resolvers would be omitted!
 So you cannot add any other resolvers after this. It will be always added as last by default.
 
 ```bash
@@ -431,12 +462,12 @@ If you don't want to use some defaults converters then you can pass converters w
 You can pass your own implementation of AbstractObjectToJsonTypeConverter&lt;T&gt; too. To do this you need to extends class AbstractObjectToJsonTypeConverter&lt;T&gt; and provide generic type (T).
 
 You need to implement method:
-* Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, LocalDate convertedValue, String propertyKey)
+* Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, T convertedValue, String propertyKey)
 
-If your converter cannot convert from this object (due to property key or others) then should return empty Optional as a result in override method convertToJsonTypeOrEmpty(..).
-Then other converter which can handle this java class will try with that...
+If your converter cannot convert from this object (due to property key or others reason) then should return empty Optional as a result in method convertToJsonTypeOrEmpty(..).
+Then another converter which can handle the same java class will try with that...
 
-Example code below for custom ObjectToJsonTypeConverter&lt;T&gt; which converts from text to LocalDate
+Example code below for custom ObjectToJsonTypeConverter&lt;T&gt; which converts from LocalDate to some instance of AbstractJsonType.
 
 ```java
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
@@ -516,12 +547,12 @@ Code snipped for add your own implementations of ObjectToJsonTypeConverter to de
      String json = PropertiesToJsonConverterBuilder.builder()
                                                            .defaultAndCustomObjectToJsonTypeConverters(
                                                                    new OwnObjectToJsonTypeConverter1(),
-                                                                   new OwnObjectToJsonTypeConverter1())
+                                                                   new OwnObjectToJsonTypeConverter2())
                                                            .build()
                                                            .convertToJson(properties);
 ```
 
-Or add can your own order of all instances AbstractObjectToJsonTypeConverter. Then will be used only that which was provided...
+Or add can your own order of all instances AbstractObjectToJsonTypeConverter. Then will be used only that which was provided without defaults one...
 
 ```java
       String json = PropertiesToJsonConverterBuilder.builder()
@@ -533,7 +564,7 @@ Or add can your own order of all instances AbstractObjectToJsonTypeConverter. Th
                                                            .convertToJson(properties);
 ```
 
-Important to note here is that always will be added two resolvers (StringToJsonTypeConverter, NullToJsonTypeConverter) to resolvers provided by you.
+Important to note here is that always will be added two resolvers (StringToJsonTypeConverter, NullToJsonTypeConverter) to provided resolvers.
 
 
 So The real list will be:
@@ -549,7 +580,7 @@ NumberToJsonTypeConverter
 <h3>Short description how works every default implementation of AbstractObjectToJsonTypeConverter</h3>
 
 <h4>1) NullToJsonTypeConverter </h4>
-When you give null object as value in properties ot Map<String, Object> or after first conversion phase will return JsonNullReferenceType
+When you give null object as value in properties or Map<String, Object> or after first conversion phase will returned JsonNullReferenceType
 
 ```java
 properties.put("main.field", null);
@@ -673,7 +704,7 @@ This simply convert java.lang.String to json text
 
 ```java
 Properties properties = new Properties();
-properties.put("some.value", 2.0);
+properties.put("some.value", "2.0");
 ```
 
 Will result
@@ -682,7 +713,7 @@ Will result
   "some": {
     "value": "2.0"
   }
-}
+}``
 ```
 
 Example how to use PropertiesToJsonConverterBuilder
@@ -690,22 +721,22 @@ Example how to use PropertiesToJsonConverterBuilder
 
 ```java
 
- // simply return new converter
-        PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
+    // simply return new converter
+    PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
                                                                           .build();
 
-        // return new converter with added some custom resolvers and converters to default
-        PropertiesToJsonConverter converter1 = PropertiesToJsonConverterBuilder.builder()
-                                                                               .defaultAndCustomTextToObjectResolvers(new TextToOwnBeanResolver(), new TextToOwnBeanResolver2())
-                                                                               .defaultAndCustomObjectToJsonTypeConverters(new OwnToJsonTypeConverter(), new OwnToJsonTypeConverter2())
-                                                                               .skipNulls() // will ski all null in json leaf, will not skip in array elements
-                                                                              .build();
+    // return new converter with added some custom resolvers and converters to default
+    PropertiesToJsonConverter converter1 = PropertiesToJsonConverterBuilder.builder()
+                                                                           .defaultAndCustomTextToObjectResolvers(new TextToOwnBeanResolver(), new TextToOwnBeanResolver2())
+                                                                           .defaultAndCustomObjectToJsonTypeConverters(new OwnToJsonTypeConverter(), new OwnToJsonTypeConverter2())
+                                                                           .skipNulls() // will ski all null in json leaf, will not skip in array elements
+                                                                           .build();
 
-        // return new converter with default resolvers (converts from text to java bean)
-        // and with custom order of converters, without defaults (it mean will have problem with convert from java.lang.Number to json type)
-        PropertiesToJsonConverter converter2 = PropertiesToJsonConverterBuilder.builder()
-                                                                               .onlyCustomObjectToJsonTypeConverters(new OwnToJsonTypeConverter())
-                                                                               .build();
+    // return new converter with default resolvers (converts from text to java bean)
+    // and with custom order of converters, without defaults (it mean will have problem with convert from java.lang.Number to json type)
+    PropertiesToJsonConverter converter2 = PropertiesToJsonConverterBuilder.builder()
+                                                                           .onlyCustomObjectToJsonTypeConverters(new OwnToJsonTypeConverter())
+                                                                           .build();
 ```
 
 Example how to use filters (inclusion of property key or first part of property keys):
@@ -776,28 +807,6 @@ Will result
 }
 ```
 
-Requirements
----------------------------------------------
-
-- java 8
-
-- properties structure must have structure compatible with json
-
-For example properties from below will throws CannotOverrideFieldException!
-```properties
-object.man.name=John
-object.man=simpleValue
-
-## reason: in first key 'man' is consider as json object and has field 'name'
-
-object.array[0]=simpleValue
-object.array[0].someField=someObjectSomeFieldValue
-object.array[0].someField2=someObjectSomeFieldValue2
-
-## reason: in first key 'object.array[0]' contains primitive value 'simpleValue' doesn't have json object. The key 'object.array[0].someField' try add new field 'someField' to element at object.array[0] which is primitive type now.
-```
-
-
 Json Object merge or Json Array merge
 ---------------------------------------------
 
@@ -855,17 +864,6 @@ object.someAnotherObject.numberField=3
 ```
 
 It can merge arrays and json objects... In another cases will throw CannotOverrideFieldException or ParsePropertiesException...
-
-Maven dependency
----------------------------------------------
-
-```xml
-    <dependency>
-        <groupId>pl.jalokim.propertiestojson</groupId>
-        <artifactId>java-properties-to-json</artifactId>
-        <version>5.1.0</version>
-    </dependency>
-```
 
 Build from sources
 ---------------------------------------------
