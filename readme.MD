@@ -177,6 +177,7 @@ Order of looking for certain resolver will pass from first to last resolver. Wil
 <h3>What does mean second conversion phase? </h3>
 Does mean when this tool have some concrete objects then try converts it to certain json object, numbers as numbers, boolean as boolean, java bean as json object, collection or array as json array.
 Order here is important only when Converters convert from the same Java Object (through method List<Class<?>> getClassesWhichCanResolve() in AbstractObjectToJsonTypeConverter<T> class)
+Class JsonTypeResolversHierarchyResolver and HierarchyClassResolver are responsible for find sufficient converter... them look for the same class or for super class or super interface. Order will have matter only when converters will be registered with the same java.lang.Class.
 
 <h3>When will be invoked conversion phases? </h3>
 Important to note here is that if you want convert properties to json from below properties source (it invoke first and second conversion phase):
@@ -219,11 +220,12 @@ Example code below for custom TextToConcreteObjectResolver which converts from t
     import java.util.Optional;
 
     /**
-     * results of this resolver you can see in test class LocalDateTimeResolverTest
+     * results of this resolver you can see in those test classes:
      *
      * @see <a href="https://github.com/mikolajmitura/java-properties-to-json/blob/v5.1.0/src/test/java/pl/jalokim/propertiestojson/resolvers/primitives/custom/TextToLocalDateResolverTest.java">LocalDateTimeResolverTest</a>
+     * @see <a href="https://github.com/mikolajmitura/java-properties-to-json/blob/v5.1.0/src/test/java/pl/jalokim/propertiestojson/resolvers/primitives/custom/LocalDateConvertersTest.java">LocalDateTimeResolverTest</a>
      */
-    public class TextToLocalDateResolver implements TextToConcreteObjectResolver {
+    public class TextToLocalDateResolver implements TextToConcreteObjectResolver<LocalDate> {
 
         private static final String DATE_FORMAT = "dd-MM-yyyy";
         private final DateTimeFormatter formatter;
@@ -250,7 +252,7 @@ Example code below for custom TextToConcreteObjectResolver which converts from t
          */
 
         @Override
-        public Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+        public Optional<LocalDate> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
                                                               String propertyValue,
                                                               String propertyKey) {
             try {
@@ -260,6 +262,7 @@ Example code below for custom TextToConcreteObjectResolver which converts from t
             }
         }
     }
+
 ```
 
 Code snipped for add your own implementations of TextToConcreteObjectResolver to default ones
@@ -273,7 +276,7 @@ Code snipped for add your own implementations of TextToConcreteObjectResolver to
                                                            .convertToJson(properties);
 ```
 
-..Or add your own order of all instances of TextToConcreteObjectResolver. Then will be used only that which was provided...
+Or you can add your own order of all instances TextToConcreteObjectResolver. Then will be used only that which was provided...
 
 ```java
      String json = PropertiesToJsonConverterBuilder.builder()
@@ -285,7 +288,7 @@ Code snipped for add your own implementations of TextToConcreteObjectResolver to
                                                            .convertToJson(properties);
 ```
 
-Important to note here is that always will 2 two resolvers before all resolvers provided by you,
+Important to note here is that always will be added two resolvers before all resolvers provided by you,
 and StringJsonTypeResolver will be as last always.
 
 So The real order will be:
@@ -300,8 +303,7 @@ TextToBooleanResolver
 TextToStringResolver
 ```
 
-Short description how works every default implementation of TextToConcreteObjectResolver<T>
----------------------------------------------
+<h3>Short description how works every default implementation of TextToConcreteObjectResolver</h3>
 
 <h4>1) TextToJsonNullReferenceResolver </h4>
 When propertyValue is equals "null" or is null reference
@@ -507,8 +509,179 @@ public class LocalDateToJsonTypeConverter extends AbstractObjectToJsonTypeConver
 
 ```
 
- // TODO how to create converter order.. itp
-// TODO add info about default converter
+Code snipped for add your own implementations of ObjectToJsonTypeConverter to default ones
+```java
+     String json = PropertiesToJsonConverterBuilder.builder()
+                                                           .defaultAndCustomObjectToJsonTypeConverters(
+                                                                   new OwnObjectToJsonTypeConverter1(),
+                                                                   new OwnObjectToJsonTypeConverter1())
+                                                           .build()
+                                                           .convertToJson(properties);
+```
+
+Or add can your own order of all instances AbstractObjectToJsonTypeConverter. Then will be used only that which was provided...
+
+```java
+      String json = PropertiesToJsonConverterBuilder.builder()
+                                                           .onlyCustomTextToObjectResolvers(
+                                                                   new OwnObjectToJsonTypeConverter1(),
+                                                                   new BooleanToJsonTypeConverter(),
+                                                                   new NumberToJsonTypeConverter())
+                                                           .build()
+                                                           .convertToJson(properties);
+```
+
+Important to note here is that always will be added two resolvers (StringToJsonTypeConverter, NullToJsonTypeConverter) to resolvers provided by you.
+
+
+So The real list will be:
+```bash
+NullToJsonTypeConverter <- you can override it via overrideNullToJsonConverter(..) in PropertiesToJsonConverterBuilder
+StringToJsonTypeConverter
+..............
+OwnObjectToJsonTypeConverter1
+BooleanToJsonTypeConverter
+NumberToJsonTypeConverter
+```
+
+<h3>Short description how works every default implementation of AbstractObjectToJsonTypeConverter</h3>
+
+<h4>1) NullToJsonTypeConverter </h4>
+When you give null object as value in properties ot Map<String, Object> or after first conversion phase will return JsonNullReferenceType
+
+```java
+properties.put("main.field", null);
+```
+
+then will result:
+```json
+{
+   "main":{
+      "field":null
+   }
+}
+```
+
+<h4>2) ElementsToJsonTypeConverter </h4>
+
+It converts from all Collection.class and Object[].class to ArrayJsonType
+
+for example:
+```bash
+java.util.List with values: [1, 23.0, 5, false, "text" ]
+```
+then will result:
+```json
+{
+"arraytexts": [1, 23.0, 5, false, "text" ]
+}
+```
+
+<h4>3) SuperObjectToJsonTypeConverter </h4>
+
+It can convert every java.lang.Object...
+Will not convert to AbstractJsonType once again if current object is type of AbstractJsonType it will pass it through.
+In another situation this resolver can convert from Pojo object to json. For example when you have:
+
+``` java
+class MyOwnPojo {
+
+   MyOwnPojo (String field1, String field2) {
+        this.field1 = field1;
+        this.field2 = field2;
+   }
+
+ private String field1;
+ private String field2;
+}
+
+....
+Properties properties = new Properties();
+properties.put("some.field", new MyOwnPojo("text1", "text2"));
+// this MyOwnPojo object will be converted to json too by Gson.
+String json = new PropertiesToJsonConverter().convertToJson(properties);
+```
+
+Will result
+```json
+{
+   "some":{
+      "field":{
+         "field1":"text1",
+         "field2":"text2"
+      }
+   }
+}
+```
+
+<h4>4) NumberToJsonTypeConverter </h4>
+
+It converts all java.lang.Number instances to json number
+
+```java
+Properties properties = new Properties();
+properties.put("some.valueLong", 2);
+properties.put("some.valueFloat", 2.0);
+```
+Will result
+```json
+{
+  "some": {
+    "valueLong": 2,
+    "valueFloat": 2.0
+  }
+}
+```
+<h4>5) CharacterJsonTypeResolver </h4>
+
+It converts all java.lang.Character instances to normal json text
+
+```java
+Properties properties = new Properties();
+properties.put("some.value", 'c');
+```
+
+Will result
+```json
+{
+  "some": {
+    "value": "c"
+  }
+}
+```
+<h4>6) BooleanToJsonTypeConverter </h4>
+It converts all java.lang.Boolean instances to normal json boolean
+
+```java
+Properties properties = new Properties();
+properties.put("some.value", true);
+```
+
+Will result
+```json
+{
+  "some": {
+    "value": true
+  }
+}
+```
+<h4>7) StringToJsonTypeConverter </h4>
+
+This simply convert java.lang.String to json text
+
+```java
+Properties properties = new Properties();
+properties.put("some.value", 2.0);
+```
+
+Will result
+```json
+{
+  "some": {
+    "value": "2.0"
+  }
+}
+```
 
 Example how to use PropertiesToJsonConverterBuilder
 ---------------------------------------------

@@ -65,18 +65,6 @@ public class PropertiesToJsonConverterBuilder {
         return new PropertiesToJsonConverterBuilder();
     }
 
-    public PropertiesToJsonConverterBuilder onlyCustomObjectToJsonTypeConverters(ObjectToJsonTypeConverter... converters) {
-        onlyCustomConverters = true;
-        this.converters.addAll(Arrays.asList(converters));
-        return this;
-    }
-
-    public PropertiesToJsonConverterBuilder defaultAndCustomObjectToJsonTypeConverters(ObjectToJsonTypeConverter... converters) {
-        onlyCustomConverters = false;
-        this.converters.addAll(Arrays.asList(converters));
-        return this;
-    }
-
     public PropertiesToJsonConverterBuilder onlyCustomTextToObjectResolvers(TextToConcreteObjectResolver... resolvers) {
         onlyCustomResolvers = true;
         this.resolvers.addAll(Arrays.asList(resolvers));
@@ -86,6 +74,18 @@ public class PropertiesToJsonConverterBuilder {
     public PropertiesToJsonConverterBuilder defaultAndCustomTextToObjectResolvers(TextToConcreteObjectResolver... resolvers) {
         onlyCustomResolvers = false;
         this.resolvers.addAll(Arrays.asList(resolvers));
+        return this;
+    }
+
+    public PropertiesToJsonConverterBuilder onlyCustomObjectToJsonTypeConverters(ObjectToJsonTypeConverter... converters) {
+        onlyCustomConverters = true;
+        this.converters.addAll(Arrays.asList(converters));
+        return this;
+    }
+
+    public PropertiesToJsonConverterBuilder defaultAndCustomObjectToJsonTypeConverters(ObjectToJsonTypeConverter... converters) {
+        onlyCustomConverters = false;
+        this.converters.addAll(Arrays.asList(converters));
         return this;
     }
 
