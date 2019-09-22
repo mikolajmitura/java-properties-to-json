@@ -58,30 +58,34 @@ public class PropertiesToJsonConverterBuilder {
     private TextToJsonNullReferenceResolver textToJsonNullResolver = TEXT_TO_NULL_JSON_RESOLVER;
     private TextToEmptyStringResolver textToEmptyStringResolver = EMPTY_TEXT_RESOLVER;
     private boolean skipNul = false;
+    private boolean onlyCustomConverters = false;
+    private boolean onlyCustomResolvers = false;
 
     public static PropertiesToJsonConverterBuilder builder() {
         return new PropertiesToJsonConverterBuilder();
     }
 
-    public PropertiesToJsonConverterBuilder onlyCustomConverters(ObjectToJsonTypeConverter... converters) {
+    public PropertiesToJsonConverterBuilder onlyCustomObjectToJsonTypeConverters(ObjectToJsonTypeConverter... converters) {
+        onlyCustomConverters = true;
         this.converters.addAll(Arrays.asList(converters));
         return this;
     }
 
-    public PropertiesToJsonConverterBuilder defaultAndCustomConverters(ObjectToJsonTypeConverter... converters) {
+    public PropertiesToJsonConverterBuilder defaultAndCustomObjectToJsonTypeConverters(ObjectToJsonTypeConverter... converters) {
+        onlyCustomConverters = false;
         this.converters.addAll(Arrays.asList(converters));
-        this.converters.addAll(TO_JSON_TYPE_CONVERTERS);
         return this;
     }
 
-    public PropertiesToJsonConverterBuilder onlyCustomConverters(TextToConcreteObjectResolver... resolvers) {
+    public PropertiesToJsonConverterBuilder onlyCustomTextToObjectResolvers(TextToConcreteObjectResolver... resolvers) {
+        onlyCustomResolvers = true;
         this.resolvers.addAll(Arrays.asList(resolvers));
         return this;
     }
 
-    public PropertiesToJsonConverterBuilder defaultAndCustomConverters(TextToConcreteObjectResolver... resolvers) {
+    public PropertiesToJsonConverterBuilder defaultAndCustomTextToObjectResolvers(TextToConcreteObjectResolver... resolvers) {
+        onlyCustomResolvers = false;
         this.resolvers.addAll(Arrays.asList(resolvers));
-        this.resolvers.addAll(TO_OBJECT_RESOLVERS);
         return this;
     }
 
@@ -106,8 +110,24 @@ public class PropertiesToJsonConverterBuilder {
     }
 
     public PropertiesToJsonConverter build() {
-        return new PropertiesToJsonConverter(converters,
-                                             resolvers,
+        List<ObjectToJsonTypeConverter> resultConverters = new ArrayList<>();
+        if (onlyCustomConverters) {
+            resultConverters.addAll(converters);
+        } else {
+            resultConverters.addAll(converters);
+            resultConverters.addAll(TO_JSON_TYPE_CONVERTERS);
+        }
+
+        List<TextToConcreteObjectResolver> resultResolvers = new ArrayList<>();
+        if (onlyCustomResolvers) {
+            resultResolvers.addAll(resolvers);
+        } else {
+            resultResolvers.addAll(resolvers);
+            resultResolvers.addAll(TO_OBJECT_RESOLVERS);
+        }
+
+        return new PropertiesToJsonConverter(resultConverters,
+                                             resultResolvers,
                                              nullToJsonConverter,
                                              textToJsonNullResolver,
                                              textToEmptyStringResolver,

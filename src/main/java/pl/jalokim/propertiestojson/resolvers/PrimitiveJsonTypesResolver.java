@@ -30,8 +30,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     public PrimitiveJsonTypesResolver(List<ObjectToJsonTypeConverter> toJsonResolvers,
                                       List<TextToConcreteObjectResolver> toObjectsResolvers,
                                       Boolean skipNulls,
-                                      NullToJsonTypeConverter nullToJsonTypeConverter
-                                     ) {
+                                      NullToJsonTypeConverter nullToJsonTypeConverter) {
         this.toObjectsResolvers = ImmutableList.copyOf(toObjectsResolvers);
         this.resolversHierarchyResolver = new JsonTypeResolversHierarchyResolver(toJsonResolvers);
         this.skipNulls = skipNulls;

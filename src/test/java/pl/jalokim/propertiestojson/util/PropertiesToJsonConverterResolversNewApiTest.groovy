@@ -1,7 +1,6 @@
 package pl.jalokim.propertiestojson.util
 
 
-import com.google.gson.JsonObject
 import groovy.json.JsonSlurper
 import pl.jalokim.propertiestojson.object.*
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver
@@ -9,7 +8,6 @@ import pl.jalokim.propertiestojson.resolvers.primitives.object.AbstractObjectToJ
 import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeConverter
 import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver
-import pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -135,6 +133,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         jsonObject.some.object.numberAsText2 == "14"
         jsonObject.some.object.number3 == 15
         jsonObject.some.object.null_ == null
+        JsonCheckerUtil.leafOfPathHasNullValue("some.object.null_", json)
     }
 
     def "skipped field will not be added to json"() {
@@ -153,15 +152,14 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
         String json = converter.convertToJson(properties)
         def jsonObject = jsonSlurper.parseText(json)
-        JsonObject jsObject = JsonObjectHelper.toJsonElement(json).getAsJsonObject()
 
         then:
         jsonObject.some.object.numberAsText == "12"
         jsonObject.some.object.number3 == 15
         jsonObject.some.object2.skip.field == null
         jsonObject.some.skip.field == null
-        !jsObject.getAsJsonObject("some").getAsJsonObject("object2").getAsJsonObject("skip").has("field")
-        !jsObject.getAsJsonObject("some").getAsJsonObject("skip").has("field")
+        JsonCheckerUtil.leafOfPathIsNotPresent("some.object2.skip.field", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("some.skip.field", json)
     }
 
     private static class SkipableJsonTypeConverter extends NumberToJsonTypeConverter {

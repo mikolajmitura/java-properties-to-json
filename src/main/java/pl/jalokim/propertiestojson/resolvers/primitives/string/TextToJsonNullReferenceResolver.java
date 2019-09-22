@@ -13,13 +13,9 @@ public class TextToJsonNullReferenceResolver implements TextToConcreteObjectReso
 
     @Override
     public Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
-        if (propertyValue == null || isStringType(propertyValue) && propertyValue.equals(NULL_VALUE)) {
+        if (propertyValue == null || propertyValue.equals(NULL_VALUE)) {
             return Optional.of(NULL_OBJECT);
         }
         return Optional.empty();
-    }
-
-    private Boolean isStringType(Object value) {
-        return String.class.isAssignableFrom(value.getClass());
     }
 }
