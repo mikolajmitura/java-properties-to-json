@@ -27,18 +27,8 @@ import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJson
 
 public class PropertiesToJsonConverterBuilder {
 
-    static final List<ObjectToJsonTypeConverter> TO_JSON_TYPE_CONVERTERS = defaultConverters();
     static final List<TextToConcreteObjectResolver> TO_OBJECT_RESOLVERS = defaultResolvers();
-
-    static List<ObjectToJsonTypeConverter> defaultConverters() {
-        List<ObjectToJsonTypeConverter> toJsonTypeConverters = new ArrayList<>();
-        toJsonTypeConverters.add(new ElementsToJsonTypeConverter());
-        toJsonTypeConverters.add(new SuperObjectToJsonTypeConverter());
-        toJsonTypeConverters.add(new NumberToJsonTypeConverter());
-        toJsonTypeConverters.add(new CharacterToJsonTypeConverter());
-        toJsonTypeConverters.add(new BooleanToJsonTypeConverter());
-        return Collections.unmodifiableList(toJsonTypeConverters);
-    }
+    static final List<ObjectToJsonTypeConverter> TO_JSON_TYPE_CONVERTERS = defaultConverters();
 
     static List<TextToConcreteObjectResolver> defaultResolvers() {
         // order is crucial
@@ -51,8 +41,18 @@ public class PropertiesToJsonConverterBuilder {
         return Collections.unmodifiableList(toObjectResolvers);
     }
 
-    private final List<ObjectToJsonTypeConverter> converters = new ArrayList<>();
+    static List<ObjectToJsonTypeConverter> defaultConverters() {
+        List<ObjectToJsonTypeConverter> toJsonTypeConverters = new ArrayList<>();
+        toJsonTypeConverters.add(new ElementsToJsonTypeConverter());
+        toJsonTypeConverters.add(new SuperObjectToJsonTypeConverter());
+        toJsonTypeConverters.add(new NumberToJsonTypeConverter());
+        toJsonTypeConverters.add(new CharacterToJsonTypeConverter());
+        toJsonTypeConverters.add(new BooleanToJsonTypeConverter());
+        return Collections.unmodifiableList(toJsonTypeConverters);
+    }
+
     private final List<TextToConcreteObjectResolver> resolvers = new ArrayList<>();
+    private final List<ObjectToJsonTypeConverter> converters = new ArrayList<>();
 
     private NullToJsonTypeConverter nullToJsonConverter = NULL_TO_JSON_RESOLVER;
     private TextToJsonNullReferenceResolver textToJsonNullResolver = TEXT_TO_NULL_JSON_RESOLVER;
@@ -126,8 +126,8 @@ public class PropertiesToJsonConverterBuilder {
             resultResolvers.addAll(TO_OBJECT_RESOLVERS);
         }
 
-        return new PropertiesToJsonConverter(resultConverters,
-                                             resultResolvers,
+        return new PropertiesToJsonConverter(resultResolvers,
+                                             resultConverters,
                                              nullToJsonConverter,
                                              textToJsonNullResolver,
                                              textToEmptyStringResolver,

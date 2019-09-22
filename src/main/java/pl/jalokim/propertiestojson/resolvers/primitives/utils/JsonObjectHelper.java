@@ -47,7 +47,7 @@ public class JsonObjectHelper {
         toObjectsResolvers.add(new TextToNumberResolver());
         toObjectsResolvers.add(new TextToBooleanResolver());
         toObjectsResolvers.add(TO_STRING_RESOLVER);
-        primitiveJsonTypesResolver = new PrimitiveJsonTypesResolver(toJsonResolvers, toObjectsResolvers, false, NULL_TO_JSON_RESOLVER);
+        primitiveJsonTypesResolver = new PrimitiveJsonTypesResolver(toObjectsResolvers, toJsonResolvers, false, NULL_TO_JSON_RESOLVER);
     }
 
     public static String toJson(Object object) {

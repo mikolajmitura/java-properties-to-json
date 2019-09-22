@@ -42,7 +42,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
         List<TextToConcreteObjectResolver> toObjectsResolvers = [new DatesOrTimeResolver()]
 
-        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(toJsonResolvers, toObjectsResolvers)
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(toObjectsResolvers, toJsonResolvers)
         Map<String, String> properties = new HashMap<>()
         properties.put("some.object.datetime", "123")
         properties.put("some.object.date", "123")
@@ -117,7 +117,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
                                                            new NumberToStringJsonTypeConverter(),
                                                            new NumberToJsonTypeConverter()]
 
-        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(toJsonResolvers, [])
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter([], toJsonResolvers)
         Properties properties = new Properties()
         properties.put("some.object.numberAsText", 12)
         properties.put("some.object.number1", 13)
@@ -143,7 +143,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
                                                            new NumberToStringJsonTypeConverter(),
                                                            new NumberToJsonTypeConverter()]
 
-        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(toJsonResolvers, [])
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter([], toJsonResolvers)
         Properties properties = new Properties()
         properties.put("some.object.numberAsText", 12)
         properties.put("some.object.number3", 15)

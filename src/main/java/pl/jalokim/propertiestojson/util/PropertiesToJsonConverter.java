@@ -69,7 +69,7 @@ public final class PropertiesToJsonConverter {
      * Default implementation of json primitive type resolvers.
      */
     public PropertiesToJsonConverter() {
-        this(TO_JSON_TYPE_CONVERTERS, TO_OBJECT_RESOLVERS);
+        this(TO_OBJECT_RESOLVERS, TO_JSON_TYPE_CONVERTERS);
     }
 
     /**
@@ -79,7 +79,7 @@ public final class PropertiesToJsonConverter {
      */
     @Deprecated
     public PropertiesToJsonConverter(PrimitiveJsonTypeResolver... customPrimitiveResolvers) {
-        this(convertToNewConverters(customPrimitiveResolvers), convertToNewResolvers(customPrimitiveResolvers));
+        this(convertToNewResolvers(customPrimitiveResolvers), convertToNewConverters(customPrimitiveResolvers));
     }
 
     private static List<ObjectToJsonTypeConverter> convertToNewConverters(PrimitiveJsonTypeResolver... customPrimitiveResolvers) {
@@ -96,13 +96,13 @@ public final class PropertiesToJsonConverter {
                      .collect(Collectors.toList());
     }
 
-    public PropertiesToJsonConverter(List<ObjectToJsonTypeConverter> toJsonTypeResolvers,
-                                     List<TextToConcreteObjectResolver> toObjectsResolvers) {
-        this(toJsonTypeResolvers, toObjectsResolvers, NULL_TO_JSON_RESOLVER, TEXT_TO_NULL_JSON_RESOLVER, EMPTY_TEXT_RESOLVER, false);
+    public PropertiesToJsonConverter(List<TextToConcreteObjectResolver> toObjectsResolvers,
+                                     List<ObjectToJsonTypeConverter> toJsonTypeResolvers) {
+        this(toObjectsResolvers, toJsonTypeResolvers, NULL_TO_JSON_RESOLVER, TEXT_TO_NULL_JSON_RESOLVER, EMPTY_TEXT_RESOLVER, false);
     }
 
-    public PropertiesToJsonConverter(List<ObjectToJsonTypeConverter> toJsonTypeResolvers,
-                                     List<TextToConcreteObjectResolver> toObjectsResolvers,
+    public PropertiesToJsonConverter(List<TextToConcreteObjectResolver> toObjectsResolvers,
+                                     List<ObjectToJsonTypeConverter> toJsonTypeResolvers,
                                      NullToJsonTypeConverter nullToJsonConverter,
                                      TextToJsonNullReferenceResolver textToJsonNullResolver,
                                      TextToEmptyStringResolver textToEmptyStringResolver,
@@ -113,8 +113,8 @@ public final class PropertiesToJsonConverter {
         this.textToEmptyStringResolver = textToEmptyStringResolver;
 
         validateTypeResolverOrder(toJsonTypeResolvers);
-        this.primitiveResolvers = new PrimitiveJsonTypesResolver(buildAllToJsonResolvers(toJsonTypeResolvers),
-                                                                 buildAllToObjectResolvers(toObjectsResolvers),
+        this.primitiveResolvers = new PrimitiveJsonTypesResolver(buildAllToObjectResolvers(toObjectsResolvers),
+                                                                 buildAllToJsonResolvers(toJsonTypeResolvers),
                                                                  skipNull,
                                                                  nullToJsonConverter);
         algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());

@@ -382,8 +382,8 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         ]
 
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                objectToJsonResolvers,
-                new ArrayList<>()
+                new ArrayList<>(),
+                objectToJsonResolvers
         )
         Properties properties = new Properties()
         properties.put("test.test", 12)
