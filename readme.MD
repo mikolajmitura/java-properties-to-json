@@ -203,12 +203,7 @@ If you don't want to use some of them then you can pass resolvers which you want
 You can pass your own Resolver too. To do this you need to implement interface TextToConcreteObjectResolver and provide generic type (T).
 
 You need to implement method:
-- Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)
-
-
-
-test
-
+- Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver, String, String)
 
 If your resolver cannot convert from text then should return empty Optional as a result in override method returnObjectWhenCanBeResolved(..).
 
