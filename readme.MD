@@ -181,10 +181,11 @@ Order here is important only when Converters can convert for the same java.lang.
 Class JsonTypeResolversHierarchyResolver and HierarchyClassResolver are responsible for find sufficient converter... them look for the same class or for super class or super interface.
 
 <h3>When will be invoked conversion phases? </h3>
+
 Important to note here is that if you want convert properties to json from below properties source (it invoke first and second conversion phase):
-* InputSteam
-* File
-* Map<String,String>
+- InputSteam
+- File
+- Map<String,String>
 
 
 Then will be call returnObjectWhenCanBeResolved(..) method from TextToConcreteObjectResolver<T>.
