@@ -201,12 +201,11 @@ Then will be called only methods convertToJsonTypeOrEmpty in ObjectToJsonTypeCon
 <h3>Override order Resolvers for first conversion phase</h3>
 The order is important when try convert from raw text value (First phase) to some object. When cannot convert then will try with next implementation of TextToConcreteObjectResolver<T>.
 If you don't want to use some of them then you can pass resolvers which you want to use.
-You can pass your own Resolver too. To do this you need to implement interface TextToConcreteObjectResolver and provide generic type (T).
+You can pass your own Resolver too. To do this you need to implement interface TextToConcreteObjectResolver&lt;T&gt; and provide generic type (T).
 
 You need to implement method:
-- Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver, String, String)
+- Optional&lt;T&gt; returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver, String, String)
 
----------------------------------------------
 If your resolver cannot convert from text then should return empty Optional as a result in override method returnObjectWhenCanBeResolved(..).
 
 Example code below for custom TextToConcreteObjectResolver which converts from text to LocalDate
@@ -310,7 +309,7 @@ When propertyValue is equals "null" or is null reference
 ```java
 Map<String, String> properties = new HashMap<>();
 properties.put("main.field", null);
-or 
+or
 properties.put("main.field", "null");
 ```
 
