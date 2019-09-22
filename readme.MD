@@ -194,6 +194,7 @@ If you will convert from below properties source (it invoke only second processi
 - Properties (under the hood is Map<Object, Object> will convert to Map<String, Object>)
 - Map<String, Object>
 
+
 Then will be called only methods convertToJsonTypeOrEmpty in ObjectToJsonTypeConverter<T> after found sufficient resolver.
 
 
@@ -202,9 +203,7 @@ The order is important when try convert from raw text value (First phase) to som
 If you don't want to use some of them then you can pass resolvers which you want to use.
 You can pass your own Resolver too. To do this you need to implement interface TextToConcreteObjectResolver and provide generic type (T).
 
-You need to implement method:
-- Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver, String, String)
-- test
+
 
 If your resolver cannot convert from text then should return empty Optional as a result in override method returnObjectWhenCanBeResolved(..).
 
