@@ -203,6 +203,8 @@ The order is important when try convert from raw text value (First phase) to som
 If you don't want to use some of them then you can pass resolvers which you want to use.
 You can pass your own Resolver too. To do this you need to implement interface TextToConcreteObjectResolver and provide generic type (T).
 
+You need to implement method:
+- Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver, String, String)
 
 
 If your resolver cannot convert from text then should return empty Optional as a result in override method returnObjectWhenCanBeResolved(..).
@@ -393,7 +395,6 @@ some.valueFloat=2.0
 ```
 Then will return Optional of Number (BigDecimal or BigInteger)
 
-```
 <h4>6) TextToCharacterResolver </h4>
 If string contains only one char then will use that resolver.
 
