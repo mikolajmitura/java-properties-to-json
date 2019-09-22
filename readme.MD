@@ -13,7 +13,7 @@ You can generate Json from:
 - from Map<String,Object> (import java.util.Map)
 - from InputStream with properties (java.io.InputStream)
 - from File with properties (java.io.File)
-- from given file localization with properties 
+- from given localization of properties file
 
 below variable "properties" as one of the above types:
 
@@ -157,7 +157,7 @@ TextToStringResolver
 ```
 
 <h3>Converters for second conversion phase </h3>
-(from object to concrete json object, field)
+(from java object to concrete json object, field)
 
 ```
 ElementsToJsonTypeConverter
@@ -170,20 +170,21 @@ NullToJsonTypeConverter
 ```
 
 <h3>What does mean first conversion phase? </h3>
-Does mean when this tool builds json from properties where value always is raw text String then will try resolve concrete Java object, when value can be number then try create BigDecimal or BigInteger.
+Does it mean when this framework builds json from properties where value always is raw text String then will try resolve concrete Java object, when value can be number then try create BigDecimal or BigInteger.
 Order of looking for certain resolver will pass from first to last resolver. Will be used first implementation of TextToConcreteObjectResolver which can convert from String to certain Java Object.
+It mean will return not empty Optional instance.
 
 
 <h3>What does mean second conversion phase? </h3>
-Does mean when this tool have some concrete objects then try converts it to certain json object, numbers as numbers, boolean as boolean, java bean as json object, collection or array as json array.
-Order here is important only when Converters convert from the same Java Object (through method List<Class<?>> getClassesWhichCanResolve() in AbstractObjectToJsonTypeConverter<T> class)
-Class JsonTypeResolversHierarchyResolver and HierarchyClassResolver are responsible for find sufficient converter... them look for the same class or for super class or super interface. Order will have matter only when converters will be registered with the same java.lang.Class.
+Does it mean when this framework builds json from properties and have some concrete objects then try converts it to certain json object, numbers as numbers, boolean as boolean, java bean as json object, java collection or java array to json array.
+Order here is important only when Converters can convert for the same java.lang.Class (through method List<Class<?>> getClassesWhichCanResolve() in AbstractObjectToJsonTypeConverter<T> class)
+Class JsonTypeResolversHierarchyResolver and HierarchyClassResolver are responsible for find sufficient converter... them look for the same class or for super class or super interface.
 
 <h3>When will be invoked conversion phases? </h3>
 Important to note here is that if you want convert properties to json from below properties source (it invoke first and second conversion phase):
-- InputSteam
-- File
-- Map<String,String>
+* InputSteam
+* File
+* Map<String,String>
 
 
 Then will be call returnObjectWhenCanBeResolved(..) method from TextToConcreteObjectResolver<T>.
