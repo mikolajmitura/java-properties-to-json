@@ -142,7 +142,8 @@ Example of use different primitive json type resolvers:
 ---------------------------------------------
 The default constructor of class PropertiesToJsonConverter has default implementation of resolvers and converter
 
-<h3>Resolvers for first conversion phase (from raw text to some concrete java object) order is important</h3>
+<h3>Resolvers for first conversion phase </h3>
+(from raw text to some concrete java object) order is important
 
 ```
 TextToJsonNullReferenceResolver
@@ -155,7 +156,8 @@ TextToBooleanResolver
 TextToStringResolver
 ```
 
-<h3>Converters for second conversion phase (from object to concrete json object, field) </h3>
+<h3>Converters for second conversion phase </h3>
+(from object to concrete json object, field)
 
 ```
 ElementsToJsonTypeConverter
@@ -201,7 +203,9 @@ If you don't want to use some of them then you can pass resolvers which you want
 You can pass your own Resolver too. To do this you need to implement interface TextToConcreteObjectResolver and provide generic type (T).
 
 You need to implement method:
+
 * Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)
+
 
 
 If your resolver cannot convert from text then should return empty Optional as a result in override method returnObjectWhenCanBeResolved(..).
