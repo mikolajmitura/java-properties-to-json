@@ -207,7 +207,7 @@ You need to implement method:
 
 
 
-
+test
 
 
 If your resolver cannot convert from text then should return empty Optional as a result in override method returnObjectWhenCanBeResolved(..).
