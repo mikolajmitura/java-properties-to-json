@@ -206,7 +206,7 @@ You can pass your own Resolver too. To do this you need to implement interface T
 You need to implement method:
 - Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver, String, String)
 
-
+---------------------------------------------
 If your resolver cannot convert from text then should return empty Optional as a result in override method returnObjectWhenCanBeResolved(..).
 
 Example code below for custom TextToConcreteObjectResolver which converts from text to LocalDate
