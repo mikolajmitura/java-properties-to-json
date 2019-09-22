@@ -36,6 +36,29 @@ public class LocalDateTimeResolverTest {
     }
 
     @Test
+    public void convertToLocalDateFromTextForAnotherFormat() {
+        // given
+        LocalDateTimeResolver resolver = new LocalDateTimeResolver("dd/MM/yyyy");
+        // when
+        Optional<LocalDate> localDate = resolver.returnConcreteValueWhenCanBeResolved(null, "04/08/2019", "some.field");
+        // then
+        assertThat(localDate.isPresent()).isTrue();
+        assertThat(localDate.get().getYear()).isEqualTo(2019);
+        assertThat(localDate.get().getMonth()).isEqualTo(AUGUST);
+        assertThat(localDate.get().getDayOfMonth()).isEqualTo(4);
+    }
+
+    @Test
+    public void notConvertToLocalDateFromTextForAnotherFormat() {
+        // given
+        LocalDateTimeResolver resolver = new LocalDateTimeResolver("dd/MM/yyyy");
+        // when
+        Optional<LocalDate> localDate = resolver.returnConcreteValueWhenCanBeResolved(null, "m/08/2019", "some.field");
+        // then
+        assertThat(localDate.isPresent()).isFalse();
+    }
+
+    @Test
     public void convertFromTextDateThroughConverterToObjectJson() {
         // given
         LocalDateTimeResolver resolver = new LocalDateTimeResolver();
@@ -68,29 +91,6 @@ public class LocalDateTimeResolverTest {
         JsonElement jsonElement = jp.parse(json);
         JsonObject asJsonObject = jsonElement.getAsJsonObject().getAsJsonObject("object");
         assertThat(asJsonObject.getAsJsonPrimitive("localDateField").getAsInt()).isEqualTo(1564876800);
-    }
-
-    @Test
-    public void convertToLocalDateFromTextForAnotherFormat() {
-        // given
-        LocalDateTimeResolver resolver = new LocalDateTimeResolver("dd/MM/yyyy");
-        // when
-        Optional<LocalDate> localDate = resolver.returnConcreteValueWhenCanBeResolved(null, "04/08/2019", "some.field");
-        // then
-        assertThat(localDate.isPresent()).isTrue();
-        assertThat(localDate.get().getYear()).isEqualTo(2019);
-        assertThat(localDate.get().getMonth()).isEqualTo(AUGUST);
-        assertThat(localDate.get().getDayOfMonth()).isEqualTo(4);
-    }
-
-    @Test
-    public void notConvertToLocalDateFromTextForAnotherFormat() {
-        // given
-        LocalDateTimeResolver resolver = new LocalDateTimeResolver("dd/MM/yyyy");
-        // when
-        Optional<LocalDate> localDate = resolver.returnConcreteValueWhenCanBeResolved(null, "m/08/2019", "some.field");
-        // then
-        assertThat(localDate.isPresent()).isFalse();
     }
 
     @Test

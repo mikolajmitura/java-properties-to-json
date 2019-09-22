@@ -1,20 +1,13 @@
 package pl.jalokim.propertiestojson.resolvers.primitives;
 
-import pl.jalokim.propertiestojson.object.AbstractJsonType;
-import pl.jalokim.propertiestojson.object.StringJsonType;
-import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.delegator.PrimitiveJsonTypeDelegatorResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.StringToJsonTypeConverter;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToStringResolver;
 
-import java.util.Optional;
+@Deprecated
+public class StringJsonTypeResolver extends PrimitiveJsonTypeDelegatorResolver<String> {
 
-public class StringJsonTypeResolver extends PrimitiveJsonTypeResolver<String> {
-
-    @Override
-    public Optional<String> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
-        return Optional.ofNullable(propertyValue);
-    }
-
-    @Override
-    public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
-        return new StringJsonType(propertyValue);
+    public StringJsonTypeResolver() {
+        super(new TextToStringResolver(), new StringToJsonTypeConverter());
     }
 }

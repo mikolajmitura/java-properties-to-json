@@ -7,10 +7,10 @@ import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
 import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
-import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.object.MergableObject.mergeObjectIfPossible;
 import static pl.jalokim.propertiestojson.util.ListUtil.getLastIndex;
 
@@ -19,6 +19,10 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
     private Map<String, AbstractJsonType> fields = new HashMap<>();
 
     public void addField(final String field, final AbstractJsonType object, PathMetadata currentPathMetaData) {
+        if(object instanceof SkipJsonField) {
+            return;
+        }
+
         AbstractJsonType oldFieldValue = fields.get(field);
         if(oldFieldValue != null) {
             if(oldFieldValue instanceof MergableObject && object instanceof MergableObject) {

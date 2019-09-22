@@ -130,7 +130,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         } catch (MergeObjectException ex) {
             //then
             PathMetadata pathMetadata = new PathMetadata("some.someArray[0]");
-            pathMetadata.setValue("[1,2,3]");
+            pathMetadata.setRawValue("[1,2,3]");
             String expectedMsg = new MergeObjectException("{\"field\":\"elementFieldValue\"}", "[1,2,3]", pathMetadata).getMessage();
             assertThat(expectedMsg).isEqualTo(ex.getMessage());
         }

@@ -147,9 +147,11 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
         List<AbstractJsonType> elementsAsList = convertToListWithoutRealNull();
         int lastIndex = getLastIndex(elementsAsList);
         for(AbstractJsonType element : elementsAsList) {
-            String lastSign = index == lastIndex ? EMPTY_STRING : NEW_LINE_SIGN;
-            result.append(element.toStringJson())
-                  .append(lastSign);
+            if(!(element instanceof SkipJsonField)) {
+                String lastSign = index == lastIndex ? EMPTY_STRING : NEW_LINE_SIGN;
+                result.append(element.toStringJson())
+                      .append(lastSign);
+            }
             index++;
         }
         return result.append(ARRAY_END_SIGN).toString();
