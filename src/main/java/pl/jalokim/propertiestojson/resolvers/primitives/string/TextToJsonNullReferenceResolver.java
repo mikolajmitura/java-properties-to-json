@@ -7,7 +7,7 @@ import java.util.Optional;
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_VALUE;
 
-public class TextToJsonNullReferenceResolver implements TextToConcreteObjectResolver {
+public class TextToJsonNullReferenceResolver implements TextToConcreteObjectResolver<Object> {
 
     public final static TextToJsonNullReferenceResolver TEXT_TO_NULL_JSON_RESOLVER = new TextToJsonNullReferenceResolver();
 

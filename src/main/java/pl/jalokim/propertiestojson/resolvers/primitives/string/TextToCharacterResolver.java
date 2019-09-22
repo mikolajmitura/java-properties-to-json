@@ -4,10 +4,10 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 import java.util.Optional;
 
-public class TextToCharacterResolver implements TextToConcreteObjectResolver {
+public class TextToCharacterResolver implements TextToConcreteObjectResolver<Character> {
 
     @Override
-    public Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+    public Optional<Character> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         if(propertyValue.length() == 1) {
             return Optional.of(propertyValue.charAt(0));
         }

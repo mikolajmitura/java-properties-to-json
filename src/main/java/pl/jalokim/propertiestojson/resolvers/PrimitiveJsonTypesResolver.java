@@ -44,19 +44,17 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     }
 
     private void addPrimitiveFieldWhenIsValid(PathMetadata currentPathMetaData) {
-        currentPathMetaData.setValue(properties.get(propertyKey));
         JsonObjectFieldsValidator.checkThatFieldCanBeSet(currentObjectJsonType, currentPathMetaData, propertyKey);
         addPrimitiveFieldToCurrentJsonObject(currentPathMetaData);
     }
 
     private void addPrimitiveFieldToCurrentJsonObject(PathMetadata currentPathMetaData) {
         String field = currentPathMetaData.getFieldName();
-        Object propertyValue = properties.get(propertyKey);
         if(currentPathMetaData.isArrayField()) {
-            addFieldToArray(currentPathMetaData, propertyValue);
+            addFieldToArray(currentPathMetaData);
         } else {
             if(currentObjectJsonType.containsField(field) && isArrayJson(currentObjectJsonType.getField(field))) {
-                AbstractJsonType abstractJsonType = resolvePrimitiveTypeAndReturn(propertyValue, propertyKey);
+                AbstractJsonType abstractJsonType = currentPathMetaData.getJsonValue();
                 ArrayJsonType currentArrayInObject = currentObjectJsonType.getJsonArray(field);
                 if(isArrayJson(abstractJsonType)) {
                     ArrayJsonType newArray = (ArrayJsonType) abstractJsonType;
@@ -68,7 +66,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
                     throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), currentArrayInObject, propertyKey);
                 }
             } else {
-                currentObjectJsonType.addField(field, resolvePrimitiveTypeAndReturn(propertyValue, propertyKey), currentPathMetaData);
+                currentObjectJsonType.addField(field, currentPathMetaData.getJsonValue(), currentPathMetaData);
             }
         }
     }
@@ -98,11 +96,11 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         return result;
     }
 
-    protected void addFieldToArray(PathMetadata currentPathMetaData, Object propertyValue) {
+    protected void addFieldToArray(PathMetadata currentPathMetaData) {
         if(arrayWithGivenFieldNameExist(currentPathMetaData.getFieldName())) {
-            fetchArrayAndAddElement(currentPathMetaData, propertyValue);
+            fetchArrayAndAddElement(currentPathMetaData);
         } else {
-            createArrayAndAddElement(currentPathMetaData, propertyValue);
+            createArrayAndAddElement(currentPathMetaData);
         }
     }
 
@@ -110,19 +108,19 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
         return currentObjectJsonType.containsField(field);
     }
 
-    private void createArrayAndAddElement(PathMetadata currentPathMetaData, Object propertyValue) {
+    private void createArrayAndAddElement(PathMetadata currentPathMetaData) {
         ArrayJsonType arrayJsonTypeObject = new ArrayJsonType();
-        addElementToArray(propertyValue, currentPathMetaData, arrayJsonTypeObject);
+        addElementToArray(currentPathMetaData, arrayJsonTypeObject);
         currentObjectJsonType.addField(currentPathMetaData.getFieldName(), arrayJsonTypeObject, currentPathMetaData);
     }
 
-    private void fetchArrayAndAddElement(PathMetadata currentPathMetaData, Object propertyValue) {
+    private void fetchArrayAndAddElement(PathMetadata currentPathMetaData) {
         ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(currentPathMetaData);
-        addElementToArray(propertyValue, currentPathMetaData, arrayJsonType);
+        addElementToArray(currentPathMetaData, arrayJsonType);
     }
 
-    private void addElementToArray(Object propertyValue, PathMetadata currentPathMetaData, ArrayJsonType arrayJsonTypeObject) {
-        arrayJsonTypeObject.addElement(currentPathMetaData.getPropertyArrayHelper(), resolvePrimitiveTypeAndReturn(propertyValue, propertyKey), currentPathMetaData);
+    private void addElementToArray(PathMetadata currentPathMetaData, ArrayJsonType arrayJsonTypeObject) {
+        arrayJsonTypeObject.addElement(currentPathMetaData.getPropertyArrayHelper(), currentPathMetaData.getJsonValue(), currentPathMetaData);
     }
 
 }

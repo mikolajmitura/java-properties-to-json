@@ -122,13 +122,11 @@ public final class PropertiesToJsonConverter {
         algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeResolver());
     }
 
-    private List<ObjectToJsonTypeConverter> buildAllToJsonResolvers(List<ObjectToJsonTypeConverter> toJsonTypeResolvers) {
-        List<ObjectToJsonTypeConverter> mergedToJsonTypeConverters = new ArrayList<>(toJsonTypeResolvers);
-        mergedToJsonTypeConverters.add(STRING_TO_JSON_RESOLVER);
-        mergedToJsonTypeConverters.add(nullToJsonConverter);
-        return mergedToJsonTypeConverters;
-    }
-
+    /**
+     * Merged list of TextToConcreteObjectResolver instances for first conversion phase
+     * @param resolvers provided by user
+     * @return list
+     */
     private List<TextToConcreteObjectResolver> buildAllToObjectResolvers(List<TextToConcreteObjectResolver> resolvers) {
         List<TextToConcreteObjectResolver> allResolvers = new ArrayList<>();
         allResolvers.add(textToJsonNullResolver);
@@ -136,6 +134,18 @@ public final class PropertiesToJsonConverter {
         allResolvers.addAll(resolvers);
         allResolvers.add(TO_STRING_RESOLVER);
         return allResolvers;
+    }
+
+    /**
+     * Merged list of ObjectToJsonTypeConverter instances for second conversion phase
+     * @param toJsonTypeResolvers provided by user
+     * @return
+     */
+    private List<ObjectToJsonTypeConverter> buildAllToJsonResolvers(List<ObjectToJsonTypeConverter> toJsonTypeResolvers) {
+        List<ObjectToJsonTypeConverter> mergedToJsonTypeConverters = new ArrayList<>(toJsonTypeResolvers);
+        mergedToJsonTypeConverters.add(STRING_TO_JSON_RESOLVER);
+        mergedToJsonTypeConverters.add(nullToJsonConverter);
+        return mergedToJsonTypeConverters;
     }
 
     /**

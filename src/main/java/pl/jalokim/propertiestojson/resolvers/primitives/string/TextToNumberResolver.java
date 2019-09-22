@@ -6,10 +6,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
 
-public class TextToNumberResolver implements TextToConcreteObjectResolver {
+public class TextToNumberResolver implements TextToConcreteObjectResolver<Number> {
 
     @Override
-    public Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+    public Optional<Number> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         return Optional.ofNullable(convertToNumber(propertyValue));
     }
 

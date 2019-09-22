@@ -152,15 +152,101 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
         String json = converter.convertToJson(properties)
         def jsonObject = jsonSlurper.parseText(json)
-
+        println json
         then:
         jsonObject.some.object.numberAsText == "12"
         jsonObject.some.object.number3 == 15
-        jsonObject.some.object2.skip.field == null
-        jsonObject.some.skip.field == null
-        JsonCheckerUtil.leafOfPathIsNotPresent("some.object2.skip.field", json)
-        JsonCheckerUtil.leafOfPathIsNotPresent("some.skip.field", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("some.object2", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("some.skip", json)
     }
+
+    def "skip json in first phase resolver"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+
+        PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
+                .defaultAndCustomTextToObjectResolvers(new SkipObjectResolver())
+                .build()
+
+        Map<String, String> properties = new HashMap<>()
+        properties.put("some.object.array.skip.field.first", "12")
+        properties.put("some.anotherObject.skip.field.first", "12")
+        properties.put("some.object.normalNumber", "12")
+
+        String json = converter.convertToJson(properties)
+        def jsonObject = jsonSlurper.parseText(json)
+        println json
+        then:
+        jsonObject.some.object.normalNumber == 12
+        JsonCheckerUtil.leafOfPathIsNotPresent("some.object.array", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("some.anotherObject", json)
+    }
+
+    private static class SkipObjectResolver implements TextToConcreteObjectResolver {
+
+        @Override
+        Optional returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                               String propertyValue,
+                                               String propertyKey) {
+            if (propertyKey.contains("skip.field.first")) {
+                return Optional.of(SkipJsonField.SKIP_JSON_FIELD)
+            }
+            return Optional.empty()
+        }
+    }
+
+    def "skipped array element not added to array"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+
+        PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
+                .defaultAndCustomObjectToJsonTypeConverters(new SkipableJsonTypeConverter(), new NumberToStringJsonTypeConverter(), new NumberToJsonTypeConverter())
+                .build()
+
+        Map<String, String> properties = new HashMap<>()
+        properties.put("some.object.numberAsText", "12")
+        properties.put("some.object.normalNumber", "12")
+        properties.put("some.object2.skip.field", "13")
+        properties.put("some.skip.field.array", "13, true, text")
+        properties.put("some.skip.field.anotherArray[0]", "13")
+        properties.put("some.skip.field.anotherArray[1]", "15")
+        properties.put("some.skip.field.anotherArray[2]", "text3")
+
+        String json = converter.convertToJson(properties)
+        def jsonObject = jsonSlurper.parseText(json)
+        println json
+        then:
+        jsonObject.some.object.numberAsText == "12"
+        jsonObject.some.object.normalNumber == 12
+        jsonObject.some.skip.field.array == [true, "text"]
+        jsonObject.some.skip.field.anotherArray == ["text3"]
+        JsonCheckerUtil.leafOfPathIsNotPresent("some.object2", json)
+    }
+
+    def "skipped all array elements"() {
+        def jsonSlurper = new JsonSlurper()
+        when:
+
+        PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
+                .defaultAndCustomObjectToJsonTypeConverters(new SkipableJsonTypeConverter(), new NumberToStringJsonTypeConverter(), new NumberToJsonTypeConverter())
+                .build()
+
+        Map<String, String> properties = new HashMap<>()
+        properties.put("some.object.numberAsText", "12")
+        properties.put("some.object.normalNumber", "12")
+        properties.put("some.object2.skip.field", "13")
+        properties.put("some.array.skip.field.elements", "13, 12, 12")
+
+        String json = converter.convertToJson(properties)
+        def jsonObject = jsonSlurper.parseText(json)
+        println json
+        then:
+        jsonObject.some.object.numberAsText == "12"
+        jsonObject.some.object.normalNumber == 12
+        jsonObject.some.array.skip.field.elements == []
+        JsonCheckerUtil.leafOfPathIsNotPresent("some.object2", json)
+    }
+
 
     private static class SkipableJsonTypeConverter extends NumberToJsonTypeConverter {
         @Override

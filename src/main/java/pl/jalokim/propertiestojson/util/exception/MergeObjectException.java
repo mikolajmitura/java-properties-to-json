@@ -14,6 +14,6 @@ public class MergeObjectException extends RuntimeException {
     @VisibleForTesting
     public MergeObjectException(String oldJsonElementValue, String elementToAddValue, PathMetadata currentPathMetadata) {
         super(format("Cannot merge objects with different types:%n Old object: %s%n New object: %s%n problematic key: '%s'%n with value: %s",
-                     oldJsonElementValue, elementToAddValue, currentPathMetadata.getOriginalPropertyKey(), currentPathMetadata.getValue()));
+                     oldJsonElementValue, elementToAddValue, currentPathMetadata.getOriginalPropertyKey(), currentPathMetadata.getRawValue()));
     }
 }

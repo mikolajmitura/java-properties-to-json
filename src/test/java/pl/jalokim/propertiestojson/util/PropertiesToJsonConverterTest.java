@@ -2,7 +2,6 @@ package pl.jalokim.propertiestojson.util;
 
 import com.google.gson.Gson;
 import org.assertj.core.api.Assertions;
-
 import org.junit.Test;
 import pl.jalokim.propertiestojson.domain.MainComplexObject;
 import pl.jalokim.propertiestojson.domain.MainObject;

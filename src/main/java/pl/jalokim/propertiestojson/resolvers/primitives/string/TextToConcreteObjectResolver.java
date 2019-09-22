@@ -4,14 +4,14 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 import java.util.Optional;
 
-public interface TextToConcreteObjectResolver {
+public interface TextToConcreteObjectResolver<T> {
 
-    default Optional<Object> returnConvertedValueForClearedText(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+    default Optional<T> returnConvertedValueForClearedText(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         return returnObjectWhenCanBeResolved(primitiveJsonTypesResolver,
                                                     propertyValue == null ? null : propertyValue.trim(), propertyKey);
     }
 
-    Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+    Optional<T> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
                                                                    String propertyValue,
                                                                    String propertyKey);
 }

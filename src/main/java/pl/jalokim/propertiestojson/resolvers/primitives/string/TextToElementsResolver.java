@@ -12,7 +12,7 @@ import static pl.jalokim.propertiestojson.Constants.SIMPLE_ARRAY_DELIMITER;
 import static pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper.hasJsonArraySignature;
 import static pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper.isValidJsonObjectOrArray;
 
-public class TextToElementsResolver implements TextToConcreteObjectResolver {
+public class TextToElementsResolver implements TextToConcreteObjectResolver<List<?>> {
 
     private final String arrayElementSeparator;
     private final boolean resolveTypeOfEachElement;
@@ -27,7 +27,7 @@ public class TextToElementsResolver implements TextToConcreteObjectResolver {
     }
 
     @Override
-    public Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+    public Optional<List<?>> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         if(isSimpleArray(propertyValue) && !isValidJsonObjectOrArray(propertyValue)) {
 
             if(hasJsonArraySignature(propertyValue)) {

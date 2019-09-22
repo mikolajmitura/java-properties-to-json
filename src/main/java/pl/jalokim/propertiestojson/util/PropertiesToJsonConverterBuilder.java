@@ -99,11 +99,15 @@ public class PropertiesToJsonConverterBuilder {
         return this;
     }
 
-    public PropertiesToJsonConverterBuilder overridetTextToEmptyStringResolver(TextToEmptyStringResolver textToEmptyStringResolver) {
+    public PropertiesToJsonConverterBuilder overrideTextToEmptyStringResolver(TextToEmptyStringResolver textToEmptyStringResolver) {
         this.textToEmptyStringResolver = textToEmptyStringResolver;
         return this;
     }
 
+    /**
+     * It will skip every leaf in json object which is null, not skip null in arrays.
+     * @return PropertiesToJsonConverterBuilder istance
+     */
     public PropertiesToJsonConverterBuilder skipNulls() {
         skipNul = true;
         return this;

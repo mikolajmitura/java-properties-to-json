@@ -164,7 +164,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         jsonObject.someObject.emptyText == ""
         jsonObject.someObject.nullField == null
         JsonCheckerUtil.leafOfPathHasNullValue("someObject.nullField", json)
-        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip.number", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip", json)
         jsonObject.someObject.simpleArray == ["text", 10.0, false, "test"]
         jsonObject.someObject.object.name == "John"
         jsonObject.someObject.object.surname == "Doe"
@@ -231,7 +231,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         jsonObject.someObject.emptyText == ""
         jsonObject.someObject.nullField == null
         JsonCheckerUtil.leafOfPathHasNullValue("someObject.nullField", json)
-        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip.number", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip", json)
         jsonObject.someObject.simpleArray == ["text", 10.0, false, "test"]
         jsonObject.someObject.object.name == "John"
         jsonObject.someObject.object.surname == "Doe"
@@ -259,7 +259,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         jsonObject.someObject.text == "# text"
         jsonObject.someObject.emptyText == ""
         JsonCheckerUtil.leafOfPathHasNullValue("someObject.nullField", json)
-        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip.number", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip", json)
     }
 
     def "default builder without defaults, only added converters, 2 steps -> throw exception - lack of converter"() {
@@ -303,7 +303,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.someObject.number == 124
-        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip.number", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip", json)
         jsonObject.someObject.bool == "true"
         jsonObject.someObject.boolAsText == " true "
         jsonObject.someObject.text == " text "
@@ -340,7 +340,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.someObject.number == 124
-        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip.number", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip", json)
         jsonObject.someObject.bool == true
         jsonObject.someObject.boolAsText == "# true "
         jsonObject.someObject.text == "# text "
@@ -371,7 +371,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.someObject.number == 124
-        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip.number", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip", json)
         jsonObject.someObject.boolAsText == "# true "
         jsonObject.someObject.text == "# text "
         jsonObject.someObject.emptyText == ""
@@ -390,6 +390,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         properties.put("someObject.another", null)
         properties.put("someObject.null", null)
         properties.put("someObject.skip.null", null)
+        properties.put("someObject.skip.value", "text")
         properties.put("someObject.other.skip.null.other", null)
 
         String json = converter.convertFromValuesAsObjectMap(properties)
@@ -397,7 +398,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         JsonCheckerUtil.leafOfPathHasNullValue("someObject.another", json)
         JsonCheckerUtil.leafOfPathHasNullValue("someObject.null", json)
         JsonCheckerUtil.leafOfPathIsNotPresent("someObject.skip.null", json)
-        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.other.skip.null.other", json)
+        JsonCheckerUtil.leafOfPathIsNotPresent("someObject.other", json)
     }
 
     def "override TextToJsonNullReferenceResolver"() {
@@ -426,7 +427,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .overridetTextToEmptyStringResolver(new OwnTextToEmptyStringResolverr())
+                .overrideTextToEmptyStringResolver(new OwnTextToEmptyStringResolverr())
                 .build()
 
         Map<String, String> properties = new HashMap<>()

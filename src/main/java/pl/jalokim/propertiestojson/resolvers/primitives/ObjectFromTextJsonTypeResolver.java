@@ -1,6 +1,5 @@
 package pl.jalokim.propertiestojson.resolvers.primitives;
 
-import com.google.gson.JsonElement;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.delegator.PrimitiveJsonTypeDelegatorResolver;
@@ -34,9 +33,7 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeDelegatorRe
      * @return instance of AbstractJsonType
      */
     public static AbstractJsonType convertFromObjectToJson(Object propertyValue, String propertyKey) {
-        String json = JsonObjectHelper.toJson(propertyValue);
-        JsonElement jsonElement = JsonObjectHelper.toJsonElement(json);
-        return JsonObjectHelper.convertToAbstractJsonType(jsonElement, propertyKey);
+        return SuperObjectToJsonTypeConverter.convertFromObjectToJson(propertyValue, propertyKey);
     }
 
     public static boolean isValidJsonObjectOrArray(String propertyValue) {
