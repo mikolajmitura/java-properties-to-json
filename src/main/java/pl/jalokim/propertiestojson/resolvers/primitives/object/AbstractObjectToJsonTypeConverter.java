@@ -8,6 +8,10 @@ public abstract class AbstractObjectToJsonTypeConverter<T> implements ObjectToJs
 
     protected final Class<?> canResolveClass = resolveTypeOfResolver();
 
+    /**
+     * Inform about that certain converter can convert from generic type.
+     * @return list of classes from which can convert to json object/element.
+     */
     @Override
     public List<Class<?>> getClassesWhichCanResolve() {
         return Collections.singletonList(canResolveClass);

@@ -6,7 +6,7 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.hierarchy.JsonTypeResolversHierarchyResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.adapter.InvokedFromAdapter;
 import pl.jalokim.propertiestojson.resolvers.primitives.delegator.InvokedFromDelegator;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.HasGenricType;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.HasGenericType;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @SuppressWarnings("unchecked")
 @Deprecated
-public abstract class PrimitiveJsonTypeResolver<T> implements HasGenricType<T> {
+public abstract class PrimitiveJsonTypeResolver<T> implements HasGenericType<T> {
 
     protected final Class<?> canResolveClass = resolveTypeOfResolver();
 

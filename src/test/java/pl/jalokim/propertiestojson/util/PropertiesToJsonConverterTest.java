@@ -1,13 +1,21 @@
 package pl.jalokim.propertiestojson.util;
 
 import com.google.gson.Gson;
-import org.assertj.core.api.Assertions;
+import com.google.gson.JsonSyntaxException;
 import org.junit.Test;
 import pl.jalokim.propertiestojson.domain.MainComplexObject;
 import pl.jalokim.propertiestojson.domain.MainObject;
+import pl.jalokim.propertiestojson.object.AbstractJsonType;
+import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.AbstractObjectToJsonTypeConverter;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Optional;
+import java.util.Properties;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConverterTest {
@@ -63,6 +71,50 @@ public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConve
         assertJsonIsAsExpected(json);
     }
 
+
+    @Test
+    public void cannotCreateJsonWhenIsNotFormattedCorrectly() {
+        // given
+        PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
+                                                                              .defaultAndCustomObjectToJsonTypeConverters(new InvalidConverter())
+                                                                              .build();
+        Properties properties = new Properties();
+        properties.put("some.given.path", "someText");
+        // when
+        try {
+            String json = converter.convertToJson(properties);
+            System.out.println(json);
+            fail();
+        } catch(JsonSyntaxException ex) {
+            // then
+            assertThat(ex.getMessage()).isEqualTo("com.google.gson.stream.MalformedJsonException: Expected ':' at line 1 column 36 path $.some.given.path.someText");
+        }
+    }
+
+    private static class InvalidConverter extends AbstractObjectToJsonTypeConverter<String> {
+
+        @Override
+        public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+                                                                   String convertedValue,
+                                                                   String propertyKey) {
+            return Optional.of(new OwnAbstractJsonType(convertedValue));
+        }
+    }
+
+    private static class OwnAbstractJsonType extends AbstractJsonType {
+
+        private String value;
+
+        OwnAbstractJsonType(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toStringJson() {
+            return "{" + value + "}";
+        }
+    }
+
     @Test
     public void returnExpectedJsonGivenByProperties() {
         //when
@@ -75,34 +127,34 @@ public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConve
     private void assertJsonWithPrimitivesTypesWithoutSimpleText(String json) {
         Gson gson = new Gson();
         MainComplexObject mainComplexObject = gson.fromJson(json, MainComplexObject.class);
-        Assertions.assertThat(mainComplexObject.getComplexObject().getBooleans().getTrueValue()).isTrue();
-        Assertions.assertThat(mainComplexObject.getComplexObject().getBooleans().getFalseValue()).isFalse();
-        Assertions.assertThat(mainComplexObject.getComplexObject().getNumbers().getDoubleValue()).isEqualTo(11.0d);
-        Assertions.assertThat(mainComplexObject.getComplexObject().getNumbers().getIntegerValue()).isEqualTo(11);
-        Assertions.assertThat(mainComplexObject.getComplexObject().getText()).isEqualTo("text");
+        assertThat(mainComplexObject.getComplexObject().getBooleans().getTrueValue()).isTrue();
+        assertThat(mainComplexObject.getComplexObject().getBooleans().getFalseValue()).isFalse();
+        assertThat(mainComplexObject.getComplexObject().getNumbers().getDoubleValue()).isEqualTo(11.0d);
+        assertThat(mainComplexObject.getComplexObject().getNumbers().getIntegerValue()).isEqualTo(11);
+        assertThat(mainComplexObject.getComplexObject().getText()).isEqualTo("text");
     }
 
     private void assertJsonWithPrimitivesTypes(String json) {
         assertJsonWithPrimitivesTypesWithoutSimpleText(json);
         Gson gson = new Gson();
         MainComplexObject mainComplexObject = gson.fromJson(json, MainComplexObject.class);
-        Assertions.assertThat(mainComplexObject.getSimpleText()).isEqualTo("text2");
+        assertThat(mainComplexObject.getSimpleText()).isEqualTo("text2");
     }
 
     private void assertJsonIsAsExpected(String json) {
         Gson gson = new Gson();
         MainObject mainObject = gson.fromJson(json, MainObject.class);
-        Assertions.assertThat(mainObject.getField1()).isEqualTo(FIELD1_VALUE);
-        Assertions.assertThat(mainObject.getField2()).isEqualTo(FIELD2_VALUE);
-        Assertions.assertThat(mainObject.getInsurance().getCost()).isEqualTo(COST_INT_VALUE);
-        Assertions.assertThat(mainObject.getInsurance().getType()).isEqualTo(INSRANCE_TYPE);
-        Assertions.assertThat(mainObject.getMan().getAddress().getCity()).isEqualTo(CITY);
-        Assertions.assertThat(mainObject.getMan().getAddress().getStreet()).isEqualTo(STREET);
-        Assertions.assertThat(mainObject.getMan().getName()).isEqualTo(NAME);
-        Assertions.assertThat(mainObject.getMan().getSurname()).isEqualTo(SURNAME);
-        Assertions.assertThat(mainObject.getMan().getMarried()).isEqualTo(false);
-        Assertions.assertThat(mainObject.getMan().getInsurance().getCost()).isEqualTo(EXPECTED_MAN_COST);
-        Assertions.assertThat(mainObject.getMan().getInsurance().getValid()).isEqualTo(true);
+        assertThat(mainObject.getField1()).isEqualTo(FIELD1_VALUE);
+        assertThat(mainObject.getField2()).isEqualTo(FIELD2_VALUE);
+        assertThat(mainObject.getInsurance().getCost()).isEqualTo(COST_INT_VALUE);
+        assertThat(mainObject.getInsurance().getType()).isEqualTo(INSRANCE_TYPE);
+        assertThat(mainObject.getMan().getAddress().getCity()).isEqualTo(CITY);
+        assertThat(mainObject.getMan().getAddress().getStreet()).isEqualTo(STREET);
+        assertThat(mainObject.getMan().getName()).isEqualTo(NAME);
+        assertThat(mainObject.getMan().getSurname()).isEqualTo(SURNAME);
+        assertThat(mainObject.getMan().getMarried()).isEqualTo(false);
+        assertThat(mainObject.getMan().getInsurance().getCost()).isEqualTo(EXPECTED_MAN_COST);
+        assertThat(mainObject.getMan().getInsurance().getValid()).isEqualTo(true);
         assertEmailList(mainObject);
         assertGroupByIdAndExpectedValues(mainObject, 0, GROUP_1, COMMERCIAL);
         assertGroupByIdAndExpectedValues(mainObject, 1, GROUP_2, FREE);

@@ -6,7 +6,7 @@ import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 import java.lang.reflect.ParameterizedType;
 
-public interface HasGenricType<T> {
+public interface HasGenericType<T> {
 
     @SuppressWarnings("unchecked")
     @InvokedFromAdapter

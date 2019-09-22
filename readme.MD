@@ -685,7 +685,26 @@ Will result
 
 Example how to use PropertiesToJsonConverterBuilder
 ---------------------------------------------
-// TODO add more info about builder
+
+```java
+
+ // simply return new converter
+        PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
+                                                                          .build();
+
+        // return new converter with added some custom resolvers and converters to default
+        PropertiesToJsonConverter converter1 = PropertiesToJsonConverterBuilder.builder()
+                                                                               .defaultAndCustomTextToObjectResolvers(new TextToOwnBeanResolver(), new TextToOwnBeanResolver2())
+                                                                               .defaultAndCustomObjectToJsonTypeConverters(new OwnToJsonTypeConverter(), new OwnToJsonTypeConverter2())
+                                                                               .skipNulls() // will ski all null in json leaf, will not skip in array elements
+                                                                              .build();
+
+        // return new converter with default resolvers (converts from text to java bean)
+        // and with custom order of converters, without defaults (it mean will have problem with convert from java.lang.Number to json type)
+        PropertiesToJsonConverter converter2 = PropertiesToJsonConverterBuilder.builder()
+                                                                               .onlyCustomObjectToJsonTypeConverters(new OwnToJsonTypeConverter())
+                                                                               .build();
+```
 
 Example how to use filters (inclusion of property key or first part of property keys):
 ---------------------------------------------
