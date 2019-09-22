@@ -142,7 +142,7 @@ Example of use different primitive json type resolvers:
 ---------------------------------------------
 The default constructor of class PropertiesToJsonConverter has default implementation of resolvers and converter
 
-<h4>Resolvers for first conversion phase (from raw text to some concrete java object) order is important</h4>
+<h3>Resolvers for first conversion phase (from raw text to some concrete java object) order is important</h3>
 
 ```
 TextToJsonNullReferenceResolver
@@ -155,7 +155,7 @@ TextToBooleanResolver
 TextToStringResolver
 ```
 
-<h4>Converters for second conversion phase (from object to concrete json object, field) </h4>
+<h3>Converters for second conversion phase (from object to concrete json object, field) </h3>
 
 ```
 ElementsToJsonTypeConverter
@@ -172,11 +172,11 @@ Does mean when this tool builds json from properties where value always is raw t
 Order of looking for certain resolver will pass from first to last resolver. Will be used first implementation of TextToConcreteObjectResolver which can convert from String to certain Java Object.
 
 
-<h3>What does mean second conversion phase? <h3>
+<h3>What does mean second conversion phase? </h3>
 Does mean when this tool have some concrete objects then try converts it to certain json object, numbers as numbers, boolean as boolean, java bean as json object, collection or array as json array.
 Order here is important only when Converters convert from the same Java Object (through method List<Class<?>> getClassesWhichCanResolve() in AbstractObjectToJsonTypeConverter<T> class)
 
-<h3>When will be invoked conversion phases? <h3>
+<h3>When will be invoked conversion phases? </h3>
 Important to note here is that if you want convert properties to json from below properties source (it invoke first and second conversion phase):
 - InputSteam
 - File
@@ -202,6 +202,7 @@ You can pass your own Resolver too. To do this you need to implement interface T
 
 You need to implement method:
 * Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey)
+
 
 If your resolver cannot convert from text then should return empty Optional as a result in override method returnObjectWhenCanBeResolved(..).
 
