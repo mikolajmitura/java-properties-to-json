@@ -177,7 +177,7 @@ It mean will return not empty Optional instance.
 
 <h3>What does mean second conversion phase? </h3>
 Does it mean when this framework builds json from properties and have some concrete objects then try converts it to certain json object, numbers as numbers, boolean as boolean, java bean as json object, java collection or java array to json array.
-Order here is important only when Converters can convert for the same java.lang.Class (through method List<Class<?>> getClassesWhichCanResolve() in AbstractObjectToJsonTypeConverter<T> class)
+Order here is important only when Converters can convert for the same java.lang.Class (through method List<Class<?>> getClassesWhichCanResolve() in AbstractObjectToJsonTypeConverter&lt;T&gt; class)
 Class JsonTypeResolversHierarchyResolver and HierarchyClassResolver are responsible for find sufficient converter... them look for the same class or for super class or super interface.
 
 <h3>When will be invoked conversion phases? </h3>
@@ -188,9 +188,9 @@ Important to note here is that if you want convert properties to json from below
 - Map<String,String>
 
 
-Then will be call returnObjectWhenCanBeResolved(..) method from TextToConcreteObjectResolver<T>.
+Then will be call returnObjectWhenCanBeResolved(..) method from TextToConcreteObjectResolver&lt;T&gt;.
 It method tries convert from String to some concrete object.
-Next will build Map<String,Object> and in next step will call convertToJsonTypeOrEmpty(..) for concrete Object on sufficient concrete instance of ObjectToJsonTypeConverter<T>.
+Next will build Map<String,Object> and in next step will call convertToJsonTypeOrEmpty(..) for concrete Object on sufficient concrete instance of ObjectToJsonTypeConverter&lt;T&gt;.
 
 
 If you will convert from below properties source (it invoke only second processing phase in resolver):
@@ -198,11 +198,11 @@ If you will convert from below properties source (it invoke only second processi
 - Map<String, Object>
 
 
-Then will be called only methods convertToJsonTypeOrEmpty in ObjectToJsonTypeConverter<T> after found sufficient resolver.
+Then will be called only methods convertToJsonTypeOrEmpty in ObjectToJsonTypeConverter&lt;T&gt; after found sufficient resolver.
 
 
 <h3>Override order Resolvers for first conversion phase</h3>
-The order is important when try convert from raw text value (First phase) to some object. When cannot convert then will try with next implementation of TextToConcreteObjectResolver<T>.
+The order is important when try convert from raw text value (First phase) to some java object. When cannot convert then will try with next implementation of TextToConcreteObjectResolver&lt;T&gt;.
 If you don't want to use some of them then you can pass resolvers which you want to use.
 You can pass your own Resolver too. To do this you need to implement interface TextToConcreteObjectResolver&lt;T&gt; and provide generic type (T).
 
@@ -426,9 +426,9 @@ some.value=2.0
 Simply will return Optional of String with "2.0" value
 
 <h3>Override order Resolvers for second conversion phase</h3>
-The order is important only when converters can convert from the same java Class. When cannot convert then will try with next implementation of AbstractObjectToJsonTypeConverter<T>.
+The order is important only when converters can convert from the same java Class. When cannot convert then will try with next implementation of AbstractObjectToJsonTypeConverter&lt;T&gt;.
 If you don't want to use some defaults converters then you can pass converters which you want to use.
-You can pass your own implementation of AbstractObjectToJsonTypeConverter<T> too. To do this you need to extends class AbstractObjectToJsonTypeConverter<T> and provide generic type (T).
+You can pass your own implementation of AbstractObjectToJsonTypeConverter&lt;T&gt; too. To do this you need to extends class AbstractObjectToJsonTypeConverter&lt;T&gt; and provide generic type (T).
 
 You need to implement method:
 * Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, LocalDate convertedValue, String propertyKey)
@@ -436,7 +436,7 @@ You need to implement method:
 If your converter cannot convert from this object (due to property key or others) then should return empty Optional as a result in override method convertToJsonTypeOrEmpty(..).
 Then other converter which can handle this java class will try with that...
 
-Example code below for custom ObjectToJsonTypeConverter<T> which converts from text to LocalDate
+Example code below for custom ObjectToJsonTypeConverter&lt;T&gt; which converts from text to LocalDate
 
 ```java
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
