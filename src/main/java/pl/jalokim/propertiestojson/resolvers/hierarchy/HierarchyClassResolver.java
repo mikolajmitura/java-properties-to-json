@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static pl.jalokim.propertiestojson.util.ListUtil.everyElementAsNewLine;
+import static pl.jalokim.utils.string.StringUtils.concatElementsAsLines;
 
 public class HierarchyClassResolver {
 
@@ -67,7 +67,7 @@ public class HierarchyClassResolver {
         throw new ParsePropertiesException(String.format(ERROR_MSG,
                                                          foundClasses.size(),
                                                          instance.getClass().getCanonicalName(),
-                                                         everyElementAsNewLine(foundClasses)));
+                                                         concatElementsAsLines(foundClasses)));
     }
 
     private void addToFoundWhenIsClosetsMatch(SearchContext searchContext, Class<?> resolverClass, int difference) {

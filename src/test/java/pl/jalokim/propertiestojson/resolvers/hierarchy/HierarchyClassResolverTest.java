@@ -12,7 +12,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static junit.framework.TestCase.fail;
 import static org.assertj.core.api.Assertions.assertThat;
-import static pl.jalokim.propertiestojson.util.ListUtil.everyElementAsNewLine;
+import static pl.jalokim.utils.string.StringUtils.concatElementsAsLines;
 
 public class HierarchyClassResolverTest {
 
@@ -56,7 +56,7 @@ public class HierarchyClassResolverTest {
             assertThat(ex.getMessage()).isEqualTo(String.format(ERR_MSG_FORMAT,
                                                                 3,
                                                                 Human.class.getCanonicalName(),
-                                                                everyElementAsNewLine(asList(HasMind.class, HasHair.class, HasLegs.class))
+                                                                concatElementsAsLines(asList(HasMind.class, HasHair.class, HasLegs.class))
                                                                ));
         }
     }
@@ -207,7 +207,7 @@ public class HierarchyClassResolverTest {
             assertThat(ex.getMessage()).isEqualTo(String.format(ERR_MSG_FORMAT,
                                                                 2,
                                                                 Alien.class.getCanonicalName(),
-                                                                everyElementAsNewLine(asList(HasMind.class, CanFly.class))
+                                                                concatElementsAsLines(asList(HasMind.class, CanFly.class))
                                                                ));
         }
     }

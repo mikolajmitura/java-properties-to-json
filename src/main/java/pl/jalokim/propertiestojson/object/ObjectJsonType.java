@@ -12,7 +12,7 @@ import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
 import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
 import static pl.jalokim.propertiestojson.object.MergableObject.mergeObjectIfPossible;
-import static pl.jalokim.propertiestojson.util.ListUtil.getLastIndex;
+import static pl.jalokim.utils.collection.CollectionUtils.getLastIndex;
 
 public class ObjectJsonType extends AbstractJsonType implements MergableObject<ObjectJsonType> {
 

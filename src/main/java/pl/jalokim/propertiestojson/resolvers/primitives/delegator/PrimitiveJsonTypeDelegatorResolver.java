@@ -5,10 +5,11 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.object.AbstractObjectToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
-import pl.jalokim.propertiestojson.util.ReflectionUtils;
 
 import java.util.List;
 import java.util.Optional;
+
+import static pl.jalokim.utils.reflection.InvokableReflectionUtils.setValueForField;
 
 @SuppressWarnings("unchecked")
 public class PrimitiveJsonTypeDelegatorResolver<T> extends PrimitiveJsonTypeResolver<T> {
@@ -20,7 +21,7 @@ public class PrimitiveJsonTypeDelegatorResolver<T> extends PrimitiveJsonTypeReso
                                               AbstractObjectToJsonTypeConverter toJsonResolver) {
         this.toObjectResolver = toObjectResolver;
         this.toJsonResolver = toJsonResolver;
-        ReflectionUtils.setValue(this, "canResolveClass", resolveTypeOfResolver());
+        setValueForField(this, "canResolveClass", resolveTypeOfResolver());
     }
 
     @Override

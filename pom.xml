@@ -6,7 +6,7 @@
 
     <groupId>pl.jalokim.propertiestojson</groupId>
     <artifactId>java-properties-to-json</artifactId>
-    <version>5.1.1-SNAPSHOT</version>
+    <version>5.1.1</version>
     <packaging>jar</packaging>
 
     <name>Java properties to Json</name>
@@ -55,7 +55,11 @@
             <artifactId>lombok</artifactId>
             <version>1.18.8</version>
         </dependency>
-
+        <dependency>
+            <groupId>pl.jalokim.utils</groupId>
+            <artifactId>java-utils</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <!-- tests -->
         <dependency>
@@ -86,11 +90,11 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>nexus-mikol</id>
+            <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>nexus-mikol</id>
+            <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
@@ -127,21 +131,6 @@
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!--below uncomment for deploy to central repo maven-->
-           <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -207,5 +196,43 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!--mvn clean deploy -Prelease-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+    </profiles>
+
 
 </project>

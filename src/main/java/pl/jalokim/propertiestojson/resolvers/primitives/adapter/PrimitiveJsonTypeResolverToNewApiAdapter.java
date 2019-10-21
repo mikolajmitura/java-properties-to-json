@@ -5,13 +5,13 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
-import pl.jalokim.propertiestojson.util.ReflectionUtils;
 
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
-import static pl.jalokim.propertiestojson.util.ReflectionUtils.invokeMethod;
+import static pl.jalokim.utils.reflection.InvokableReflectionUtils.invokeMethod;
+import static pl.jalokim.utils.reflection.InvokableReflectionUtils.setValueForField;
 
 @SuppressWarnings("unchecked")
 public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJsonTypeResolver
@@ -21,7 +21,7 @@ public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJso
 
     public PrimitiveJsonTypeResolverToNewApiAdapter(PrimitiveJsonTypeResolver oldImplementation) {
         this.oldImplementation = oldImplementation;
-        ReflectionUtils.setValue(this, "canResolveClass", resolveTypeOfResolver());
+        setValueForField(this, "canResolveClass", resolveTypeOfResolver());
     }
 
     @Override // from PrimitiveJsonTypeResolver and ObjectToJsonTypeConverter
@@ -46,8 +46,8 @@ public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJso
                                                                     String propertyValue,
                                                                     String propertyKey) {
         return invokeMethod(oldImplementation, "returnConcreteValueWhenCanBeResolved",
-                                            asList(PrimitiveJsonTypesResolver.class, String.class, String.class),
-                                            asList(primitiveJsonTypesResolver, propertyValue, propertyKey));
+                                                     asList(PrimitiveJsonTypesResolver.class, String.class, String.class),
+                                                     asList(primitiveJsonTypesResolver, propertyValue, propertyKey));
     }
 
     @Override // from PrimitiveJsonTypeResolver

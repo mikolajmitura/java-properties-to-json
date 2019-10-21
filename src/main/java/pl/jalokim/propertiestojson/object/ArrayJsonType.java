@@ -17,8 +17,8 @@ import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
 import static pl.jalokim.propertiestojson.object.MergableObject.mergeObjectIfPossible;
-import static pl.jalokim.propertiestojson.util.ListUtil.getLastIndex;
-import static pl.jalokim.propertiestojson.util.ListUtil.isLastIndex;
+import static pl.jalokim.utils.collection.CollectionUtils.getLastIndex;
+import static pl.jalokim.utils.collection.CollectionUtils.isLastIndex;
 
 
 public class ArrayJsonType extends AbstractJsonType implements MergableObject<ArrayJsonType> {

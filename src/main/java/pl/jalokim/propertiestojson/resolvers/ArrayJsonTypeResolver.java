@@ -10,7 +10,7 @@ import pl.jalokim.propertiestojson.path.PathMetadata;
 import java.util.List;
 
 import static pl.jalokim.propertiestojson.object.ArrayJsonType.createOrGetNextDimensionOfArray;
-import static pl.jalokim.propertiestojson.util.ListUtil.isLastIndex;
+import static pl.jalokim.utils.collection.CollectionUtils.isLastIndex;
 
 public class ArrayJsonTypeResolver extends JsonTypeResolver {
 

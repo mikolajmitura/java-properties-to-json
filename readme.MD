@@ -24,7 +24,7 @@ Maven dependency
     <dependency>
         <groupId>pl.jalokim.propertiestojson</groupId>
         <artifactId>java-properties-to-json</artifactId>
-        <version>5.1.0</version>
+        <version>5.1.1</version>
     </dependency>
 ```
 
