@@ -11,7 +11,7 @@ import java.util.Optional;
 
 /**
  * You can extends {@link AbstractObjectToJsonTypeConverter} which have implemented {@link AbstractObjectToJsonTypeConverter#canResolveClass}
- * @param <T>
+ * @param <T> Generic type of converter.
  */
 public interface ObjectToJsonTypeConverter<T> extends HasGenericType<T> {
 
