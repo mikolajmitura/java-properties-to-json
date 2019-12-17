@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>pl.jalokim.propertiestojson</groupId>
     <artifactId>java-properties-to-json</artifactId>
-    <version>5.1.1</version>
+    <version>5.1.2</version>
     <packaging>jar</packaging>
 
     <name>Java properties to Json</name>
     <description>Library used to convert from java properties to json</description>
     <url>https://github.com/mikolajmitura/java-properties-to-json</url>
+
+    <properties>
+        <spock.version>1.1-groovy-2.4-rc-4</spock.version>
+        <java-utils.version>1.1.1</java-utils.version>
+
+        <!--Git Flow-->
+        <noDeploy>true</noDeploy> <!--https://ecosystem.atlassian.net/browse/MJF-145-->
+        <gitUsername />
+        <gitPassword />
+    </properties>
 
     <licenses>
         <license>
@@ -35,10 +43,6 @@
         <url>https://github.com/mikolajmitura/java-properties-to-json</url>
     </scm>
 
-    <properties>
-        <spock.version>1.1-groovy-2.4-rc-4</spock.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -58,7 +62,7 @@
         <dependency>
             <groupId>pl.jalokim.utils</groupId>
             <artifactId>java-utils</artifactId>
-            <version>1.0.0</version>
+            <version>${java-utils.version}</version>
         </dependency>
 
         <!-- tests -->
@@ -109,6 +113,34 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <pushFeatures>false</pushFeatures>
+                    <pushReleases>false</pushReleases>
+                    <pushHotfixes>false</pushHotfixes>
+                    <noDeploy>${noDeploy}</noDeploy>
+                    <keepBranch>false</keepBranch>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <scmCommentPrefix>[gitflow]</scmCommentPrefix>
+                    <flowInitContext>
+                        <masterBranchName>master</masterBranchName>
+                        <developBranchName>develop</developBranchName>
+                        <featureBranchPrefix>feature-</featureBranchPrefix>
+                        <releaseBranchPrefix>release-</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
+                        <versionTagPrefix>v</versionTagPrefix>
+                    </flowInitContext>
+                    <username>${gitUsername}</username>
+                    <password>${gitPassword}</password>
+                </configuration>
+            </plugin>
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
