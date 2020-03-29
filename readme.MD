@@ -1,6 +1,9 @@
 Java Properties to JSON
 ---------------------------------------------
 
+[![Build Status](https://travis-ci.org/mikolajmitura/java-properties-to-json.svg?branch=develop)](https://travis-ci.org/github/mikolajmitura/java-properties-to-json)
+[![Coverage Status](https://coveralls.io/repos/github/mikolajmitura/java-properties-to-json/badge.svg?branch=develop)](https://coveralls.io/github/mikolajmitura/java-properties-to-json?branch=develop)
+
 From 5 version is not backward compatible!
 The way creation of own json type resolvers has been changed!
 But if you used only simple uses cases, migration (from 4.0) should pass without problems.
