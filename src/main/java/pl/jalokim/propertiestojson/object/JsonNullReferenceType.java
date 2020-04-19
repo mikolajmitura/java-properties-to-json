@@ -11,9 +11,9 @@ import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObj
  */
 public final class JsonNullReferenceType extends AbstractJsonType {
 
-    public final static JsonNullReferenceType NULL_OBJECT = new JsonNullReferenceType();
+    public static final JsonNullReferenceType NULL_OBJECT = new JsonNullReferenceType();
 
-    public final static String NULL_VALUE = "null";
+    public static final String NULL_VALUE = "null";
 
     @Override
     public String toStringJson() {

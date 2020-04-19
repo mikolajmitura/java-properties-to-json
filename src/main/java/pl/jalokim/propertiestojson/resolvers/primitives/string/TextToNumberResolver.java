@@ -26,10 +26,12 @@ public class TextToNumberResolver implements TextToConcreteObjectResolver<Number
         try {
             return getIntegerNumber(propertyValue);
         } catch (NumberFormatException exc) {
+            // NOTHING TO DO
         }
         try {
             return getDoubleNumber(propertyValue);
         } catch (NumberFormatException exc) {
+            // NOTHING TO DO
         }
         return null;
     }

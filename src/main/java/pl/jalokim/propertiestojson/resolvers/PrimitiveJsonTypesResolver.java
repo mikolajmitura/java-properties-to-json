@@ -89,7 +89,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
             result = resolversHierarchyResolver.returnConcreteJsonTypeObject(this, propertyValue, propertyKey);
         }
 
-        if(skipNulls && result instanceof JsonNullReferenceType) {
+        if(Boolean.TRUE.equals(skipNulls) && result instanceof JsonNullReferenceType) {
             result = SkipJsonField.SKIP_JSON_FIELD;
         }
 

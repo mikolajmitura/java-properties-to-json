@@ -50,6 +50,9 @@ public class JsonObjectHelper {
         primitiveJsonTypesResolver = new PrimitiveJsonTypesResolver(toObjectsResolvers, toJsonResolvers, false, NULL_TO_JSON_RESOLVER);
     }
 
+    private JsonObjectHelper() {
+    }
+
     public static String toJson(Object object) {
         return gson.toJson(object);
     }

@@ -33,10 +33,9 @@ public class JsonObjectsTraverseResolver {
     public void initializeFieldsInJson() {
         PathMetadata currentPathMetaData = rootPathMetaData;
         Object valueFromProperties = properties.get(currentPathMetaData.getOriginalPropertyKey());
-        if(valueFromProperties != null) {
-            if(valueFromProperties instanceof SkipJsonField) {
-                return;
-            }
+        if (valueFromProperties instanceof SkipJsonField) {
+            return;
+
         }
         AbstractJsonType resolverJsonObject = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(valueFromProperties, currentPathMetaData.getOriginalPropertyKey());
         if (resolverJsonObject instanceof SkipJsonField && !rootPathMetaData.getLeaf().isArrayField()) {
@@ -46,19 +45,19 @@ public class JsonObjectsTraverseResolver {
         }
         rootPathMetaData.getLeaf().setRawValue(properties.get(propertyKey));
 
-        while(currentPathMetaData != null) {
+        while (currentPathMetaData != null) {
             DataForResolve dataForResolve = new DataForResolve(properties, propertyKey, currentObjectJsonType, currentPathMetaData);
             currentObjectJsonType = algorithms.get(resolveAlgorithm(currentPathMetaData))
-                                              .traverseOnObjectAndInitByField(dataForResolve);
+                    .traverseOnObjectAndInitByField(dataForResolve);
             currentPathMetaData = currentPathMetaData.getChild();
         }
     }
 
     private AlgorithmType resolveAlgorithm(PathMetadata currentPathMetaData) {
-        if(isPrimitiveField(currentPathMetaData)) {
+        if (isPrimitiveField(currentPathMetaData)) {
             return AlgorithmType.PRIMITIVE;
         }
-        if(currentPathMetaData.isArrayField()) {
+        if (currentPathMetaData.isArrayField()) {
             return AlgorithmType.ARRAY;
         }
         return AlgorithmType.OBJECT;

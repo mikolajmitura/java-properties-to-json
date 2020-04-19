@@ -12,7 +12,7 @@ import static pl.jalokim.utils.string.StringUtils.concatElementsAsLines;
 
 public class HierarchyClassResolver {
 
-    private final String ERROR_MSG = "Found %s resolvers for instance type: %s%nfound resolvers:%n%s";
+    private static final String ERROR_MSG = "Found %s resolvers for instance type: %s%nfound resolvers:%n%s";
 
     private final List<Class<?>> resolverClasses;
 

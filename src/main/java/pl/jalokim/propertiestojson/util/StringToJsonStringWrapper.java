@@ -2,6 +2,9 @@ package pl.jalokim.propertiestojson.util;
 
 public class StringToJsonStringWrapper {
 
+    private StringToJsonStringWrapper() {
+    }
+
     private static final String JSON_STRING_SCHEMA = "\"%s\"";
 
     public static String wrap(String textToWrap) {
