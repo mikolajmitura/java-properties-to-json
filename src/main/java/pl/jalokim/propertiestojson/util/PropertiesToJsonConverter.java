@@ -26,17 +26,10 @@ import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJsonNullRef
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 import pl.jalokim.propertiestojson.util.exception.ReadInputException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -64,6 +57,8 @@ public final class PropertiesToJsonConverter {
     private final PrimitiveJsonTypesResolver primitiveResolvers;
 
     private PropertyKeysOrderResolver propertyKeysOrderResolver = new PropertyKeysOrderResolver();
+
+    private final Charset charsetToUse;
 
     /**
      * Default implementation of json primitive type resolvers.
@@ -118,15 +113,27 @@ public final class PropertiesToJsonConverter {
                                      TextToEmptyStringResolver textToEmptyStringResolver,
                                      Boolean skipNull) {
 
+        this(toObjectsResolvers, toJsonTypeResolvers, nullToJsonConverter, textToJsonNullResolver, textToEmptyStringResolver, skipNull, null);
+    }
+
+    public PropertiesToJsonConverter(List<TextToConcreteObjectResolver> toObjectsResolvers,
+                                     List<ObjectToJsonTypeConverter> toJsonTypeResolvers,
+                                     NullToJsonTypeConverter nullToJsonConverter,
+                                     TextToJsonNullReferenceResolver textToJsonNullResolver,
+                                     TextToEmptyStringResolver textToEmptyStringResolver,
+                                     Boolean skipNull,
+                                     Charset charset) {
+
         this.nullToJsonConverter = nullToJsonConverter;
         this.textToJsonNullResolver = textToJsonNullResolver;
         this.textToEmptyStringResolver = textToEmptyStringResolver;
+        this.charsetToUse = Optional.ofNullable(charset).orElse(StandardCharsets.UTF_8);
 
         validateTypeResolverOrder(toJsonTypeResolvers);
         this.primitiveResolvers = new PrimitiveJsonTypesResolver(buildAllToObjectResolvers(toObjectsResolvers),
-                                                                 buildAllToJsonResolvers(toJsonTypeResolvers),
-                                                                 skipNull,
-                                                                 nullToJsonConverter);
+                buildAllToJsonResolvers(toJsonTypeResolvers),
+                skipNull,
+                nullToJsonConverter);
         algorithms.put(AlgorithmType.OBJECT, new ObjectJsonTypeResolver());
         algorithms.put(AlgorithmType.PRIMITIVE, this.primitiveResolvers);
         algorithms.put(AlgorithmType.ARRAY, new ArrayJsonTypeResolver());
@@ -529,7 +536,7 @@ public final class PropertiesToJsonConverter {
         Properties propertiesWithConvertedValues = new Properties();
         Properties properties = new Properties();
         try {
-            properties.load(inputStream);
+            properties.load(new InputStreamReader(inputStream, charsetToUse));
             for(String property : getAllKeysFromProperties(propertiesToMap(properties))) {
                 Object object = primitiveResolvers.getResolvedObject((String) properties.get(property), property);
                 propertiesWithConvertedValues.put(property, object);

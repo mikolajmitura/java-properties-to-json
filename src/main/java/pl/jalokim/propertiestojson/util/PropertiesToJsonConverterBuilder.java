@@ -1,22 +1,10 @@
 package pl.jalokim.propertiestojson.util;
 
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.BooleanToJsonTypeConverter;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.CharacterToJsonTypeConverter;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.ElementsToJsonTypeConverter;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeConverter;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeConverter;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter;
-import pl.jalokim.propertiestojson.resolvers.primitives.object.SuperObjectToJsonTypeConverter;
-import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToBooleanResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToCharacterResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToElementsResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToEmptyStringResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJsonNullReferenceResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToObjectResolver;
+import pl.jalokim.propertiestojson.resolvers.primitives.object.*;
+import pl.jalokim.propertiestojson.resolvers.primitives.string.*;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,6 +21,7 @@ public class PropertiesToJsonConverterBuilder {
 
     static final List<TextToConcreteObjectResolver> TO_OBJECT_RESOLVERS = defaultResolvers();
     static final List<ObjectToJsonTypeConverter> TO_JSON_TYPE_CONVERTERS = defaultConverters();
+    private Charset charset;
 
     /**
      * Default list of resolvers from text to java Object...
@@ -168,6 +157,17 @@ public class PropertiesToJsonConverterBuilder {
     }
 
     /**
+     * It will set the charset of the reader.
+     *
+     * @param charset charset to use
+     * @return builder instance
+     */
+    public PropertiesToJsonConverterBuilder charset(Charset charset) {
+        this.charset = charset;
+        return this;
+    }
+
+    /**
      * It will skip every leaf in json object which is null, not skip null in arrays.
      *
      * @return PropertiesToJsonConverterBuilder instance
@@ -184,7 +184,7 @@ public class PropertiesToJsonConverterBuilder {
      */
     public PropertiesToJsonConverter build() {
         List<ObjectToJsonTypeConverter> resultConverters = new ArrayList<>();
-        if(onlyCustomConverters) {
+        if (onlyCustomConverters) {
             resultConverters.addAll(converters);
         } else {
             resultConverters.addAll(converters);
@@ -192,7 +192,7 @@ public class PropertiesToJsonConverterBuilder {
         }
 
         List<TextToConcreteObjectResolver> resultResolvers = new ArrayList<>();
-        if(onlyCustomResolvers) {
+        if (onlyCustomResolvers) {
             resultResolvers.addAll(resolvers);
         } else {
             resultResolvers.addAll(resolvers);
@@ -200,10 +200,11 @@ public class PropertiesToJsonConverterBuilder {
         }
 
         return new PropertiesToJsonConverter(resultResolvers,
-                                             resultConverters,
-                                             nullToJsonConverter,
-                                             textToJsonNullResolver,
-                                             textToEmptyStringResolver,
-                                             skipNul);
+                resultConverters,
+                nullToJsonConverter,
+                textToJsonNullResolver,
+                textToEmptyStringResolver,
+                skipNul,
+                charset);
     }
 }
