@@ -29,6 +29,7 @@ class JsonObjectsTraverseResolverTest extends Specification {
         "array_[]name"           | false
         "array_[12name"          | false
         "array]name"             | false
+        "array[name]" | false
 
     }
 }
