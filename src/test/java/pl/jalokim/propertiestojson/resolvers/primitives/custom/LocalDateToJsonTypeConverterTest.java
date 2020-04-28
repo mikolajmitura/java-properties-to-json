@@ -34,6 +34,6 @@ public class LocalDateToJsonTypeConverterTest {
         // then
         assertThat(jsonObject).isNotNull();
         ObjectJsonType numberJsonType = (ObjectJsonType) jsonObject;
-        assertThat(numberJsonType.toString()).isEqualTo("{\"month\":8,\"year\":2019,\"day\":4}");
+        assertThat(numberJsonType.toString()).isEqualTo("{\"year\":2019,\"month\":8,\"day\":4}");
     }
 }
