@@ -10,7 +10,7 @@ import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter
 import spock.lang.Specification
 
 import java.time.LocalDate
-import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.concurrent.atomic.AtomicInteger
 
 class OwnJsonTypeResolverTest extends Specification {
@@ -34,7 +34,7 @@ class OwnJsonTypeResolverTest extends Specification {
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.object.ownBean.textField == "text_value"
-        jsonObject.object.ownBean.timestamp == 1547247600
+        jsonObject.object.ownBean.timestamp == 1547251200
         jsonObject.object.booleanAsTest == true
         jsonObject.object.number == "12"
     }
@@ -58,7 +58,7 @@ class OwnJsonTypeResolverTest extends Specification {
         def jsonObject = jsonSlurper.parseText(json)
         then:
         jsonObject.object.ownBean.textField == "text_value"
-        jsonObject.object.ownBean.timestamp == 1547247600
+        jsonObject.object.ownBean.timestamp == 1547251200
         jsonObject.object.booleanAsTest == true
         jsonObject.object.number == "12"
     }
@@ -114,7 +114,7 @@ class OwnJsonTypeResolverTest extends Specification {
                 throw new RuntimeException("property: deprecated.two is not supported!")
             }
             return new OwnBeanJsonType(propertyValue.textField,
-                    propertyValue.localDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond())
+                    propertyValue.localDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond())
         }
     }
 
