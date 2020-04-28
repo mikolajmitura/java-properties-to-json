@@ -1,16 +1,16 @@
 package pl.jalokim.propertiestojson.path;
 
-import static pl.jalokim.propertiestojson.Constants.REGEX_DOT;
+import com.google.common.annotations.VisibleForTesting;
+
+import java.util.List;
 
 public class PathMetadataBuilder {
 
     public static PathMetadata createRootPathMetaData(String propertyKey) {
-        String[] fields = propertyKey.split(REGEX_DOT);
+        List<String> fields = getPropertyParts(propertyKey);
         PathMetadata currentPathMetadata = null;
 
-        for(int index = 0; index < fields.length; index++) {
-            String field = fields[index];
-
+        for (String field : fields) {
             PathMetadata nextPathMetadata = new PathMetadata(propertyKey);
             nextPathMetadata.setParent(currentPathMetadata);
             nextPathMetadata.setFieldName(field);
@@ -20,8 +20,17 @@ public class PathMetadataBuilder {
                 currentPathMetadata.setChild(nextPathMetadata);
             }
             currentPathMetadata = nextPathMetadata;
-
         }
         return currentPathMetadata.getRoot();
+    }
+
+    @VisibleForTesting
+    protected static List<String> getPropertyParts(String property) {
+        char[] chars = property.toCharArray();
+        ParserContext parserContext = new ParserContext();
+        for (char aChar : chars) {
+            parserContext.parseNextChar(aChar);
+        }
+        return parserContext.getPropertiesParts();
     }
 }

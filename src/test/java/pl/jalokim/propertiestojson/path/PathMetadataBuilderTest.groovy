@@ -7,6 +7,20 @@ import java.util.concurrent.atomic.AtomicReference
 
 class PathMetadataBuilderTest extends Specification {
 
+    def "return expected list of property parts"() {
+        given:
+        String propertyKey = "field.nextfield.array[12][12].anotherField[external.key.leaf].anotherField[[external.key.leaf][some.strange.things]].fieldLeaf"
+        when:
+        def parts = PathMetadataBuilder.getPropertyParts(propertyKey)
+        then:
+        parts[0] == "field"
+        parts[1] == "nextfield"
+        parts[2] == "array[12][12]"
+        parts[3] == "anotherField[external.key.leaf]"
+        parts[4] == "anotherField[[external.key.leaf][some.strange.things]]"
+        parts[5] == "fieldLeaf"
+    }
+
     def "create Expected path metadata"() {
         given:
         String propertyKey = "field.nextfield.array[12][12].fieldLeaf"
@@ -37,5 +51,6 @@ class PathMetadataBuilderTest extends Specification {
 
         return true
     }
+
 }
 
