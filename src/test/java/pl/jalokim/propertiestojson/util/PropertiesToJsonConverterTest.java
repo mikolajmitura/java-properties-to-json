@@ -129,7 +129,6 @@ public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConve
         // when
         String json = new PropertiesToJsonConverter().convertPropertiesFromFileToJson("src/test/resources/order-of-properties.properties");
         // then
-        System.out.println(json);
         assertThat(json).isEqualTo("{\n" +
                                    "  \"someField\": {\n" +
                                    "    \"nextField0\": {\n" +
@@ -145,6 +144,23 @@ public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConve
                                    "    \"nextField\": {\n" +
                                    "      \"leaf1\": 1,\n" +
                                    "      \"leaf2\": 2\n" +
+                                   "    }\n" +
+                                   "  },\n" +
+                                   "  \"0field\": 0\n" +
+                                   "}");
+    }
+
+    @Test
+    public void jsonWithExpectedOrderOfPropertiesDuringFiltering() {
+        // when
+        String json = new PropertiesToJsonConverter().convertPropertiesFromFileToJson("src/test/resources/order-of-properties.properties", "someField.nextField0", "0field");
+        // then
+        assertThat(json).isEqualTo("{\n" +
+                                   "  \"someField\": {\n" +
+                                   "    \"nextField0\": {\n" +
+                                   "      \"leaf1\": 1,\n" +
+                                   "      \"leaf2\": 2,\n" +
+                                   "      \"leaf3\": 3\n" +
                                    "    }\n" +
                                    "  },\n" +
                                    "  \"0field\": 0\n" +
