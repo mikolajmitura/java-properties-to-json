@@ -4,7 +4,7 @@ import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.util.StringToJsonStringWrapper;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static pl.jalokim.propertiestojson.Constants.*;
@@ -13,7 +13,7 @@ import static pl.jalokim.utils.collection.CollectionUtils.getLastIndex;
 
 public class ObjectJsonType extends AbstractJsonType implements MergableObject<ObjectJsonType> {
 
-    private Map<String, AbstractJsonType> fields = new HashMap<>();
+    private Map<String, AbstractJsonType> fields = new LinkedHashMap<>();
 
     public void addField(final String field, final AbstractJsonType object, PathMetadata currentPathMetaData) {
         if (object instanceof SkipJsonField) {

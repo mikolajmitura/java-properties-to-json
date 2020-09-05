@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import pl.jalokim.propertiestojson.AlgorithmType;
 import pl.jalokim.propertiestojson.JsonObjectsTraverseResolver;
+import pl.jalokim.propertiestojson.helper.PropertiesWithInsertOrder;
 import pl.jalokim.propertiestojson.helper.PropertyKeysOrderResolver;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
@@ -30,6 +31,18 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -499,7 +512,7 @@ public final class PropertiesToJsonConverter {
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
     public String convertFromValuesAsObjectMap(Map<String, Object> properties, String... includeDomainKeys) {
-        Map<String, Object> filteredProperties = new HashMap<>();
+        Map<String, Object> filteredProperties = new LinkedHashMap<>();
         for(String key : properties.keySet()) {
             for(String requiredKey : includeDomainKeys) {
                 checkKey(properties, filteredProperties, key, requiredKey);
@@ -530,8 +543,8 @@ public final class PropertiesToJsonConverter {
     }
 
     private Properties inputStreamToProperties(InputStream inputStream) {
-        Properties propertiesWithConvertedValues = new Properties();
-        Properties properties = new Properties();
+        Properties propertiesWithConvertedValues = new PropertiesWithInsertOrder();
+        Properties properties = new PropertiesWithInsertOrder();
         try {
             properties.load(new InputStreamReader(inputStream, charsetToUse));
             for(String property : getAllKeysFromProperties(propertiesToMap(properties))) {
@@ -556,15 +569,15 @@ public final class PropertiesToJsonConverter {
 
 
     private static Map<String, Object> propertiesToMap(Properties properties) {
-        Map<String, Object> map = new HashMap<>();
-        for(Map.Entry<Object, Object> property : properties.entrySet()) {
-            map.put(property.getKey().toString(), property.getValue());
+        Map<String, Object> map = new LinkedHashMap<>();
+        for (Object key : properties.keySet()) {
+            map.put(key.toString(), properties.get(key));
         }
         return map;
     }
 
     private Map<String, Object> stringValueMapToObjectValueMap(Map<String, String> properties) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         for(String property : getAllKeysFromProperties(properties)) {
             Object object = primitiveResolvers.getResolvedObject(properties.get(property), property);
             map.put(property, object);

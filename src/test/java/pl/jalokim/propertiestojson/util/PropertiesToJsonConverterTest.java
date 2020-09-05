@@ -124,6 +124,49 @@ public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConve
         assertJsonIsAsExpected(json);
     }
 
+    @Test
+    public void jsonWithExpectedOrderOfProperties() {
+        // when
+        String json = new PropertiesToJsonConverter().convertPropertiesFromFileToJson("src/test/resources/order-of-properties.properties");
+        // then
+        assertThat(json).isEqualTo("{\n" +
+                                   "  \"someField\": {\n" +
+                                   "    \"nextField0\": {\n" +
+                                   "      \"leaf1\": 1,\n" +
+                                   "      \"leaf2\": 2,\n" +
+                                   "      \"leaf3\": 3\n" +
+                                   "    },\n" +
+                                   "    \"nextField1\": {\n" +
+                                   "      \"leaf1\": 1\n" +
+                                   "    }\n" +
+                                   "  },\n" +
+                                   "  \"anotherField\": {\n" +
+                                   "    \"nextField\": {\n" +
+                                   "      \"leaf1\": 1,\n" +
+                                   "      \"leaf2\": 2\n" +
+                                   "    }\n" +
+                                   "  },\n" +
+                                   "  \"0field\": 0\n" +
+                                   "}");
+    }
+
+    @Test
+    public void jsonWithExpectedOrderOfPropertiesDuringFiltering() {
+        // when
+        String json = new PropertiesToJsonConverter().convertPropertiesFromFileToJson("src/test/resources/order-of-properties.properties", "someField.nextField0", "0field");
+        // then
+        assertThat(json).isEqualTo("{\n" +
+                                   "  \"someField\": {\n" +
+                                   "    \"nextField0\": {\n" +
+                                   "      \"leaf1\": 1,\n" +
+                                   "      \"leaf2\": 2,\n" +
+                                   "      \"leaf3\": 3\n" +
+                                   "    }\n" +
+                                   "  },\n" +
+                                   "  \"0field\": 0\n" +
+                                   "}");
+    }
+
     private void assertJsonWithPrimitivesTypesWithoutSimpleText(String json) {
         Gson gson = new Gson();
         MainComplexObject mainComplexObject = gson.fromJson(json, MainComplexObject.class);
