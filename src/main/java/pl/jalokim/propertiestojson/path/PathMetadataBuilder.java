@@ -4,6 +4,9 @@ import static pl.jalokim.propertiestojson.Constants.REGEX_DOT;
 
 public class PathMetadataBuilder {
 
+    private PathMetadataBuilder() {
+    }
+
     public static PathMetadata createRootPathMetaData(String propertyKey) {
         String[] fields = propertyKey.split(REGEX_DOT);
         PathMetadata currentPathMetadata = null;

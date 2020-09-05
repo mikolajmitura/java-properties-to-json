@@ -5,7 +5,6 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.delegator.PrimitiveJsonTypeDelegatorResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.object.SuperObjectToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToObjectResolver;
-import pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 
 
@@ -34,13 +33,5 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeDelegatorRe
      */
     public static AbstractJsonType convertFromObjectToJson(Object propertyValue, String propertyKey) {
         return SuperObjectToJsonTypeConverter.convertFromObjectToJson(propertyValue, propertyKey);
-    }
-
-    public static boolean isValidJsonObjectOrArray(String propertyValue) {
-        return JsonObjectHelper.isValidJsonObjectOrArray(propertyValue);
-    }
-
-    private static boolean hasJsonObjectSignature(String propertyValue) {
-        return JsonObjectHelper.hasJsonObjectSignature(propertyValue);
     }
 }

@@ -8,7 +8,7 @@ public class ParsePropertiesException extends RuntimeException {
     public static final String STRING_RESOLVER_AS_NOT_LAST = "Added some type resolver after " + StringJsonTypeResolver.class.getCanonicalName() +
                                                              ". This type resolver always should be last when is in configuration of resolvers";
 
-    public static final String STRING__TO_JSON_RESOLVER_AS_NOT_LAST = "Added some type resolver after " + StringToJsonTypeConverter.class.getCanonicalName() +
+    public static final String STRING_TO_JSON_RESOLVER_AS_NOT_LAST = "Added some type resolver after " + StringToJsonTypeConverter.class.getCanonicalName() +
                                                                       ". This type resolver always should be last when is in configuration of resolvers";
 
     public static final String PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE = "Unsupported property key type: %s for key: %s, Property key needs to be a string type";

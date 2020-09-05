@@ -9,7 +9,7 @@ import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_VALU
 
 public class TextToJsonNullReferenceResolver implements TextToConcreteObjectResolver<Object> {
 
-    public final static TextToJsonNullReferenceResolver TEXT_TO_NULL_JSON_RESOLVER = new TextToJsonNullReferenceResolver();
+    public static final TextToJsonNullReferenceResolver TEXT_TO_NULL_JSON_RESOLVER = new TextToJsonNullReferenceResolver();
 
     @Override
     public Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {

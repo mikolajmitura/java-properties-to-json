@@ -7,7 +7,7 @@ import java.util.Optional;
 public class TextToEmptyStringResolver implements TextToConcreteObjectResolver<String> {
 
     public static final TextToEmptyStringResolver EMPTY_TEXT_RESOLVER = new TextToEmptyStringResolver();
-    private final static String EMPTY_VALUE = "";
+    private static final String EMPTY_VALUE = "";
 
     @Override
     public Optional<String> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
