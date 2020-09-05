@@ -1,19 +1,21 @@
 package pl.jalokim.propertiestojson.util
 
-
 import groovy.json.JsonSlurper
-import pl.jalokim.propertiestojson.object.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import pl.jalokim.propertiestojson.object.AbstractJsonType
+import pl.jalokim.propertiestojson.object.JsonNullReferenceType
+import pl.jalokim.propertiestojson.object.NumberJsonType
+import pl.jalokim.propertiestojson.object.SkipJsonField
+import pl.jalokim.propertiestojson.object.StringJsonType
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.object.AbstractObjectToJsonTypeConverter
 import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeConverter
 import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver
 import spock.lang.Specification
-
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
@@ -60,8 +62,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                            LocalDateTime convertedValue,
-                                                            String propertyKey) {
+            LocalDateTime convertedValue,
+            String propertyKey) {
             return Optional.of(new StringJsonType(convertedValue.format(DateTimeFormatter.ISO_DATE_TIME)))
         }
     }
@@ -70,8 +72,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                            LocalDate convertedValue,
-                                                            String propertyKey) {
+            LocalDate convertedValue,
+            String propertyKey) {
             return Optional.of(new StringJsonType(convertedValue.format(DateTimeFormatter.ISO_DATE)))
         }
     }
@@ -80,8 +82,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                            LocalTime convertedValue,
-                                                            String propertyKey) {
+            LocalTime convertedValue,
+            String propertyKey) {
             return Optional.of(new StringJsonType(convertedValue.format(DateTimeFormatter.ISO_TIME)))
         }
     }
@@ -90,8 +92,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
         @Override
         Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                       String propertyValue,
-                                                       String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
 
             LocalTime localTime = LocalTime.of(10, 12)
             LocalDate localDate = LocalDate.of(2019, 9, 29)
@@ -165,8 +167,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         when:
 
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .defaultAndCustomTextToObjectResolvers(new SkipObjectResolver())
-                .build()
+            .defaultAndCustomTextToObjectResolvers(new SkipObjectResolver())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("some.object.array.skip.field.first", "12")
@@ -186,8 +188,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
         @Override
         Optional returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                               String propertyValue,
-                                               String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyKey.contains("skip.field.first")) {
                 return Optional.of(SkipJsonField.SKIP_JSON_FIELD)
             }
@@ -200,8 +202,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         when:
 
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .defaultAndCustomObjectToJsonTypeConverters(new SkipableJsonTypeConverter(), new NumberToStringJsonTypeConverter(), new NumberToJsonTypeConverter())
-                .build()
+            .defaultAndCustomObjectToJsonTypeConverters(new SkipableJsonTypeConverter(), new NumberToStringJsonTypeConverter(), new NumberToJsonTypeConverter())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("some.object.numberAsText", "12")
@@ -228,8 +230,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         when:
 
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .defaultAndCustomObjectToJsonTypeConverters(new SkipableJsonTypeConverter(), new NumberToStringJsonTypeConverter(), new NumberToJsonTypeConverter())
-                .build()
+            .defaultAndCustomObjectToJsonTypeConverters(new SkipableJsonTypeConverter(), new NumberToStringJsonTypeConverter(), new NumberToJsonTypeConverter())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("some.object.numberAsText", "12")
@@ -251,8 +253,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
     private static class SkipableJsonTypeConverter extends NumberToJsonTypeConverter {
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                            Number convertedValue,
-                                                            String propertyKey) {
+            Number convertedValue,
+            String propertyKey) {
             if (propertyKey.contains("skip.field")) {
                 return Optional.of(SkipJsonField.SKIP_JSON_FIELD)
             }
@@ -264,8 +266,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                            Number convertedValue,
-                                                            String propertyKey) {
+            Number convertedValue,
+            String propertyKey) {
             if (propertyKey.contains("numberAsText")) {
                 return Optional.of(new StringJsonType(convertedValue.toString()))
             }
@@ -277,8 +279,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
 
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                            Number convertedValue,
-                                                            String propertyKey) {
+            Number convertedValue,
+            String propertyKey) {
             if (propertyKey.contains("null")) {
                 return Optional.of(JsonNullReferenceType.NULL_OBJECT)
             }

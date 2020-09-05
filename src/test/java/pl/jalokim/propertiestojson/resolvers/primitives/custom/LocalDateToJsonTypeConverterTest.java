@@ -1,13 +1,12 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.custom;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.LocalDate;
 import org.junit.Test;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.NumberJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
-
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class LocalDateToJsonTypeConverterTest {
 

@@ -1,9 +1,8 @@
 package pl.jalokim.propertiestojson.resolvers.transfer;
 
+import java.util.Map;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
-
-import java.util.Map;
 
 public class DataForResolve {
 

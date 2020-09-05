@@ -3,7 +3,12 @@ package pl.jalokim.propertiestojson.util
 import groovy.json.JsonSlurper
 import pl.jalokim.propertiestojson.object.AbstractJsonType
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver
-import pl.jalokim.propertiestojson.resolvers.primitives.*
+import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver
+import pl.jalokim.propertiestojson.resolvers.primitives.NumberJsonTypeResolver
+import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver
+import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonTypeResolver
+import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver
+import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.adapter.PrimitiveJsonTypeResolverToNewApiAdapter
 import pl.jalokim.propertiestojson.resolvers.primitives.object.NumberToJsonTypeConverter
 import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter
@@ -30,9 +35,9 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new PrimitiveArrayJsonTypeResolver(),
-                new NumberJsonTypeResolver(),
-                new StringJsonTypeResolver())
+            new PrimitiveArrayJsonTypeResolver(),
+            new NumberJsonTypeResolver(),
+            new StringJsonTypeResolver())
         String json = converter.convertPropertiesFromFileToJson("src/test/resources/arrayCombinations.properties", "arraytexts")
         def jsonObject = jsonSlurper.parseText(json)
         then:
@@ -172,7 +177,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         then:
         Exception ex = thrown()
         ex.message == "Cannot find valid JSON type resolver for class: 'class java.math.BigDecimal'. \n" +
-                "Please consider add sufficient resolver to your resolvers."
+            "Please consider add sufficient resolver to your resolvers."
     }
 
 
@@ -263,8 +268,8 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ObjectFromTextJsonTypeResolver(),
-                new BooleanJsonTypeResolver()
+            new ObjectFromTextJsonTypeResolver(),
+            new BooleanJsonTypeResolver()
         )
 
         Properties properties = new Properties()
@@ -289,8 +294,8 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ObjectFromTextJsonTypeResolver(),
-                new BooleanJsonTypeResolver()
+            new ObjectFromTextJsonTypeResolver(),
+            new BooleanJsonTypeResolver()
         )
 
         Map<String, Object> properties = new HashMap<>()
@@ -315,8 +320,8 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ObjectFromTextJsonTypeResolver(),
-                new BooleanJsonTypeResolver()
+            new ObjectFromTextJsonTypeResolver(),
+            new BooleanJsonTypeResolver()
         )
 
         Map<String, String> properties = new HashMap<>()
@@ -361,8 +366,8 @@ class PropertiesToJsonConverterResolversTest extends Specification {
     def "found too match resolvers for given bean type (old api resolvers)"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new NumberJsonTypeResolver(),
-                new AnotherNumberResolver()
+            new NumberJsonTypeResolver(),
+            new AnotherNumberResolver()
         )
         Properties properties = new Properties()
         properties.put("test.test", 12)
@@ -377,13 +382,13 @@ class PropertiesToJsonConverterResolversTest extends Specification {
     def "found too match resolvers for given bean type when mixin with adapter classes"() {
         given:
         List<ObjectToJsonTypeConverter<?>> objectToJsonResolvers = [
-                new PrimitiveJsonTypeResolverToNewApiAdapter(new NumberJsonTypeResolver()),
-                new NumberToJsonTypeConverter()
+            new PrimitiveJsonTypeResolverToNewApiAdapter(new NumberJsonTypeResolver()),
+            new NumberToJsonTypeConverter()
         ]
 
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ArrayList<>(),
-                objectToJsonResolvers
+            new ArrayList<>(),
+            objectToJsonResolvers
         )
         Properties properties = new Properties()
         properties.put("test.test", 12)
@@ -392,22 +397,23 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         converter.convertToJson(properties)
         then:
         ParsePropertiesException exception = thrown()
-        exception.getMessage() == "Found: " + [NumberJsonTypeResolver.class, NumberToJsonTypeConverter.class] + " for type" + Integer.class + " expected only one!"
+        exception.getMessage() == "Found: " + [NumberJsonTypeResolver.class, NumberToJsonTypeConverter.class] + " for type" + Integer.class +
+            " expected only one!"
     }
 
     private static class AnotherNumberResolver extends PrimitiveJsonTypeResolver<Number> {
 
         @Override
         protected Optional<Number> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                              String propertyValue,
-                                                              String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             return Optional.empty()
         }
 
         @Override
         AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                Number propertyValue,
-                                                String propertyKey) {
+            Number propertyValue,
+            String propertyKey) {
             return null
         }
     }
@@ -430,8 +436,8 @@ class PropertiesToJsonConverterResolversTest extends Specification {
     def "when don't have provided resolver for raw objects"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new NumberJsonTypeResolver(),
-                new BooleanJsonTypeResolver()
+            new NumberJsonTypeResolver(),
+            new BooleanJsonTypeResolver()
         )
         Properties properties = createExtendedProperties()
         when:

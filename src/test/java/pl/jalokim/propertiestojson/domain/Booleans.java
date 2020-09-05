@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Booleans {
+
     private Boolean trueValue;
     private Boolean falseValue;
 }

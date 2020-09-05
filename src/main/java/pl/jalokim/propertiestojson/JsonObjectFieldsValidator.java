@@ -11,14 +11,17 @@ import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
 public class JsonObjectFieldsValidator {
 
+    private JsonObjectFieldsValidator() {
+    }
+
     public static void checkThatFieldCanBeSet(ObjectJsonType currentObjectJson, PathMetadata currentPathMetaData, String propertyKey) {
-        if(currentObjectJson.containsField(currentPathMetaData.getFieldName())) {
+        if (currentObjectJson.containsField(currentPathMetaData.getFieldName())) {
             AbstractJsonType abstractJsonType = currentObjectJson.getField(currentPathMetaData.getFieldName());
-            if(currentPathMetaData.isArrayField()) {
-                if(isArrayJson(abstractJsonType)) {
+            if (currentPathMetaData.isArrayField()) {
+                if (isArrayJson(abstractJsonType)) {
                     ArrayJsonType jsonArray = currentObjectJson.getJsonArray(currentPathMetaData.getFieldName());
                     AbstractJsonType elementByDimArray = jsonArray.getElementByGivenDimIndexes(currentPathMetaData);
-                    if(elementByDimArray != null) {
+                    if (elementByDimArray != null) {
                         throwErrorWhenCannotMerge(currentPathMetaData, propertyKey, elementByDimArray);
                     }
                 } else {
@@ -31,15 +34,15 @@ public class JsonObjectFieldsValidator {
     }
 
     private static void throwErrorWhenCannotMerge(PathMetadata currentPathMetaData, String propertyKey, AbstractJsonType oldJsonValue) {
-        if (!isMergableJsonType(oldJsonValue) ) {
+        if (!isMergableJsonType(oldJsonValue)) {
             throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), oldJsonValue, propertyKey);
         }
     }
 
     public static void checkEarlierWasJsonObject(String propertyKey, PathMetadata currentPathMetaData, AbstractJsonType jsonType) {
-         if (!isObjectJson(jsonType)) {
-             throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), jsonType, propertyKey);
-         }
+        if (!isObjectJson(jsonType)) {
+            throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(), jsonType, propertyKey);
+        }
     }
 
     public static boolean isObjectJson(AbstractJsonType jsonType) {

@@ -1,6 +1,9 @@
 package pl.jalokim.propertiestojson.resolvers.primitives
 
 import groovy.json.JsonSlurper
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.util.concurrent.atomic.AtomicInteger
 import pl.jalokim.propertiestojson.object.AbstractJsonType
 import pl.jalokim.propertiestojson.object.NumberJsonType
 import pl.jalokim.propertiestojson.object.ObjectJsonType
@@ -9,19 +12,15 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter
 import spock.lang.Specification
 
-import java.time.LocalDate
-import java.time.ZoneOffset
-import java.util.concurrent.atomic.AtomicInteger
-
 class OwnJsonTypeResolverTest extends Specification {
 
     def "from text will convert to expected json, will invoke custom resolver"() {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new OwnBeanPrimitiveJsonTypeResolver(),
-                new ObjectFromTextJsonTypeResolver(),
-                new BooleanJsonTypeResolver()
+            new OwnBeanPrimitiveJsonTypeResolver(),
+            new ObjectFromTextJsonTypeResolver(),
+            new BooleanJsonTypeResolver()
         )
 
         Map<String, String> properties = new HashMap<>()
@@ -43,9 +42,9 @@ class OwnJsonTypeResolverTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new OwnBeanPrimitiveJsonTypeResolver(),
-                new ObjectFromTextJsonTypeResolver(),
-                new BooleanJsonTypeResolver()
+            new OwnBeanPrimitiveJsonTypeResolver(),
+            new ObjectFromTextJsonTypeResolver(),
+            new BooleanJsonTypeResolver()
         )
 
         Properties properties = new Properties()
@@ -66,7 +65,7 @@ class OwnJsonTypeResolverTest extends Specification {
     def "throw exception while will not convert deprecated property key during process simple text in OwnBeanPrimitiveJsonTypeResolver"() {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new OwnBeanPrimitiveJsonTypeResolver()
+            new OwnBeanPrimitiveJsonTypeResolver()
         )
 
         Map<String, String> properties = new HashMap<>()
@@ -81,7 +80,7 @@ class OwnJsonTypeResolverTest extends Specification {
     def "throw exception while will not convert deprecated property key during process OwnBean"() {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new OwnBeanPrimitiveJsonTypeResolver()
+            new OwnBeanPrimitiveJsonTypeResolver()
         )
 
         Properties properties = new Properties()
@@ -96,7 +95,8 @@ class OwnJsonTypeResolverTest extends Specification {
     private static class OwnBeanPrimitiveJsonTypeResolver extends PrimitiveJsonTypeResolver<OwnBean> {
 
         @Override
-        protected Optional<OwnBean> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
+        protected Optional<OwnBean> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue,
+            String propertyKey) {
             if (propertyKey == ("deprecated.one")) {
                 throw new RuntimeException("property: deprecated.one is not supported!")
             }
@@ -114,7 +114,7 @@ class OwnJsonTypeResolverTest extends Specification {
                 throw new RuntimeException("property: deprecated.two is not supported!")
             }
             return new OwnBeanJsonType(propertyValue.textField,
-                    propertyValue.localDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond())
+                propertyValue.localDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond())
         }
     }
 
@@ -140,8 +140,8 @@ class OwnJsonTypeResolverTest extends Specification {
         when:
         SecureResolver tested = new SecureResolver()
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                tested,
-                new BooleanJsonTypeResolver()
+            tested,
+            new BooleanJsonTypeResolver()
         )
 
         String secHash = " space _ _ xx "
@@ -174,8 +174,8 @@ class OwnJsonTypeResolverTest extends Specification {
         when:
         SecureResolver tested = new SecureResolver()
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                tested,
-                new BooleanJsonTypeResolver()
+            tested,
+            new BooleanJsonTypeResolver()
         )
 
         Map<String, String> properties = new HashMap<>()
@@ -188,8 +188,8 @@ class OwnJsonTypeResolverTest extends Specification {
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
-        jsonObject.object.sec_1 == "hash:" +  " _^ _^ _ " + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
-        jsonObject.object.sec_2 == "hash:" +  " _^1_^2_ " + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.sec_1 == "hash:" + " _^ _^ _ " + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.sec_2 == "hash:" + " _^1_^2_ " + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
         jsonObject.object.boolean1 == true
         jsonObject.object.numberAsText == "12"
         assertInvocations(tested, "resolveTypeOfResolver", 3)
@@ -231,12 +231,12 @@ class OwnJsonTypeResolverTest extends Specification {
 
         @Override
         AbstractJsonType returnJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                        Object propertyValue,
-                                        String propertyKey) {
+            Object propertyValue,
+            String propertyKey) {
             invocationMap.get("returnJsonType").incrementAndGet()
             if (propertyValue instanceof SecureBean1 ||
-                    propertyValue instanceof SecureBean2 ||
-                    propertyValue instanceof SecureBean3) {
+                propertyValue instanceof SecureBean2 ||
+                propertyValue instanceof SecureBean3) {
                 return super.returnJsonType(primitiveJsonTypesResolver, propertyValue, propertyKey)
             }
             throw new UnsupportedOperationException("Cannot support type: " + propertyValue.getClass())
@@ -250,8 +250,8 @@ class OwnJsonTypeResolverTest extends Specification {
 
         @Override
         protected Optional<Object> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                                        String propertyValue,
-                                                                        String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             invocationMap.get("returnConcreteValueWhenCanBeResolved").incrementAndGet()
             if (propertyValue.contains("sec_hash:")) {
                 return Optional.of(new SecureBean2(propertyValue.replace("sec_hash:", "")))
@@ -261,8 +261,8 @@ class OwnJsonTypeResolverTest extends Specification {
 
         @Override
         Optional<Object> returnConvertedValueForClearedText(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                            String propertyValue,
-                                                            String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             invocationMap.get("returnConvertedValueForClearedText").incrementAndGet()
             if (propertyValue == null) {
                 return Optional.empty()

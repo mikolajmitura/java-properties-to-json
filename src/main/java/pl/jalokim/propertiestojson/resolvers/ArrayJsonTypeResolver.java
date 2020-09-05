@@ -1,16 +1,15 @@
 package pl.jalokim.propertiestojson.resolvers;
 
+import static pl.jalokim.propertiestojson.object.ArrayJsonType.createOrGetNextDimensionOfArray;
+import static pl.jalokim.utils.collection.CollectionUtils.isLastIndex;
+
+import java.util.List;
 import pl.jalokim.propertiestojson.JsonObjectFieldsValidator;
 import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
-
-import java.util.List;
-
-import static pl.jalokim.propertiestojson.object.ArrayJsonType.createOrGetNextDimensionOfArray;
-import static pl.jalokim.utils.collection.CollectionUtils.isLastIndex;
 
 public class ArrayJsonTypeResolver extends JsonTypeResolver {
 
@@ -21,7 +20,7 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
     }
 
     private void fetchJsonObjectAndCreateArrayWhenNotExist(PathMetadata currentPathMetaData) {
-        if(isArrayExist(currentPathMetaData.getFieldName())) {
+        if (isArrayExist(currentPathMetaData.getFieldName())) {
             fetchArrayAndAddElement(currentPathMetaData);
         } else {
             createArrayAndAddElement(currentPathMetaData);
@@ -37,10 +36,10 @@ public class ArrayJsonTypeResolver extends JsonTypeResolver {
         ArrayJsonType arrayJsonType = getArrayJsonWhenIsValid(currentPathMetaData);
         List<Integer> dimIndexes = propertyArrayHelper.getDimensionalIndexes();
         ArrayJsonType currentArray = arrayJsonType;
-        for(int index = 0; index < dimIndexes.size(); index++) {
-            if(isLastIndex(dimIndexes, index)) {
+        for (int index = 0; index < dimIndexes.size(); index++) {
+            if (isLastIndex(dimIndexes, index)) {
                 int lastDimIndex = dimIndexes.get(index);
-                if(currentArray.existElementByGivenIndex(lastDimIndex)) {
+                if (currentArray.existElementByGivenIndex(lastDimIndex)) {
                     fetchJsonObjectWhenIsValid(currentPathMetaData, lastDimIndex, currentArray);
                 } else {
                     createJsonObjectAndAddToArray(lastDimIndex, currentArray, currentPathMetaData);

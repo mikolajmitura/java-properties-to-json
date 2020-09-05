@@ -1,21 +1,20 @@
 package pl.jalokim.propertiestojson.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Optional;
+import java.util.Properties;
 import org.junit.Test;
 import pl.jalokim.propertiestojson.domain.MainComplexObject;
 import pl.jalokim.propertiestojson.domain.MainObject;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.object.AbstractObjectToJsonTypeConverter;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.Optional;
-import java.util.Properties;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConverterTest {
@@ -31,7 +30,8 @@ public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConve
     @Test
     public void returnExpectedJsonWithGivenIncludeFromGivenFile() {
         //when
-        String json = new PropertiesToJsonConverter().convertPropertiesFromFileToJson(new File("src/test/resources/primitiveTypes.properties"), "complexObject");
+        String json = new PropertiesToJsonConverter()
+            .convertPropertiesFromFileToJson(new File("src/test/resources/primitiveTypes.properties"), "complexObject");
         // then
         assertJsonWithPrimitivesTypesWithoutSimpleText(json);
     }
@@ -76,8 +76,8 @@ public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConve
     public void cannotCreateJsonWhenIsNotFormattedCorrectly() {
         // given
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                                                                              .defaultAndCustomObjectToJsonTypeConverters(new InvalidConverter())
-                                                                              .build();
+            .defaultAndCustomObjectToJsonTypeConverters(new InvalidConverter())
+            .build();
         Properties properties = new Properties();
         properties.put("some.given.path", "someText");
         // when
@@ -85,33 +85,10 @@ public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConve
             String json = converter.convertToJson(properties);
             System.out.println(json);
             fail();
-        } catch(JsonSyntaxException ex) {
+        } catch (JsonSyntaxException ex) {
             // then
-            assertThat(ex.getMessage()).isEqualTo("com.google.gson.stream.MalformedJsonException: Expected ':' at line 1 column 36 path $.some.given.path.someText");
-        }
-    }
-
-    private static class InvalidConverter extends AbstractObjectToJsonTypeConverter<String> {
-
-        @Override
-        public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                                   String convertedValue,
-                                                                   String propertyKey) {
-            return Optional.of(new OwnAbstractJsonType(convertedValue));
-        }
-    }
-
-    private static class OwnAbstractJsonType extends AbstractJsonType {
-
-        private String value;
-
-        OwnAbstractJsonType(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toStringJson() {
-            return "{" + value + "}";
+            assertThat(ex.getMessage())
+                .isEqualTo("com.google.gson.stream.MalformedJsonException: Expected ':' at line 1 column 36 path $.some.given.path.someText");
         }
     }
 
@@ -129,26 +106,43 @@ public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConve
         // when
         String json = new PropertiesToJsonConverter().convertPropertiesFromFileToJson("src/test/resources/order-of-properties.properties");
         // then
-        System.out.println(json);
         assertThat(json).isEqualTo("{\n" +
-                                   "  \"someField\": {\n" +
-                                   "    \"nextField0\": {\n" +
-                                   "      \"leaf1\": 1,\n" +
-                                   "      \"leaf2\": 2,\n" +
-                                   "      \"leaf3\": 3\n" +
-                                   "    },\n" +
-                                   "    \"nextField1\": {\n" +
-                                   "      \"leaf1\": 1\n" +
-                                   "    }\n" +
-                                   "  },\n" +
-                                   "  \"anotherField\": {\n" +
-                                   "    \"nextField\": {\n" +
-                                   "      \"leaf1\": 1,\n" +
-                                   "      \"leaf2\": 2\n" +
-                                   "    }\n" +
-                                   "  },\n" +
-                                   "  \"0field\": 0\n" +
-                                   "}");
+            "  \"someField\": {\n" +
+            "    \"nextField0\": {\n" +
+            "      \"leaf1\": 1,\n" +
+            "      \"leaf2\": 2,\n" +
+            "      \"leaf3\": 3\n" +
+            "    },\n" +
+            "    \"nextField1\": {\n" +
+            "      \"leaf1\": 1\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"anotherField\": {\n" +
+            "    \"nextField\": {\n" +
+            "      \"leaf1\": 1,\n" +
+            "      \"leaf2\": 2\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"0field\": 0\n" +
+            "}");
+    }
+
+    @Test
+    public void jsonWithExpectedOrderOfPropertiesDuringFiltering() {
+        // when
+        String json = new PropertiesToJsonConverter()
+            .convertPropertiesFromFileToJson("src/test/resources/order-of-properties.properties", "someField.nextField0", "0field");
+        // then
+        assertThat(json).isEqualTo("{\n" +
+            "  \"someField\": {\n" +
+            "    \"nextField0\": {\n" +
+            "      \"leaf1\": 1,\n" +
+            "      \"leaf2\": 2,\n" +
+            "      \"leaf3\": 3\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"0field\": 0\n" +
+            "}");
     }
 
     private void assertJsonWithPrimitivesTypesWithoutSimpleText(String json) {
@@ -187,6 +181,30 @@ public class PropertiesToJsonConverterTest extends AbstractPropertiesToJsonConve
         assertGroupByIdAndExpectedValues(mainObject, 1, GROUP_2, FREE);
         assertGroupByIdAndExpectedValues(mainObject, 2, GROUP_3, COMMERCIAL);
         assertHobbiesList(mainObject);
+    }
+
+    private static class InvalidConverter extends AbstractObjectToJsonTypeConverter<String> {
+
+        @Override
+        public Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
+            String convertedValue,
+            String propertyKey) {
+            return Optional.of(new OwnAbstractJsonType(convertedValue));
+        }
+    }
+
+    private static class OwnAbstractJsonType extends AbstractJsonType {
+
+        private String value;
+
+        OwnAbstractJsonType(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toStringJson() {
+            return "{" + value + "}";
+        }
     }
 
 }

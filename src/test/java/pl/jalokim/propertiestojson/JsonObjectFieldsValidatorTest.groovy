@@ -1,5 +1,9 @@
 package pl.jalokim.propertiestojson
 
+import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isArrayJson
+import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isObjectJson
+import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isPrimitiveValue
+
 import pl.jalokim.propertiestojson.object.AbstractJsonType
 import pl.jalokim.propertiestojson.object.ArrayJsonType
 import pl.jalokim.propertiestojson.object.JsonNullReferenceType
@@ -7,10 +11,6 @@ import pl.jalokim.propertiestojson.object.NumberJsonType
 import pl.jalokim.propertiestojson.object.ObjectJsonType
 import pl.jalokim.propertiestojson.object.StringJsonType
 import spock.lang.Specification
-
-import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isArrayJson
-import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isObjectJson
-import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isPrimitiveValue
 
 class JsonObjectFieldsValidatorTest extends Specification {
 
@@ -20,12 +20,12 @@ class JsonObjectFieldsValidatorTest extends Specification {
         then:
         result == expectedResult
         where:
-        someObject                 | expectedResult
-        new ObjectJsonType()       | true
-        new StringJsonType("test") | false
-        new ArrayJsonType()        | false
-        new OwnObjectJsonType()    | true
-        new JsonNullReferenceType()    | false
+        someObject                  | expectedResult
+        new ObjectJsonType()        | true
+        new StringJsonType("test")  | false
+        new ArrayJsonType()         | false
+        new OwnObjectJsonType()     | true
+        new JsonNullReferenceType() | false
     }
 
     def "is type of json array"(AbstractJsonType someObject, boolean expectedResult) {
@@ -34,13 +34,13 @@ class JsonObjectFieldsValidatorTest extends Specification {
         then:
         result == expectedResult
         where:
-        someObject                 | expectedResult
-        new ObjectJsonType()       | false
-        new StringJsonType("test") | false
-        new ArrayJsonType()        | true
-        new OwnObjectJsonType()    | false
-        new OwnArrayJsonType()     | true
-        new JsonNullReferenceType()     | false
+        someObject                  | expectedResult
+        new ObjectJsonType()        | false
+        new StringJsonType("test")  | false
+        new ArrayJsonType()         | true
+        new OwnObjectJsonType()     | false
+        new OwnArrayJsonType()      | true
+        new JsonNullReferenceType() | false
     }
 
     def "is type of primitive value"(AbstractJsonType someObject, boolean expectedResult) {

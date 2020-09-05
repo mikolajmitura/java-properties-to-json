@@ -1,5 +1,7 @@
 package pl.jalokim.propertiestojson.util
 
+import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT
+
 import groovy.json.JsonSlurper
 import pl.jalokim.propertiestojson.object.AbstractJsonType
 import pl.jalokim.propertiestojson.object.ArrayJsonType
@@ -19,8 +21,6 @@ import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException
 import spock.lang.Specification
 
-import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT
-
 class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
 
     def jsonMapper = new JsonSlurper()
@@ -28,7 +28,7 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     def "extended BooleanJsonTypeResolver"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ExtendedBooleanJsonTypeResolver()
+            new ExtendedBooleanJsonTypeResolver()
         )
         Map<String, String> mapString = new HashMap<>()
         mapString.put("object.boolAsText", "true")
@@ -46,8 +46,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     private class ExtendedBooleanJsonTypeResolver extends BooleanJsonTypeResolver {
         @Override
         Optional<Boolean> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                               String propertyValue,
-                                                               String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.boolAsText") {
                 return Optional.empty()
             }
@@ -56,8 +56,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
 
         @Override
         AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                Boolean propertyValue,
-                                                String propertyKey) {
+            Boolean propertyValue,
+            String propertyKey) {
             if (propertyKey.contains("alwaysFalse")) {
                 return new BooleanJsonType(false)
             }
@@ -68,7 +68,7 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     def "extended CharacterJsonTypeResolver"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ExtendedCharacterJsonTypeResolver()
+            new ExtendedCharacterJsonTypeResolver()
         )
         Map<String, String> mapString = new HashMap<>()
         mapString.put("object.alwaysAsC", "_")
@@ -86,8 +86,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     private class ExtendedCharacterJsonTypeResolver extends CharacterJsonTypeResolver {
         @Override
         Optional<Character> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                               String propertyValue,
-                                                               String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.alwaysAsC") {
                 Character someChar = 'c'
                 return Optional.of(someChar)
@@ -97,8 +97,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
 
         @Override
         AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                Character propertyValue,
-                                                String propertyKey) {
+            Character propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.asTrueStringFromT") {
                 return new StringJsonType("true")
             }
@@ -109,7 +109,7 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     def "extended EmptyStringJsonTypeResolver"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ExtendedEmptyStringJsonTypeResolver()
+            new ExtendedEmptyStringJsonTypeResolver()
         )
         Map<String, String> mapString = new HashMap<>()
         mapString.put("object.asEmpty", "_")
@@ -127,8 +127,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     private class ExtendedEmptyStringJsonTypeResolver extends EmptyStringJsonTypeResolver {
         @Override
         Optional<String> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                                 String propertyValue,
-                                                                 String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.asEmpty") {
                 return Optional.of("_empty_")
             }
@@ -140,16 +140,16 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
 
         @Override
         AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                String propertyValue,
-                                                String propertyKey) {
-           return new StringJsonType("###:" + propertyValue)
+            String propertyValue,
+            String propertyKey) {
+            return new StringJsonType("###:" + propertyValue)
         }
     }
 
     def "extended JsonNullReferenceTypeResolver"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ExtendedJsonNullReferenceTypeResolver()
+            new ExtendedJsonNullReferenceTypeResolver()
         )
         Map<String, String> mapString = new HashMap<>()
         mapString.put("object.undefinedAsText", "undefined")
@@ -166,8 +166,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     private class ExtendedJsonNullReferenceTypeResolver extends JsonNullReferenceTypeResolver {
         @Override
         Optional<JsonNullReferenceType> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                                 String propertyValue,
-                                                                 String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.undefinedAsNull") {
                 return Optional.of(NULL_OBJECT)
             }
@@ -180,8 +180,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
 
         @Override
         AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                JsonNullReferenceType propertyValue,
-                                                String propertyKey) {
+            JsonNullReferenceType propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.asTrueStringFromT") {
                 return new StringJsonType("true")
             }
@@ -192,7 +192,7 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     def "extended NumberJsonTypeResolver"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ExtendedNumberJsonTypeResolver()
+            new ExtendedNumberJsonTypeResolver()
         )
         Map<String, String> mapString = new HashMap<>()
         mapString.put("object.alwaysZero", "10.0")
@@ -210,8 +210,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     private class ExtendedNumberJsonTypeResolver extends NumberJsonTypeResolver {
         @Override
         Optional<Number> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                              String propertyValue,
-                                                              String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.alwaysZero") {
                 return Optional.of(BigDecimal.ZERO)
             }
@@ -220,8 +220,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
 
         @Override
         AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                Number propertyValue,
-                                                String propertyKey) {
+            Number propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.numberAsText") {
                 return new StringJsonType(propertyValue.toString())
             }
@@ -232,7 +232,7 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     def "extended ObjectFromTextJsonTypeResolver"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ExtendedObjectFromTextJsonTypeResolver()
+            new ExtendedObjectFromTextJsonTypeResolver()
         )
         Map<String, String> mapString = new HashMap<>()
         mapString.put("object.asText", "{\"field\":12}")
@@ -250,8 +250,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     private class ExtendedObjectFromTextJsonTypeResolver extends ObjectFromTextJsonTypeResolver {
         @Override
         Optional<Object> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                              String propertyValue,
-                                                              String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.objectWrapper") {
                 ObjectJsonType objectJsonType = new ObjectJsonType()
                 StringJsonType numberJsonType = new StringJsonType(propertyValue)
@@ -263,8 +263,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
 
         @Override
         AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                Object propertyValue,
-                                                String propertyKey) {
+            Object propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.asText") {
                 return new StringJsonType(propertyValue.toString())
             }
@@ -275,8 +275,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     def "extended PrimitiveArrayJsonTypeResolver"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ExtendedPrimitiveArrayJsonTypeResolver(),
-                new NumberJsonTypeResolver()
+            new ExtendedPrimitiveArrayJsonTypeResolver(),
+            new NumberJsonTypeResolver()
         )
         Map<String, String> mapString = new HashMap<>()
         mapString.put("object.asText", "1, 2, 3, text")
@@ -294,8 +294,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     private class ExtendedPrimitiveArrayJsonTypeResolver extends PrimitiveArrayJsonTypeResolver {
         @Override
         Optional<Collection<?>> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                              String propertyValue,
-                                                              String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.asText") {
                 return Optional.of(Arrays.asList(propertyValue))
             }
@@ -304,8 +304,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
 
         @Override
         AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                Collection<?> propertyValue,
-                                                String propertyKey) {
+            Collection<?> propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.onlyFirst3") {
                 def list = new ArrayList<>(propertyValue)
                 Collection<?> elements = list.subList(0, 3)
@@ -322,7 +322,7 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     def "extended StringJsonTypeResolver"() {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ExtendedStringJsonTypeResolver()
+            new ExtendedStringJsonTypeResolver()
         )
         Map<String, String> mapString = new HashMap<>()
         mapString.put("object.normalText", " #text text ")
@@ -338,8 +338,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
     private class ExtendedStringJsonTypeResolver extends StringJsonTypeResolver {
         @Override
         Optional<String> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                                     String propertyValue,
-                                                                     String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyKey == "object.removeSpaces") {
                 return Optional.of(propertyValue.replace(" ", "_"))
             }
@@ -348,8 +348,8 @@ class PropertiesToJsonConverterDeprecatedResolversTest extends Specification {
 
         @Override
         AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                String propertyValue,
-                                                String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             return new StringJsonType("###:" + propertyValue)
         }
     }
