@@ -38,12 +38,12 @@ public class JsonObjectHelper {
     private static final Gson gson = new Gson();
 
     static {
-        List<ObjectToJsonTypeConverter> toJsonResolvers = new ArrayList<>();
+        List<ObjectToJsonTypeConverter<?>> toJsonResolvers = new ArrayList<>();
         toJsonResolvers.add(new NumberToJsonTypeConverter());
         toJsonResolvers.add(new BooleanToJsonTypeConverter());
         toJsonResolvers.add(STRING_TO_JSON_RESOLVER);
 
-        List<TextToConcreteObjectResolver> toObjectsResolvers = new ArrayList<>();
+        List<TextToConcreteObjectResolver<?>> toObjectsResolvers = new ArrayList<>();
         toObjectsResolvers.add(new TextToNumberResolver());
         toObjectsResolvers.add(new TextToBooleanResolver());
         toObjectsResolvers.add(TO_STRING_RESOLVER);

@@ -30,11 +30,11 @@ public class JsonTypeResolversHierarchyResolver {
     private final Map<Class<?>, List<ObjectToJsonTypeConverter<?>>> resolversByType = new HashMap<>();
     private final HierarchyClassResolver hierarchyClassResolver;
 
-    public JsonTypeResolversHierarchyResolver(List<ObjectToJsonTypeConverter> resolvers) {
-        for(ObjectToJsonTypeConverter<?> resolver : resolvers) {
-            for(Class<?> canResolveType : resolver.getClassesWhichCanResolve()) {
+    public JsonTypeResolversHierarchyResolver(List<ObjectToJsonTypeConverter<?>> resolvers) {
+        for (ObjectToJsonTypeConverter<?> resolver : resolvers) {
+            for (Class<?> canResolveType : resolver.getClassesWhichCanResolve()) {
                 List<ObjectToJsonTypeConverter<?>> resolversByClass = resolversByType.get(canResolveType);
-                if(resolversByClass == null) {
+                if (resolversByClass == null) {
                     List<ObjectToJsonTypeConverter<?>> newResolvers = new ArrayList<>();
                     newResolvers.add(resolver);
                     resolversByType.put(canResolveType, newResolvers);
@@ -71,7 +71,7 @@ public class JsonTypeResolversHierarchyResolver {
                                                            .map(resolver -> {
                                                                if(resolver instanceof PrimitiveJsonTypeResolverToNewApiAdapter) {
                                                                    PrimitiveJsonTypeResolverToNewApiAdapter adapter = (PrimitiveJsonTypeResolverToNewApiAdapter) resolver;
-                                                                   PrimitiveJsonTypeResolver oldImplementation = adapter.getOldImplementation();
+                                                                   PrimitiveJsonTypeResolver<?> oldImplementation = adapter.getOldImplementation();
                                                                    return oldImplementation.getClass();
                                                                }
                                                                return resolver.getClass();

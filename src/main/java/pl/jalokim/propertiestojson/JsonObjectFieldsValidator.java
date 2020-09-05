@@ -1,6 +1,11 @@
 package pl.jalokim.propertiestojson;
 
-import pl.jalokim.propertiestojson.object.*;
+import pl.jalokim.propertiestojson.object.AbstractJsonType;
+import pl.jalokim.propertiestojson.object.ArrayJsonType;
+import pl.jalokim.propertiestojson.object.JsonNullReferenceType;
+import pl.jalokim.propertiestojson.object.MergableObject;
+import pl.jalokim.propertiestojson.object.ObjectJsonType;
+import pl.jalokim.propertiestojson.object.PrimitiveJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 

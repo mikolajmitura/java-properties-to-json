@@ -7,7 +7,11 @@ import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static pl.jalokim.propertiestojson.Constants.*;
+
+import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
+import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
+import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
+import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
 import static pl.jalokim.propertiestojson.object.MergableObject.mergeObjectIfPossible;
 import static pl.jalokim.utils.collection.CollectionUtils.getLastIndex;
 
@@ -26,8 +30,8 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
                 mergeObjectIfPossible(oldFieldValue, object, currentPathMetaData);
             } else {
                 throw new CannotOverrideFieldException(currentPathMetaData.getCurrentFullPath(),
-                        oldFieldValue,
-                        currentPathMetaData.getOriginalPropertyKey());
+                    oldFieldValue,
+                    currentPathMetaData.getOriginalPropertyKey());
             }
         } else {
             fields.put(field, object);
@@ -55,9 +59,9 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
             AbstractJsonType object = entry.getValue();
             String lastSign = index == lastIndex ? EMPTY_STRING : NEW_LINE_SIGN;
             result.append(StringToJsonStringWrapper.wrap(entry.getKey()))
-                    .append(":")
-                    .append(object.toStringJson())
-                    .append(lastSign);
+                .append(":")
+                .append(object.toStringJson())
+                .append(lastSign);
             index++;
         }
         result.append(JSON_OBJECT_END);

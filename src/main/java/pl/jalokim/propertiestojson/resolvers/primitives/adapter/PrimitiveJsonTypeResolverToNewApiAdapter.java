@@ -14,13 +14,13 @@ import static pl.jalokim.utils.reflection.InvokableReflectionUtils.invokeMethod;
 import static pl.jalokim.utils.reflection.InvokableReflectionUtils.setValueForField;
 
 @SuppressWarnings("unchecked")
-public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJsonTypeResolver
-        implements TextToConcreteObjectResolver, ObjectToJsonTypeConverter {
+public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJsonTypeResolver<Object>
+    implements TextToConcreteObjectResolver<Object>, ObjectToJsonTypeConverter<Object> {
 
-    private final PrimitiveJsonTypeResolver oldImplementation;
+    private final PrimitiveJsonTypeResolver<Object> oldImplementation;
 
-    public PrimitiveJsonTypeResolverToNewApiAdapter(PrimitiveJsonTypeResolver oldImplementation) {
-        this.oldImplementation = oldImplementation;
+    public PrimitiveJsonTypeResolverToNewApiAdapter(PrimitiveJsonTypeResolver<?> oldImplementation) {
+        this.oldImplementation = (PrimitiveJsonTypeResolver<Object>) oldImplementation;
         setValueForField(this, "canResolveClass", resolveTypeOfResolver());
     }
 
@@ -84,7 +84,7 @@ public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJso
         return oldImplementation.getClassesWhichCanResolve();
     }
 
-    public PrimitiveJsonTypeResolver getOldImplementation() {
+    public PrimitiveJsonTypeResolver<?> getOldImplementation() {
         return oldImplementation;
     }
 }

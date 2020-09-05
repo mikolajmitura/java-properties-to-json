@@ -22,15 +22,15 @@ import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJE
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
-    private final List<TextToConcreteObjectResolver> toObjectsResolvers;
+    private final List<TextToConcreteObjectResolver<?>> toObjectsResolvers;
     private final JsonTypeResolversHierarchyResolver resolversHierarchyResolver;
     private final Boolean skipNulls;
     private final NullToJsonTypeConverter nullToJsonTypeConverter;
 
-    public PrimitiveJsonTypesResolver(List<TextToConcreteObjectResolver> toObjectsResolvers,
-                                      List<ObjectToJsonTypeConverter> toJsonResolvers,
-                                      Boolean skipNulls,
-                                      NullToJsonTypeConverter nullToJsonTypeConverter) {
+    public PrimitiveJsonTypesResolver(List<TextToConcreteObjectResolver<?>> toObjectsResolvers,
+        List<ObjectToJsonTypeConverter<?>> toJsonResolvers,
+        Boolean skipNulls,
+        NullToJsonTypeConverter nullToJsonTypeConverter) {
         this.toObjectsResolvers = ImmutableList.copyOf(toObjectsResolvers);
         this.resolversHierarchyResolver = new JsonTypeResolversHierarchyResolver(toJsonResolvers);
         this.skipNulls = skipNulls;
