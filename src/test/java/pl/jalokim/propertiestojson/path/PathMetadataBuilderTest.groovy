@@ -1,9 +1,8 @@
 package pl.jalokim.propertiestojson.path
 
+import java.util.concurrent.atomic.AtomicReference
 import org.assertj.core.api.Assertions
 import spock.lang.Specification
-
-import java.util.concurrent.atomic.AtomicReference
 
 class PathMetadataBuilderTest extends Specification {
 
@@ -39,7 +38,7 @@ class PathMetadataBuilderTest extends Specification {
     }
 
     private static boolean hasExpectedValues(AtomicReference<PathMetadata> currentReference, boolean isRoot, boolean isLeaf,
-                                             String fieldName, String currentFullPath, String originalPropertyKey) {
+        String fieldName, String currentFullPath, String originalPropertyKey) {
         PathMetadata pathMetadata = currentReference.get()
         currentReference.set(pathMetadata.getChild())
 

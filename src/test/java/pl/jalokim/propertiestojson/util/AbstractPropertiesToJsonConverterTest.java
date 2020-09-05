@@ -1,8 +1,5 @@
 package pl.jalokim.propertiestojson.util;
 
-import org.assertj.core.api.Assertions;
-import pl.jalokim.propertiestojson.domain.MainObject;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import org.assertj.core.api.Assertions;
+import pl.jalokim.propertiestojson.domain.MainObject;
 
 public class AbstractPropertiesToJsonConverterTest {
 

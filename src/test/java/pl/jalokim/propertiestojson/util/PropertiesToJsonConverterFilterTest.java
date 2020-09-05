@@ -1,12 +1,11 @@
 package pl.jalokim.propertiestojson.util;
 
 import com.google.gson.Gson;
+import java.io.IOException;
+import java.io.InputStream;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import pl.jalokim.propertiestojson.domain.MainObject;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 public class PropertiesToJsonConverterFilterTest extends AbstractPropertiesToJsonConverterTest {
 

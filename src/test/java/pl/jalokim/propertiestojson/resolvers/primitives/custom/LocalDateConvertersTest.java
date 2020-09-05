@@ -1,16 +1,15 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.custom;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.Test;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverterBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class LocalDateConvertersTest {
 
@@ -22,9 +21,9 @@ public class LocalDateConvertersTest {
         TextToLocalDateResolver textToLocalDateResolver = new TextToLocalDateResolver();
         LocalDateToJsonTypeConverter localDateToJsonTypeConverter = new LocalDateToJsonTypeConverter();
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                                                                              .onlyCustomTextToObjectResolvers(textToLocalDateResolver)
-                                                                              .onlyCustomObjectToJsonTypeConverters(localDateToJsonTypeConverter)
-                                                                              .build();
+            .onlyCustomTextToObjectResolvers(textToLocalDateResolver)
+            .onlyCustomObjectToJsonTypeConverters(localDateToJsonTypeConverter)
+            .build();
         Map<String, String> properties = new HashMap<>();
         properties.put("object.localDateField", "04-08-2019");
         // when
@@ -45,9 +44,9 @@ public class LocalDateConvertersTest {
         TextToLocalDateResolver textToLocalDateResolver = new TextToLocalDateResolver();
         LocalDateToJsonTypeConverter localDateToJsonTypeConverter = new LocalDateToJsonTypeConverter(true);
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                                                                              .onlyCustomTextToObjectResolvers(textToLocalDateResolver)
-                                                                              .onlyCustomObjectToJsonTypeConverters(localDateToJsonTypeConverter)
-                                                                              .build();
+            .onlyCustomTextToObjectResolvers(textToLocalDateResolver)
+            .onlyCustomObjectToJsonTypeConverters(localDateToJsonTypeConverter)
+            .build();
         Map<String, String> properties = new HashMap<>();
         properties.put("object.localDateField", "04-08-2019");
         // when

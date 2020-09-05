@@ -11,4 +11,7 @@ public class Constants {
     public static final String JSON_OBJECT_END = "}";
     public static final String ARRAY_START_SIGN = "[";
     public static final String ARRAY_END_SIGN = "]";
+
+    private Constants() {
+    }
 }

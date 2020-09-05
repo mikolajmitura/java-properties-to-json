@@ -5,7 +5,6 @@ import pl.jalokim.propertiestojson.util.exception.MergeObjectException;
 
 @SuppressWarnings("unchecked")
 public interface MergableObject<T extends AbstractJsonType> {
-    void merge(T mergeWith, PathMetadata currentPathMetadata);
 
     static void mergeObjectIfPossible(AbstractJsonType oldJsonElement, AbstractJsonType elementToAdd, PathMetadata currentPathMetadata) {
         MergableObject oldObject = (MergableObject) oldJsonElement;
@@ -15,4 +14,6 @@ public interface MergableObject<T extends AbstractJsonType> {
             throw new MergeObjectException(oldJsonElement, elementToAdd, currentPathMetadata);
         }
     }
+
+    void merge(T mergeWith, PathMetadata currentPathMetadata);
 }

@@ -4,7 +4,7 @@ public abstract class PrimitiveJsonType<T> extends AbstractJsonType {
 
     protected T value;
 
-    public PrimitiveJsonType(T value){
+    public PrimitiveJsonType(T value) {
         this.value = value;
     }
 

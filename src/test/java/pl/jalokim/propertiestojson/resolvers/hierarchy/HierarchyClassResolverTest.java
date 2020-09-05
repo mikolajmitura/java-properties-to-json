@@ -1,18 +1,17 @@
 package pl.jalokim.propertiestojson.resolvers.hierarchy;
 
 
-import org.junit.Test;
-import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
+import static java.util.Arrays.asList;
+import static junit.framework.TestCase.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static pl.jalokim.utils.string.StringUtils.concatElementsAsLines;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import static java.util.Arrays.asList;
-import static junit.framework.TestCase.fail;
-import static org.assertj.core.api.Assertions.assertThat;
-import static pl.jalokim.utils.string.StringUtils.concatElementsAsLines;
+import org.junit.Test;
+import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
 public class HierarchyClassResolverTest {
 
@@ -44,27 +43,28 @@ public class HierarchyClassResolverTest {
     public void foundToMuchResolversToMuchInterfaces() {
         // given
         HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(
-                asList(HasMind.class, HasHair.class, HasLegs.class, Object.class, HasBrain.class, HasAwareness.class));
+            asList(HasMind.class, HasHair.class, HasLegs.class, Object.class, HasBrain.class, HasAwareness.class));
 
         Human human = new Human();
         // when
         try {
             hierarchyClassResolver.searchResolverClass(human);
             fail();
-        } catch(ParsePropertiesException ex) {
+        } catch (ParsePropertiesException ex) {
             // then
             assertThat(ex.getMessage()).isEqualTo(String.format(ERR_MSG_FORMAT,
-                                                                3,
-                                                                Human.class.getCanonicalName(),
-                                                                concatElementsAsLines(asList(HasMind.class, HasHair.class, HasLegs.class))
-                                                               ));
+                3,
+                Human.class.getCanonicalName(),
+                concatElementsAsLines(asList(HasMind.class, HasHair.class, HasLegs.class))
+            ));
         }
     }
 
     @Test
     public void foundAnimalAsResolverTypeNorToMuchInterfaces() {
         // given
-        HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(asList(Animal.class, HasMind.class, HasHair.class, HasLegs.class, Object.class, HasBrain.class, CanFly.class));
+        HierarchyClassResolver hierarchyClassResolver = new HierarchyClassResolver(
+            asList(Animal.class, HasMind.class, HasHair.class, HasLegs.class, Object.class, HasBrain.class, CanFly.class));
         Human human = new Human();
         // when
         Class<?> aClass = hierarchyClassResolver.searchResolverClass(human);
@@ -202,29 +202,27 @@ public class HierarchyClassResolverTest {
         try {
             hierarchyClassResolver.searchResolverClass(alien);
             fail();
-        } catch(ParsePropertiesException ex) {
+        } catch (ParsePropertiesException ex) {
             // then
             assertThat(ex.getMessage()).isEqualTo(String.format(ERR_MSG_FORMAT,
-                                                                2,
-                                                                Alien.class.getCanonicalName(),
-                                                                concatElementsAsLines(asList(HasMind.class, CanFly.class))
-                                                               ));
+                2,
+                Alien.class.getCanonicalName(),
+                concatElementsAsLines(asList(HasMind.class, CanFly.class))
+            ));
         }
     }
-
-    private class Animal {
-
-    }
-
 
     private interface CanStartMoving {
 
     }
 
+
     private interface CanStopMoving {
+
     }
 
     private interface HasLegs extends CanStartMoving, CanStopMoving {
+
     }
 
     private interface HasBrain extends HasAwareness {
@@ -247,6 +245,18 @@ public class HierarchyClassResolverTest {
 
     }
 
+    private interface SuperSuperAlienFunc {
+
+    }
+
+    private interface Super3xAlienFunc {
+
+    }
+
+    private class Animal {
+
+    }
+
     private class Alien implements HasMind, CanFly {
 
     }
@@ -259,19 +269,11 @@ public class HierarchyClassResolverTest {
 
     }
 
-    private interface SuperSuperAlienFunc {
-
-    }
-
     private class SuperSuperAlien extends SuperAlien implements SuperSuperAlienFunc {
 
     }
 
     private class Super3xAlien extends SuperSuperAlien implements Super3xAlienFunc {
-
-    }
-
-    private interface Super3xAlienFunc {
 
     }
 }

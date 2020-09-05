@@ -1,5 +1,14 @@
 package pl.jalokim.propertiestojson.util;
 
+import static pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeConverter.NULL_TO_JSON_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToEmptyStringResolver.EMPTY_TEXT_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJsonNullReferenceResolver.TEXT_TO_NULL_JSON_RESOLVER;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.resolvers.primitives.object.BooleanToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.object.CharacterToJsonTypeConverter;
@@ -17,31 +26,32 @@ import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJsonNullRef
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToObjectResolver;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeConverter.NULL_TO_JSON_RESOLVER;
-import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToEmptyStringResolver.EMPTY_TEXT_RESOLVER;
-import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJsonNullReferenceResolver.TEXT_TO_NULL_JSON_RESOLVER;
-
 /**
  * Builder class for PropertiesToJsonConverter
  */
 public class PropertiesToJsonConverterBuilder {
 
-    static final List<TextToConcreteObjectResolver> TO_OBJECT_RESOLVERS = defaultResolvers();
-    static final List<ObjectToJsonTypeConverter> TO_JSON_TYPE_CONVERTERS = defaultConverters();
+    static final List<TextToConcreteObjectResolver<?>> TO_OBJECT_RESOLVERS = defaultResolvers();
+    static final List<ObjectToJsonTypeConverter<?>> TO_JSON_TYPE_CONVERTERS = defaultConverters();
+
+    private final List<TextToConcreteObjectResolver<?>> resolvers = new ArrayList<>();
+    private final List<ObjectToJsonTypeConverter<?>> converters = new ArrayList<>();
+
+    private NullToJsonTypeConverter nullToJsonConverter = NULL_TO_JSON_RESOLVER;
+    private TextToJsonNullReferenceResolver textToJsonNullResolver = TEXT_TO_NULL_JSON_RESOLVER;
+    private TextToEmptyStringResolver textToEmptyStringResolver = EMPTY_TEXT_RESOLVER;
+    private Charset charset;
+    private boolean skipNulls = false;
+    private boolean onlyCustomConverters = false;
+    private boolean onlyCustomResolvers = false;
 
     /**
-     * Default list of resolvers from text to java Object...
-     * Order here is important.
+     * Default list of resolvers from text to java Object... Order here is important.
      *
      * @return list
      */
-    static List<TextToConcreteObjectResolver> defaultResolvers() {
-        List<TextToConcreteObjectResolver> toObjectResolvers = new ArrayList<>();
+    static List<TextToConcreteObjectResolver<?>> defaultResolvers() {
+        List<TextToConcreteObjectResolver<?>> toObjectResolvers = new ArrayList<>();
         toObjectResolvers.add(new TextToElementsResolver());
         toObjectResolvers.add(new TextToObjectResolver());
         toObjectResolvers.add(new TextToNumberResolver());
@@ -55,8 +65,8 @@ public class PropertiesToJsonConverterBuilder {
      *
      * @return list
      */
-    static List<ObjectToJsonTypeConverter> defaultConverters() {
-        List<ObjectToJsonTypeConverter> toJsonTypeConverters = new ArrayList<>();
+    static List<ObjectToJsonTypeConverter<?>> defaultConverters() {
+        List<ObjectToJsonTypeConverter<?>> toJsonTypeConverters = new ArrayList<>();
         toJsonTypeConverters.add(new ElementsToJsonTypeConverter());
         toJsonTypeConverters.add(new SuperObjectToJsonTypeConverter());
         toJsonTypeConverters.add(new NumberToJsonTypeConverter());
@@ -64,16 +74,6 @@ public class PropertiesToJsonConverterBuilder {
         toJsonTypeConverters.add(new BooleanToJsonTypeConverter());
         return Collections.unmodifiableList(toJsonTypeConverters);
     }
-
-    private final List<TextToConcreteObjectResolver> resolvers = new ArrayList<>();
-    private final List<ObjectToJsonTypeConverter> converters = new ArrayList<>();
-
-    private NullToJsonTypeConverter nullToJsonConverter = NULL_TO_JSON_RESOLVER;
-    private TextToJsonNullReferenceResolver textToJsonNullResolver = TEXT_TO_NULL_JSON_RESOLVER;
-    private TextToEmptyStringResolver textToEmptyStringResolver = EMPTY_TEXT_RESOLVER;
-    private boolean skipNul = false;
-    private boolean onlyCustomConverters = false;
-    private boolean onlyCustomResolvers = false;
 
     /**
      * Returns new instance of builder.
@@ -85,50 +85,51 @@ public class PropertiesToJsonConverterBuilder {
     }
 
     /**
-     * Will build PropertiesToJsonConverter only with instances provided in argument.
-     * Order of resolvers has meaning. Order is crucial.
+     * Will build PropertiesToJsonConverter only with instances provided in argument. Order of resolvers has meaning. Order is crucial.
      *
      * @param resolvers it override default list of {@link PropertiesToJsonConverterBuilder#TO_OBJECT_RESOLVERS}
      * @return builder instance
      */
-    public PropertiesToJsonConverterBuilder onlyCustomTextToObjectResolvers(TextToConcreteObjectResolver... resolvers) {
+    public PropertiesToJsonConverterBuilder onlyCustomTextToObjectResolvers(TextToConcreteObjectResolver<?>... resolvers) {
         onlyCustomResolvers = true;
         this.resolvers.addAll(Arrays.asList(resolvers));
         return this;
     }
 
     /**
-     * Will build PropertiesToJsonConverter with combined list of {@link PropertiesToJsonConverterBuilder#TO_OBJECT_RESOLVERS} and instances provided in argument.
+     * Will build PropertiesToJsonConverter with combined list of {@link PropertiesToJsonConverterBuilder#TO_OBJECT_RESOLVERS} and instances provided in
+     * argument.
      *
      * @param resolvers added to {@link PropertiesToJsonConverterBuilder#TO_OBJECT_RESOLVERS}
      * @return builder instance
      */
-    public PropertiesToJsonConverterBuilder defaultAndCustomTextToObjectResolvers(TextToConcreteObjectResolver... resolvers) {
+    public PropertiesToJsonConverterBuilder defaultAndCustomTextToObjectResolvers(TextToConcreteObjectResolver<?>... resolvers) {
         onlyCustomResolvers = false;
         this.resolvers.addAll(Arrays.asList(resolvers));
         return this;
     }
 
     /**
-     * Will build PropertiesToJsonConverter only with instances provided in argument.
-     * Order of converters has meaning only when converters can convert from the same java class.
+     * Will build PropertiesToJsonConverter only with instances provided in argument. Order of converters has meaning only when converters can convert from the
+     * same java class.
      *
      * @param converters it override default list of {@link PropertiesToJsonConverterBuilder#TO_JSON_TYPE_CONVERTERS}
      * @return builder instance
      */
-    public PropertiesToJsonConverterBuilder onlyCustomObjectToJsonTypeConverters(ObjectToJsonTypeConverter... converters) {
+    public PropertiesToJsonConverterBuilder onlyCustomObjectToJsonTypeConverters(ObjectToJsonTypeConverter<?>... converters) {
         onlyCustomConverters = true;
         this.converters.addAll(Arrays.asList(converters));
         return this;
     }
 
     /**
-     * Will build PropertiesToJsonConverter with combined list of {@link PropertiesToJsonConverterBuilder#TO_JSON_TYPE_CONVERTERS} and instances provided in argument.
+     * Will build PropertiesToJsonConverter with combined list of {@link PropertiesToJsonConverterBuilder#TO_JSON_TYPE_CONVERTERS} and instances provided in
+     * argument.
      *
      * @param converters added to {@link PropertiesToJsonConverterBuilder#TO_JSON_TYPE_CONVERTERS}
      * @return builder instance
      */
-    public PropertiesToJsonConverterBuilder defaultAndCustomObjectToJsonTypeConverters(ObjectToJsonTypeConverter... converters) {
+    public PropertiesToJsonConverterBuilder defaultAndCustomObjectToJsonTypeConverters(ObjectToJsonTypeConverter<?>... converters) {
         onlyCustomConverters = false;
         this.converters.addAll(Arrays.asList(converters));
         return this;
@@ -168,12 +169,23 @@ public class PropertiesToJsonConverterBuilder {
     }
 
     /**
+     * It will set the charset of the reader.
+     *
+     * @param charset charset to use
+     * @return builder instance
+     */
+    public PropertiesToJsonConverterBuilder charset(Charset charset) {
+        this.charset = charset;
+        return this;
+    }
+
+    /**
      * It will skip every leaf in json object which is null, not skip null in arrays.
      *
      * @return PropertiesToJsonConverterBuilder instance
      */
     public PropertiesToJsonConverterBuilder skipNulls() {
-        skipNul = true;
+        skipNulls = true;
         return this;
     }
 
@@ -183,16 +195,16 @@ public class PropertiesToJsonConverterBuilder {
      * @return instance of PropertiesToJsonConverter
      */
     public PropertiesToJsonConverter build() {
-        List<ObjectToJsonTypeConverter> resultConverters = new ArrayList<>();
-        if(onlyCustomConverters) {
+        List<ObjectToJsonTypeConverter<?>> resultConverters = new ArrayList<>();
+        if (onlyCustomConverters) {
             resultConverters.addAll(converters);
         } else {
             resultConverters.addAll(converters);
             resultConverters.addAll(TO_JSON_TYPE_CONVERTERS);
         }
 
-        List<TextToConcreteObjectResolver> resultResolvers = new ArrayList<>();
-        if(onlyCustomResolvers) {
+        List<TextToConcreteObjectResolver<?>> resultResolvers = new ArrayList<>();
+        if (onlyCustomResolvers) {
             resultResolvers.addAll(resolvers);
         } else {
             resultResolvers.addAll(resolvers);
@@ -200,10 +212,11 @@ public class PropertiesToJsonConverterBuilder {
         }
 
         return new PropertiesToJsonConverter(resultResolvers,
-                                             resultConverters,
-                                             nullToJsonConverter,
-                                             textToJsonNullResolver,
-                                             textToEmptyStringResolver,
-                                             skipNul);
+            resultConverters,
+            nullToJsonConverter,
+            textToJsonNullResolver,
+            textToEmptyStringResolver,
+            skipNulls,
+            charset);
     }
 }

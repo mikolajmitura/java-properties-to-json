@@ -1,15 +1,14 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.example;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.NumberJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
-
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 /*
 Class only for check backward compatibility with extend of PrimitiveJsonTypeResolver...
@@ -39,20 +38,20 @@ public class LocalDateTimeResolver extends PrimitiveJsonTypeResolver<LocalDate> 
 
     @Override
     protected Optional<LocalDate> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                                       String propertyValue,
-                                                                       String propertyKey) {
+        String propertyValue,
+        String propertyKey) {
         try {
             return Optional.ofNullable(LocalDate.parse(propertyValue, formatter)); // if parse then will return LocalDate
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             return Optional.empty(); // if not
         }
     }
 
     @Override
     public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                   LocalDate convertedValue,
-                                                   String propertyKey) {
-        if(asTimestampInUTC) {
+        LocalDate convertedValue,
+        String propertyKey) {
+        if (asTimestampInUTC) {
             return new NumberJsonType(convertedValue.atStartOfDay(ZoneOffset.UTC).toEpochSecond());
         }
         return ObjectFromTextJsonTypeResolver.convertFromObjectToJson(convertedValue, propertyKey);

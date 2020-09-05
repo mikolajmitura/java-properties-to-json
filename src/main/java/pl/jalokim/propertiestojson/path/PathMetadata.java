@@ -1,11 +1,12 @@
 package pl.jalokim.propertiestojson.path;
 
-import lombok.Data;
-import pl.jalokim.propertiestojson.PropertyArrayHelper;
-import pl.jalokim.propertiestojson.object.AbstractJsonType;
-
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.Constants.NORMAL_DOT;
+
+import lombok.Data;
+import pl.jalokim.propertiestojson.PropertyArrayHelper;
+import pl.jalokim.propertiestojson.exception.NotLeafValueException;
+import pl.jalokim.propertiestojson.object.AbstractJsonType;
 
 
 @Data
@@ -55,7 +56,7 @@ public class PathMetadata {
 
     public void setRawValue(Object rawValue) {
         if (!isLeaf()) {
-            throw new RuntimeException("Cannot set value for not leaf: " + getCurrentFullPath());
+            throw new NotLeafValueException("Cannot set value for not leaf: " + getCurrentFullPath());
         }
         this.rawValue = rawValue;
     }
@@ -77,22 +78,22 @@ public class PathMetadata {
         return parentFullPath + getFieldName();
     }
 
-    public void setJsonValue(AbstractJsonType jsonValue) {
-        if (!isLeaf()) {
-            throw new RuntimeException("Cannot set value for not leaf: " + getCurrentFullPath());
-        }
-        this.jsonValue = jsonValue;
-    }
-
     public AbstractJsonType getJsonValue() {
         return jsonValue;
+    }
+
+    public void setJsonValue(AbstractJsonType jsonValue) {
+        if (!isLeaf()) {
+            throw new NotLeafValueException("Cannot set value for not leaf: " + getCurrentFullPath());
+        }
+        this.jsonValue = jsonValue;
     }
 
     @Override
     public String toString() {
         return "field='" + fieldName + '\'' +
-               ", rawValue=" + rawValue +
-               ", fullPath='" + getCurrentFullPath() + '}';
+            ", rawValue=" + rawValue +
+            ", fullPath='" + getCurrentFullPath() + '}';
     }
 
     public boolean isArrayField() {

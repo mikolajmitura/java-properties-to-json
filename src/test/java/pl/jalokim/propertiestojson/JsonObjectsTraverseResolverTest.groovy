@@ -4,7 +4,6 @@ import pl.jalokim.propertiestojson.path.PathMetadata
 import spock.lang.Specification
 import spock.lang.Unroll
 
-
 class JsonObjectsTraverseResolverTest extends Specification {
 
     @Unroll

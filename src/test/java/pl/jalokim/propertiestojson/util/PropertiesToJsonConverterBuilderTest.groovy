@@ -1,5 +1,8 @@
 package pl.jalokim.propertiestojson.util
 
+import static java.lang.Boolean.FALSE
+import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT
+
 import groovy.json.JsonSlurper
 import pl.jalokim.propertiestojson.object.AbstractJsonType
 import pl.jalokim.propertiestojson.object.JsonNullReferenceType
@@ -13,9 +16,6 @@ import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJsonNullRef
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException
 import spock.lang.Specification
-
-import static java.lang.Boolean.FALSE
-import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT
 
 class PropertiesToJsonConverterBuilderTest extends Specification {
 
@@ -78,8 +78,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .skipNulls()
-                .build()
+            .skipNulls()
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("someObject.number", "123")
@@ -109,8 +109,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .skipNulls()
-                .build()
+            .skipNulls()
+            .build()
 
         Map<String, Object> properties = new HashMap<>()
         properties.put("someObject.number", 123)
@@ -142,8 +142,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .defaultAndCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
-                .build()
+            .defaultAndCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("someObject.number", "123")
@@ -174,8 +174,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .defaultAndCustomTextToObjectResolvers(new NotTrimText())
-                .build()
+            .defaultAndCustomTextToObjectResolvers(new NotTrimText())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("someObject.number", "123")
@@ -206,9 +206,9 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .defaultAndCustomTextToObjectResolvers(new NotTrimText())
-                .defaultAndCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
-                .build()
+            .defaultAndCustomTextToObjectResolvers(new NotTrimText())
+            .defaultAndCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("someObject.number", "123")
@@ -242,8 +242,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
-                .build()
+            .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("someObject.skip.number", "123")
@@ -265,8 +265,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
     def "default builder without defaults, only added converters, 2 steps -> throw exception - lack of converter"() {
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
-                .build()
+            .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("someObject.skip.number", "123")
@@ -276,17 +276,17 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         then:
         ParsePropertiesException ex = thrown()
         ex.message == "Cannot find valid JSON type resolver for class: 'class java.math.BigInteger'. \n" +
-                " for property: someObject.number, and object value: 123 \n" +
-                "Please consider add sufficient resolver to your resolvers."
+            " for property: someObject.number, and object value: 123 \n" +
+            "Please consider add sufficient resolver to your resolvers."
     }
 
     def "default builder without defaults, only added resolvers, 2 steps"() {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .onlyCustomTextToObjectResolvers(new NotTrimText(), new TextToNumberResolver())
-                .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter(), new NumberToJsonTypeConverter())
-                .build()
+            .onlyCustomTextToObjectResolvers(new NotTrimText(), new TextToNumberResolver())
+            .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter(), new NumberToJsonTypeConverter())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("someObject.number", "124")
@@ -322,8 +322,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .defaultAndCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter(), new NumberToJsonTypeConverter())
-                .build()
+            .defaultAndCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter(), new NumberToJsonTypeConverter())
+            .build()
 
         Map<String, Object> properties = new HashMap<>()
         properties.put("someObject.number", 124)
@@ -356,8 +356,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter(), new NumberToJsonTypeConverter())
-                .build()
+            .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter(), new NumberToJsonTypeConverter())
+            .build()
 
         Map<String, Object> properties = new HashMap<>()
         properties.put("someObject.number", 124)
@@ -383,8 +383,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
     def "override NullToJsonTypeConverter"() {
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .overrideNullToJsonConverter(new OwnNullToJsonTypeConverter())
-                .build()
+            .overrideNullToJsonConverter(new OwnNullToJsonTypeConverter())
+            .build()
 
         Map<String, Object> properties = new HashMap<>()
         properties.put("someObject.another", null)
@@ -405,8 +405,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .overrideTextToJsonNullResolver(new OwnTextToJsonNullReferenceResolver())
-                .build()
+            .overrideTextToJsonNullResolver(new OwnTextToJsonNullReferenceResolver())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("someObject.nullAsText", "null")
@@ -427,8 +427,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
-                .overrideTextToEmptyStringResolver(new OwnTextToEmptyStringResolverr())
-                .build()
+            .overrideTextToEmptyStringResolver(new OwnTextToEmptyStringResolverr())
+            .build()
 
         Map<String, String> properties = new HashMap<>()
         properties.put("someObject.emptyAsNull", "")
@@ -446,8 +446,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
     private static class SkipableNumberJsonTypeConverter extends NumberToJsonTypeConverter {
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                            Number convertedValue,
-                                                            String propertyKey) {
+            Number convertedValue,
+            String propertyKey) {
             if (propertyKey.contains("skip.number")) {
                 return Optional.of(SkipJsonField.SKIP_JSON_FIELD)
             }
@@ -464,8 +464,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
 
         @Override
         Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                       String propertyValue,
-                                                       String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyValue.contains("#")) {
                 return Optional.ofNullable(propertyValue.replace("#", ""))
             }
@@ -476,20 +476,21 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
     private static class OwnNullToJsonTypeConverter extends NullToJsonTypeConverter {
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                                   JsonNullReferenceType convertedValue,
-                                                                   String propertyKey) {
+            JsonNullReferenceType convertedValue,
+            String propertyKey) {
             if (propertyKey.contains("skip.null")) {
                 return Optional.of(SkipJsonField.SKIP_JSON_FIELD)
             }
             return Optional.of(convertedValue)
         }
     }
+
     private static class OwnTextToJsonNullReferenceResolver extends TextToJsonNullReferenceResolver {
 
         @Override
         Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                       String propertyValue,
-                                                       String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyValue == null || propertyValue.equals("undefined")) {
                 return Optional.of(NULL_OBJECT)
             }
@@ -501,8 +502,8 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
 
         @Override
         Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                       String propertyValue,
-                                                       String propertyKey) {
+            String propertyValue,
+            String propertyKey) {
             if (propertyValue == null || propertyValue.equals("")) {
                 return Optional.of(NULL_OBJECT)
             }

@@ -1,12 +1,11 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.custom;
 
-import org.junit.Test;
+import static java.time.Month.AUGUST;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.util.Optional;
-
-import static java.time.Month.AUGUST;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
 
 public class TextToLocalDateResolverTest {
 
