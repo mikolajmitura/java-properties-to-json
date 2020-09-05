@@ -1,12 +1,12 @@
 package pl.jalokim.propertiestojson.path;
 
+import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
+import static pl.jalokim.propertiestojson.Constants.NORMAL_DOT;
+
 import lombok.Data;
 import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.exception.NotLeafValueException;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
-
-import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
-import static pl.jalokim.propertiestojson.Constants.NORMAL_DOT;
 
 
 @Data
@@ -78,6 +78,10 @@ public class PathMetadata {
         return parentFullPath + getFieldName();
     }
 
+    public AbstractJsonType getJsonValue() {
+        return jsonValue;
+    }
+
     public void setJsonValue(AbstractJsonType jsonValue) {
         if (!isLeaf()) {
             throw new NotLeafValueException("Cannot set value for not leaf: " + getCurrentFullPath());
@@ -85,15 +89,11 @@ public class PathMetadata {
         this.jsonValue = jsonValue;
     }
 
-    public AbstractJsonType getJsonValue() {
-        return jsonValue;
-    }
-
     @Override
     public String toString() {
         return "field='" + fieldName + '\'' +
-                ", rawValue=" + rawValue +
-                ", fullPath='" + getCurrentFullPath() + '}';
+            ", rawValue=" + rawValue +
+            ", fullPath='" + getCurrentFullPath() + '}';
     }
 
     public boolean isArrayField() {

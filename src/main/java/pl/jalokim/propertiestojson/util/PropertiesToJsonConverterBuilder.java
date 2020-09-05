@@ -1,12 +1,15 @@
 package pl.jalokim.propertiestojson.util;
 
-import pl.jalokim.propertiestojson.object.AbstractJsonType;
+import static pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeConverter.NULL_TO_JSON_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToEmptyStringResolver.EMPTY_TEXT_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJsonNullReferenceResolver.TEXT_TO_NULL_JSON_RESOLVER;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.resolvers.primitives.object.BooleanToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.object.CharacterToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.object.ElementsToJsonTypeConverter;
@@ -22,10 +25,6 @@ import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToEmptyString
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJsonNullReferenceResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToObjectResolver;
-
-import static pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeConverter.NULL_TO_JSON_RESOLVER;
-import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToEmptyStringResolver.EMPTY_TEXT_RESOLVER;
-import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToJsonNullReferenceResolver.TEXT_TO_NULL_JSON_RESOLVER;
 
 /**
  * Builder class for PropertiesToJsonConverter

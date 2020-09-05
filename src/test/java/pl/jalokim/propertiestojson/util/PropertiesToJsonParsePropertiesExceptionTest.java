@@ -1,5 +1,13 @@
 package pl.jalokim.propertiestojson.util;
 
+import static junit.framework.TestCase.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE;
+import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING_RESOLVER_AS_NOT_LAST;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -11,19 +19,16 @@ import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 import pl.jalokim.propertiestojson.util.exception.MergeObjectException;
 import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import static junit.framework.TestCase.fail;
-import static org.assertj.core.api.Assertions.assertThat;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.PROPERTY_KEY_NEEDS_TO_BE_STRING_TYPE;
-import static pl.jalokim.propertiestojson.util.exception.ParsePropertiesException.STRING_RESOLVER_AS_NOT_LAST;
-
 public class PropertiesToJsonParsePropertiesExceptionTest {
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
+
+    public static void setUpMockPickupKeysOrder(PropertiesToJsonConverter converter, String... keys) {
+        PropertyKeysOrderResolverForTest pickupOrderedForTest = new PropertyKeysOrderResolverForTest();
+        pickupOrderedForTest.setUpMockKeys(keys);
+        converter.setPropertyKeysOrderResolver(pickupOrderedForTest);
+    }
 
     @Test
     public void throwWhenCannotOverrideObjectByPrimitiveValue() {
@@ -68,7 +73,8 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
     public void throwWhenCannotOverrideArrayByObject() {
         //then
         expectedEx.expect(CannotOverrideFieldException.class);
-        String expectedMsg = new CannotOverrideFieldException("some.someArray", "[{\"field\":\"elementFieldValue\"}]", "some.someArray.unExpectedField").getMessage();
+        String expectedMsg = new CannotOverrideFieldException("some.someArray", "[{\"field\":\"elementFieldValue\"}]", "some.someArray.unExpectedField")
+            .getMessage();
         expectedEx.expectMessage(expectedMsg);
         //given
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter();
@@ -76,7 +82,6 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         //when
         converter.convertToJson(addWrongParam(initProperties(), "some.someArray.unExpectedField"));
     }
-
 
     @Test
     public void throwWhenCannotOverrideArrayByObjectPrimitiveType() {
@@ -171,8 +176,8 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         expectedEx.expectMessage(STRING_RESOLVER_AS_NOT_LAST);
         //given
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new StringJsonTypeResolver(),
-                new NumberJsonTypeResolver()
+            new StringJsonTypeResolver(),
+            new NumberJsonTypeResolver()
         );
         //when
         converter.convertToJson(initProperties());
@@ -367,12 +372,6 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
         converter.convertToJson(properties);
     }
 
-    public static void setUpMockPickupKeysOrder(PropertiesToJsonConverter converter, String... keys) {
-        PropertyKeysOrderResolverForTest pickupOrderedForTest = new PropertyKeysOrderResolverForTest();
-        pickupOrderedForTest.setUpMockKeys(keys);
-        converter.setPropertyKeysOrderResolver(pickupOrderedForTest);
-    }
-
     private Map<String, String> initProperties() {
         Map<String, String> properties = new HashMap<>();
         properties.put("man.someField", "test");
@@ -385,7 +384,7 @@ public class PropertiesToJsonParsePropertiesExceptionTest {
     }
 
     private Map<String, String> addWrongParam(Map<String, String> properties, String wrongKey) {
-            properties.put(wrongKey, wrongKey + "VALUE");
+        properties.put(wrongKey, wrongKey + "VALUE");
         return properties;
     }
 

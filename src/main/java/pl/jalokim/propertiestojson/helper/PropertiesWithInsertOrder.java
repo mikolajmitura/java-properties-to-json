@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 /**
- * Implementation for Properties which stores keys in the same order like were put.
- * It supports order only in {@link #forEach(BiConsumer)} and {@link #keySet()} methods.
+ * Implementation for Properties which stores keys in the same order like were put. It supports order only in {@link #forEach(BiConsumer)} and {@link #keySet()}
+ * methods.
  */
 public class PropertiesWithInsertOrder extends Properties {
 

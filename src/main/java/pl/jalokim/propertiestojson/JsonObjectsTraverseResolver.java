@@ -1,5 +1,6 @@
 package pl.jalokim.propertiestojson;
 
+import java.util.Map;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.object.SkipJsonField;
@@ -7,8 +8,6 @@ import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.JsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.transfer.DataForResolve;
-
-import java.util.Map;
 
 public class JsonObjectsTraverseResolver {
 
@@ -20,8 +19,8 @@ public class JsonObjectsTraverseResolver {
     private ObjectJsonType currentObjectJsonType;
 
     public JsonObjectsTraverseResolver(Map<AlgorithmType, JsonTypeResolver> algorithms,
-                                       Map<String, Object> properties, String propertyKey,
-                                       PathMetadata rootPathMetaData, ObjectJsonType coreObjectJsonType) {
+        Map<String, Object> properties, String propertyKey,
+        PathMetadata rootPathMetaData, ObjectJsonType coreObjectJsonType) {
         this.properties = properties;
         this.propertyKey = propertyKey;
         this.rootPathMetaData = rootPathMetaData;
@@ -37,7 +36,8 @@ public class JsonObjectsTraverseResolver {
             return;
 
         }
-        AbstractJsonType resolverJsonObject = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(valueFromProperties, currentPathMetaData.getOriginalPropertyKey());
+        AbstractJsonType resolverJsonObject = primitiveJsonTypesResolver
+            .resolvePrimitiveTypeAndReturn(valueFromProperties, currentPathMetaData.getOriginalPropertyKey());
         if (resolverJsonObject instanceof SkipJsonField && !rootPathMetaData.getLeaf().isArrayField()) {
             return;
         } else {
@@ -48,7 +48,7 @@ public class JsonObjectsTraverseResolver {
         while (currentPathMetaData != null) {
             DataForResolve dataForResolve = new DataForResolve(properties, propertyKey, currentObjectJsonType, currentPathMetaData);
             currentObjectJsonType = algorithms.get(resolveAlgorithm(currentPathMetaData))
-                    .traverseOnObjectAndInitByField(dataForResolve);
+                .traverseOnObjectAndInitByField(dataForResolve);
             currentPathMetaData = currentPathMetaData.getChild();
         }
     }

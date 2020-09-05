@@ -1,15 +1,14 @@
 package pl.jalokim.propertiestojson.helper;
 
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
 
 public class PropertiesWithInsertOrderTest {
 
@@ -48,11 +47,11 @@ public class PropertiesWithInsertOrderTest {
         Iterator<Integer> iterator1 = expectedValues.iterator();
         // key set
         properties.keySet().forEach(key ->
-                                            assertThat(properties.get(key)).isEqualTo(iterator1.next())
-                                   );
+            assertThat(properties.get(key)).isEqualTo(iterator1.next())
+        );
         Iterator<Integer> iterator2 = expectedValues.iterator();
         properties.forEach((key, value) ->
-                                   assertThat(properties.get(key)).isEqualTo(iterator2.next())
-                          );
+            assertThat(properties.get(key)).isEqualTo(iterator2.next())
+        );
     }
 }

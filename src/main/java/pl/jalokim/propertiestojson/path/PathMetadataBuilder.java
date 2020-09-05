@@ -1,7 +1,6 @@
 package pl.jalokim.propertiestojson.path;
 
 import com.google.common.annotations.VisibleForTesting;
-
 import java.util.List;
 
 public class PathMetadataBuilder {

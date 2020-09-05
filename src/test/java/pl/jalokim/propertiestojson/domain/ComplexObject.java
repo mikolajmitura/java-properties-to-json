@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ComplexObject {
+
     private Numbers numbers;
     private Booleans booleans;
     private String text;

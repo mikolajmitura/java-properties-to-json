@@ -1,5 +1,7 @@
 package pl.jalokim.propertiestojson.util
 
+import static PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOrder
+
 import groovy.json.JsonSlurper
 import pl.jalokim.propertiestojson.helper.PropertyKeysOrderResolverForTest
 import pl.jalokim.propertiestojson.resolvers.primitives.BooleanJsonTypeResolver
@@ -8,8 +10,6 @@ import pl.jalokim.propertiestojson.resolvers.primitives.ObjectFromTextJsonTypeRe
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveArrayJsonTypeResolver
 import pl.jalokim.propertiestojson.resolvers.primitives.StringJsonTypeResolver
 import spock.lang.Specification
-
-import static PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOrder
 
 class PropertiesToJsonConverterArraysTest extends Specification {
 
@@ -48,12 +48,12 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         PropertyKeysOrderResolverForTest keyOrderResolver = new PropertyKeysOrderResolverForTest()
         keyOrderResolver.setUpMockKeys(
-                "arrayWitObjects[0][0].somefield.nextField",
-                "arrayWitObjects[0][1].somefield.nextField1",
-                "arrayWitObjects[0][1].somefield.nextField2",
-                "arrayWitObjects[1][0].somefield.nextField",
-                "arrayWitObjects[1][1].somefield.nextField1",
-                "arrayWitObjects[1][1].somefield.nextField2",
+            "arrayWitObjects[0][0].somefield.nextField",
+            "arrayWitObjects[0][1].somefield.nextField1",
+            "arrayWitObjects[0][1].somefield.nextField2",
+            "arrayWitObjects[1][0].somefield.nextField",
+            "arrayWitObjects[1][1].somefield.nextField1",
+            "arrayWitObjects[1][1].somefield.nextField2",
         )
         converter.setPropertyKeysOrderResolver(keyOrderResolver)
 
@@ -137,13 +137,13 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
-                "object.test",
-                "object.test[6]", \
-                 "object.test[7]",
-                "object.test[9]",
-                "object.test[10]",
-                "object.test[11]",
-                "test")
+            "object.test",
+            "object.test[6]",   \
+                   "object.test[7]",
+            "object.test[9]",
+            "object.test[10]",
+            "object.test[11]",
+            "test")
         String json = converter.convertToJson(getOverrideArraysProperties())
         def jsonObject = jsonSlurper.parseText(json)
         then:
@@ -165,13 +165,13 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
-                "object.test[7]",
-                "object.test[6]",
-                "object.test[10]",
-                "object.test[9]",
-                "object.test",
-                "object.test[11]",
-                "test")
+            "object.test[7]",
+            "object.test[6]",
+            "object.test[10]",
+            "object.test[9]",
+            "object.test",
+            "object.test[11]",
+            "test")
         String json = converter.convertToJson(getOverrideArraysProperties())
         def jsonObject = jsonSlurper.parseText(json)
         then:
@@ -193,8 +193,8 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
-                "object.test[2][2]",
-                "object.test[2][2].field2")
+            "object.test[2][2]",
+            "object.test[2][2].field2")
 
         Map<String, String> properties = new HashMap<>()
         properties.put("object.test[2][2]", "{\"field1\":\"field_text\"}")
@@ -213,8 +213,8 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
-                "object.test[2]",
-                "object.test[2].field2")
+            "object.test[2]",
+            "object.test[2].field2")
 
         Map<String, String> properties = new HashMap<>()
         properties.put("object.test[2]", "{\"field1\":\"field_text\"}")
@@ -233,8 +233,8 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
-                "object.test[2][2]",
-                "object.test[2][2][3]")
+            "object.test[2][2]",
+            "object.test[2][2][3]")
 
         Map<String, String> properties = new HashMap<>()
         properties.put("object.test[2][2]", "[0, 1, 2]")
@@ -252,8 +252,8 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
-                "object.test[2][2][3]",
-                "object.test[2][2]")
+            "object.test[2][2][3]",
+            "object.test[2][2]")
 
         Map<String, String> properties = new HashMap<>()
         properties.put("object.test[2][2]", "[0, 1, 2]")
@@ -271,9 +271,9 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
-                "object.test[11]",
-                "object.test[11][4]",
-                "test")
+            "object.test[11]",
+            "object.test[11][4]",
+            "test")
         def properties = getOverrideArraysProperties()
         properties.put("object.test[11][4]", "[\"next_value\", 12, true]")
         String json = converter.convertToJson(properties)
@@ -287,10 +287,10 @@ class PropertiesToJsonConverterArraysTest extends Specification {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
-                "object.test[11][4]",
-                "object.test[11][5]",
-                "object.test[11]",
-                "test")
+            "object.test[11][4]",
+            "object.test[11][5]",
+            "object.test[11]",
+            "test")
         def properties = getOverrideArraysProperties()
         properties.put("object.test[11][4]", "[\"next_value\", 12, true]")
         properties.put("object.test[11][5]", "{\"field\":\"test\", \"field2\": \"test_2\"}")
@@ -321,8 +321,8 @@ class PropertiesToJsonConverterArraysTest extends Specification {
     def "only simple text resolver but objects and array will have numbers, boolean etc"() {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new ObjectFromTextJsonTypeResolver(),
-                new StringJsonTypeResolver())
+            new ObjectFromTextJsonTypeResolver(),
+            new StringJsonTypeResolver())
 
         Map<String, String> map = new HashMap<>()
         map.put("field", "true")
@@ -346,10 +346,10 @@ class PropertiesToJsonConverterArraysTest extends Specification {
     def "return array with text elements when provided others resolvers and PrimitiveArrayJsonTypeResolver(false)"() {
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-                new PrimitiveArrayJsonTypeResolver(false),
-                new ObjectFromTextJsonTypeResolver(),
-                new NumberJsonTypeResolver(),
-                new BooleanJsonTypeResolver()
+            new PrimitiveArrayJsonTypeResolver(false),
+            new ObjectFromTextJsonTypeResolver(),
+            new NumberJsonTypeResolver(),
+            new BooleanJsonTypeResolver()
         )
         def json = converter.convertPropertiesFromFileToJson('src/test/resources/arraysMixinTypes.properties')
         print(json)

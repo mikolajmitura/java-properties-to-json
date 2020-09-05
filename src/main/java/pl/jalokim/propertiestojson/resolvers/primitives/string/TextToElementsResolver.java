@@ -1,16 +1,15 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.string;
 
-import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import static java.lang.String.join;
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.Constants.SIMPLE_ARRAY_DELIMITER;
 import static pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper.hasJsonArraySignature;
 import static pl.jalokim.propertiestojson.resolvers.primitives.utils.JsonObjectHelper.isValidJsonObjectOrArray;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 public class TextToElementsResolver implements TextToConcreteObjectResolver<List<?>> {
 
@@ -32,15 +31,15 @@ public class TextToElementsResolver implements TextToConcreteObjectResolver<List
 
     @Override
     public Optional<List<?>> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
-        if(isSimpleArray(propertyValue) && !isValidJsonObjectOrArray(propertyValue)) {
+        if (isSimpleArray(propertyValue) && !isValidJsonObjectOrArray(propertyValue)) {
 
-            if(hasJsonArraySignature(propertyValue)) {
+            if (hasJsonArraySignature(propertyValue)) {
                 propertyValue = propertyValue
-                        .replaceAll("]\\s*$", EMPTY_STRING)
-                        .replaceAll("^\\s*\\[\\s*", EMPTY_STRING);
+                    .replaceAll("]\\s*$", EMPTY_STRING)
+                    .replaceAll("^\\s*\\[\\s*", EMPTY_STRING);
                 String[] elements = propertyValue.split(arrayElementSeparator);
                 List<String> clearedElements = new ArrayList<>();
-                for(String element : elements) {
+                for (String element : elements) {
                     element = element.trim();
                     clearedElements.add(element);
                 }
@@ -48,8 +47,8 @@ public class TextToElementsResolver implements TextToConcreteObjectResolver<List
             }
 
             List<Object> elements = new ArrayList<>();
-            for(String element : propertyValue.split(arrayElementSeparator)) {
-                if(resolveTypeOfEachElement) {
+            for (String element : propertyValue.split(arrayElementSeparator)) {
+                if (resolveTypeOfEachElement) {
                     elements.add(primitiveJsonTypesResolver.getResolvedObject(element, propertyKey));
                 } else {
                     elements.add(element);

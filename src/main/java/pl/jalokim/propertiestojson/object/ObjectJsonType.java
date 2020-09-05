@@ -1,19 +1,17 @@
 package pl.jalokim.propertiestojson.object;
 
-import pl.jalokim.propertiestojson.path.PathMetadata;
-import pl.jalokim.propertiestojson.util.StringToJsonStringWrapper;
-import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
 import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
 import static pl.jalokim.propertiestojson.Constants.NEW_LINE_SIGN;
 import static pl.jalokim.propertiestojson.object.MergableObject.mergeObjectIfPossible;
 import static pl.jalokim.utils.collection.CollectionUtils.getLastIndex;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import pl.jalokim.propertiestojson.path.PathMetadata;
+import pl.jalokim.propertiestojson.util.StringToJsonStringWrapper;
+import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
 public class ObjectJsonType extends AbstractJsonType implements MergableObject<ObjectJsonType> {
 

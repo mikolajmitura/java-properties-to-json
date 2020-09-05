@@ -1,22 +1,21 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.example;
 
 
+import static java.time.Month.AUGUST;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.Test;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.NumberJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
-
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import static java.time.Month.AUGUST;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class LocalDateTimeResolverTest {
 
@@ -102,7 +101,7 @@ public class LocalDateTimeResolverTest {
         AbstractJsonType jsonObject = resolver.returnConcreteJsonType(null, localDate, "some.field");
         // then
         assertThat(jsonObject).isNotNull();
-        NumberJsonType numberJsonType = (NumberJsonType)  jsonObject;
+        NumberJsonType numberJsonType = (NumberJsonType) jsonObject;
         assertThat(numberJsonType.toString()).isEqualTo("1564876800");
     }
 
@@ -115,7 +114,7 @@ public class LocalDateTimeResolverTest {
         AbstractJsonType jsonObject = resolver.returnConcreteJsonType(null, localDate, "some.field");
         // then
         assertThat(jsonObject).isNotNull();
-        ObjectJsonType numberJsonType = (ObjectJsonType)  jsonObject;
+        ObjectJsonType numberJsonType = (ObjectJsonType) jsonObject;
         assertThat(numberJsonType.toString()).isEqualTo("{\"year\":2019,\"month\":8,\"day\":4}");
     }
 }

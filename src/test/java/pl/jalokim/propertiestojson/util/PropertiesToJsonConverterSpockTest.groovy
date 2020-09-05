@@ -15,6 +15,7 @@ class PropertiesToJsonConverterSpockTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         def jsonObject = jsonSlurper.parseText(json)
         then:
-        jsonObject.field.nextfield.array[0][5]["anotherField[external.key.leaf]"]["anotherField[[external.key.leaf][some.strange.things]]"].fieldLeaf == "someValue"
+        jsonObject.field.nextfield.array[0][5]["anotherField[external.key.leaf]"]["anotherField[[external.key.leaf][some.strange.things]]"].fieldLeaf ==
+            "someValue"
     }
 }

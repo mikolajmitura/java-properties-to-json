@@ -1,15 +1,14 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.delegator;
 
+import static pl.jalokim.utils.reflection.InvokableReflectionUtils.setValueForField;
+
+import java.util.List;
+import java.util.Optional;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.PrimitiveJsonTypeResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.object.AbstractObjectToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
-
-import java.util.List;
-import java.util.Optional;
-
-import static pl.jalokim.utils.reflection.InvokableReflectionUtils.setValueForField;
 
 @SuppressWarnings("unchecked")
 public class PrimitiveJsonTypeDelegatorResolver<T> extends PrimitiveJsonTypeResolver<T> {
@@ -18,7 +17,7 @@ public class PrimitiveJsonTypeDelegatorResolver<T> extends PrimitiveJsonTypeReso
     private final AbstractObjectToJsonTypeConverter toJsonResolver;
 
     public PrimitiveJsonTypeDelegatorResolver(TextToConcreteObjectResolver toObjectResolver,
-                                              AbstractObjectToJsonTypeConverter toJsonResolver) {
+        AbstractObjectToJsonTypeConverter toJsonResolver) {
         this.toObjectResolver = toObjectResolver;
         this.toJsonResolver = toJsonResolver;
         setValueForField(this, "canResolveClass", resolveTypeOfResolver());
@@ -34,20 +33,20 @@ public class PrimitiveJsonTypeDelegatorResolver<T> extends PrimitiveJsonTypeReso
 
     @Override
     public AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                   T convertedValue,
-                                                   String propertyKey) {
+        T convertedValue,
+        String propertyKey) {
         Optional<AbstractJsonType> optional = toJsonResolver.convertToJsonTypeOrEmpty(primitiveJsonTypesResolver,
-                                                                                      convertedValue,
-                                                                                      propertyKey);
+            convertedValue,
+            propertyKey);
         return optional.get();
     }
 
     @Override
     protected Optional<T> returnConcreteValueWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                               String propertyValue,
-                                                               String propertyKey) {
+        String propertyValue,
+        String propertyKey) {
         Optional<Object> optionalObject = toObjectResolver.returnObjectWhenCanBeResolved(primitiveJsonTypesResolver,
-                                                                            propertyValue, propertyKey);
+            propertyValue, propertyKey);
         return optionalObject.map(o -> (T) o);
     }
 

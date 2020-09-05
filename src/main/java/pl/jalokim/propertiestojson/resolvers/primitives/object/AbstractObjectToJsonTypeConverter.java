@@ -10,6 +10,7 @@ public abstract class AbstractObjectToJsonTypeConverter<T> implements ObjectToJs
 
     /**
      * Inform about that certain converter can convert from generic type.
+     *
      * @return list of classes from which can convert to json object/element.
      */
     @Override

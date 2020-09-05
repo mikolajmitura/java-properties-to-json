@@ -1,10 +1,10 @@
 package pl.jalokim.propertiestojson.util
 
+import static pl.jalokim.propertiestojson.util.PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOrder
+
 import groovy.json.JsonSlurper
 import pl.jalokim.propertiestojson.helper.PropertyKeysOrderResolverForTest
 import spock.lang.Specification
-
-import static pl.jalokim.propertiestojson.util.PropertiesToJsonParsePropertiesExceptionTest.setUpMockPickupKeysOrder
 
 class PropertiesToJsonConverterMixinObjectPropertiesTest extends Specification {
 
@@ -34,13 +34,13 @@ class PropertiesToJsonConverterMixinObjectPropertiesTest extends Specification {
         given:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         setUpMockPickupKeysOrder(converter,
-                "some.someArray[0].someObject.someArray[4]",
-                "some.someArray[0].someObject.someArray[3]",
-                "some.someArray[0].field",
-                "some.someArray[0]",
-                "some.someArray[0].someObject",
-                "some.someArray[0].objectField",
-                "some.someArray[0].someObject.anotherField"
+            "some.someArray[0].someObject.someArray[4]",
+            "some.someArray[0].someObject.someArray[3]",
+            "some.someArray[0].field",
+            "some.someArray[0]",
+            "some.someArray[0].someObject",
+            "some.someArray[0].objectField",
+            "some.someArray[0].someObject.anotherField"
         )
 
         Map<String, String> properties = new HashMap<>()

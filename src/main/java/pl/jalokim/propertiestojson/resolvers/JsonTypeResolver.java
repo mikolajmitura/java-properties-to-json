@@ -2,7 +2,6 @@ package pl.jalokim.propertiestojson.resolvers;
 
 
 import java.util.Map;
-
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
@@ -15,7 +14,7 @@ public abstract class JsonTypeResolver {
     protected String propertyKey;
     protected ObjectJsonType currentObjectJsonType;
 
-	protected ArrayJsonType getArrayJsonWhenIsValid(PathMetadata currentPathMetaData) {
+    protected ArrayJsonType getArrayJsonWhenIsValid(PathMetadata currentPathMetaData) {
         AbstractJsonType jsonType = currentObjectJsonType.getField(currentPathMetaData.getFieldName());
         return (ArrayJsonType) jsonType;
     }

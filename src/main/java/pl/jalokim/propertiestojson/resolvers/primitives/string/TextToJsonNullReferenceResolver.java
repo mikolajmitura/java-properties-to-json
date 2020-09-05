@@ -1,11 +1,10 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.string;
 
-import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
-
-import java.util.Optional;
-
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
 import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_VALUE;
+
+import java.util.Optional;
+import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 public class TextToJsonNullReferenceResolver implements TextToConcreteObjectResolver<Object> {
 

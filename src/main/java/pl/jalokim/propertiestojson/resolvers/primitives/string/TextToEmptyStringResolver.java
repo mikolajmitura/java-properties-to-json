@@ -1,8 +1,7 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.string;
 
-import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
-
 import java.util.Optional;
+import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 
 public class TextToEmptyStringResolver implements TextToConcreteObjectResolver<String> {
 
@@ -11,8 +10,8 @@ public class TextToEmptyStringResolver implements TextToConcreteObjectResolver<S
 
     @Override
     public Optional<String> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
-                                                          String propertyValue,
-                                                          String propertyKey) {
+        String propertyValue,
+        String propertyKey) {
         String text = propertyValue.equals(EMPTY_VALUE) ? EMPTY_VALUE : null;
         return Optional.ofNullable(text);
     }

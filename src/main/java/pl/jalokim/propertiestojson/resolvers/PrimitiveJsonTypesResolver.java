@@ -1,6 +1,11 @@
 package pl.jalokim.propertiestojson.resolvers;
 
+import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isArrayJson;
+import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
+
 import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.Optional;
 import pl.jalokim.propertiestojson.JsonObjectFieldsValidator;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
@@ -13,12 +18,6 @@ import pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeCon
 import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
-
-import java.util.List;
-import java.util.Optional;
-
-import static pl.jalokim.propertiestojson.JsonObjectFieldsValidator.isArrayJson;
-import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
 
 public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
@@ -50,16 +49,16 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     private void addPrimitiveFieldToCurrentJsonObject(PathMetadata currentPathMetaData) {
         String field = currentPathMetaData.getFieldName();
-        if(currentPathMetaData.isArrayField()) {
+        if (currentPathMetaData.isArrayField()) {
             addFieldToArray(currentPathMetaData);
         } else {
-            if(currentObjectJsonType.containsField(field) && isArrayJson(currentObjectJsonType.getField(field))) {
+            if (currentObjectJsonType.containsField(field) && isArrayJson(currentObjectJsonType.getField(field))) {
                 AbstractJsonType abstractJsonType = currentPathMetaData.getJsonValue();
                 ArrayJsonType currentArrayInObject = currentObjectJsonType.getJsonArray(field);
-                if(isArrayJson(abstractJsonType)) {
+                if (isArrayJson(abstractJsonType)) {
                     ArrayJsonType newArray = (ArrayJsonType) abstractJsonType;
                     List<AbstractJsonType> abstractJsonTypes = newArray.convertToListWithoutRealNull();
-                    for(int i = 0; i < abstractJsonTypes.size(); i++) {
+                    for (int i = 0; i < abstractJsonTypes.size(); i++) {
                         currentArrayInObject.addElement(i, abstractJsonTypes.get(i), currentPathMetaData);
                     }
                 } else {
@@ -73,8 +72,8 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     public Object getResolvedObject(String propertyValue, String propertyKey) {
         Optional<?> objectOptional = Optional.empty();
-        for(TextToConcreteObjectResolver primitiveResolver : toObjectsResolvers) {
-            if(!objectOptional.isPresent()) {
+        for (TextToConcreteObjectResolver primitiveResolver : toObjectsResolvers) {
+            if (!objectOptional.isPresent()) {
                 objectOptional = primitiveResolver.returnConvertedValueForClearedText(this, propertyValue, propertyKey);
             }
         }
@@ -83,13 +82,13 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
 
     public AbstractJsonType resolvePrimitiveTypeAndReturn(Object propertyValue, String propertyKey) {
         AbstractJsonType result;
-        if(propertyValue == null) {
+        if (propertyValue == null) {
             result = nullToJsonTypeConverter.convertToJsonTypeOrEmpty(this, NULL_OBJECT, propertyKey).get();
         } else {
             result = resolversHierarchyResolver.returnConcreteJsonTypeObject(this, propertyValue, propertyKey);
         }
 
-        if(Boolean.TRUE.equals(skipNulls) && result instanceof JsonNullReferenceType) {
+        if (Boolean.TRUE.equals(skipNulls) && result instanceof JsonNullReferenceType) {
             result = SkipJsonField.SKIP_JSON_FIELD;
         }
 
@@ -97,7 +96,7 @@ public class PrimitiveJsonTypesResolver extends JsonTypeResolver {
     }
 
     protected void addFieldToArray(PathMetadata currentPathMetaData) {
-        if(arrayWithGivenFieldNameExist(currentPathMetaData.getFieldName())) {
+        if (arrayWithGivenFieldNameExist(currentPathMetaData.getFieldName())) {
             fetchArrayAndAddElement(currentPathMetaData);
         } else {
             createArrayAndAddElement(currentPathMetaData);

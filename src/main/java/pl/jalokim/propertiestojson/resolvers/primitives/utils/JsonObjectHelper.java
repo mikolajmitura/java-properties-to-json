@@ -1,11 +1,24 @@
 package pl.jalokim.propertiestojson.resolvers.primitives.utils;
 
+import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
+import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
+import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
+import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
+import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
+import static pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeConverter.NULL_TO_JSON_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.object.StringToJsonTypeConverter.STRING_TO_JSON_RESOLVER;
+import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver.convertToNumber;
+import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToStringResolver.TO_STRING_RESOLVER;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
@@ -16,20 +29,6 @@ import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeC
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToBooleanResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
-import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
-import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_END;
-import static pl.jalokim.propertiestojson.Constants.JSON_OBJECT_START;
-import static pl.jalokim.propertiestojson.object.JsonNullReferenceType.NULL_OBJECT;
-import static pl.jalokim.propertiestojson.resolvers.primitives.object.NullToJsonTypeConverter.NULL_TO_JSON_RESOLVER;
-import static pl.jalokim.propertiestojson.resolvers.primitives.object.StringToJsonTypeConverter.STRING_TO_JSON_RESOLVER;
-import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver.convertToNumber;
-import static pl.jalokim.propertiestojson.resolvers.primitives.string.TextToStringResolver.TO_STRING_RESOLVER;
 
 public class JsonObjectHelper {
 
@@ -64,7 +63,7 @@ public class JsonObjectHelper {
     public static ObjectJsonType createObjectJsonType(JsonElement parsedJson, String propertyKey) {
         ObjectJsonType objectJsonType = new ObjectJsonType();
         JsonObject asJsonObject = parsedJson.getAsJsonObject();
-        for(Map.Entry<String, JsonElement> entry : asJsonObject.entrySet()) {
+        for (Map.Entry<String, JsonElement> entry : asJsonObject.entrySet()) {
             JsonElement someField = entry.getValue();
             AbstractJsonType valueOfNextField = convertToAbstractJsonType(someField, propertyKey);
             objectJsonType.addField(entry.getKey(), valueOfNextField, null);
@@ -74,23 +73,23 @@ public class JsonObjectHelper {
 
     public static AbstractJsonType convertToAbstractJsonType(JsonElement someField, String propertyKey) {
         AbstractJsonType valueOfNextField = null;
-        if(someField.isJsonNull()) {
+        if (someField.isJsonNull()) {
             valueOfNextField = NULL_OBJECT;
         }
-        if(someField.isJsonObject()) {
+        if (someField.isJsonObject()) {
             valueOfNextField = createObjectJsonType(someField, propertyKey);
         }
-        if(someField.isJsonArray()) {
+        if (someField.isJsonArray()) {
             valueOfNextField = createArrayJsonType(someField, propertyKey);
         }
-        if(someField.isJsonPrimitive()) {
+        if (someField.isJsonPrimitive()) {
             JsonPrimitive jsonPrimitive = someField.getAsJsonPrimitive();
-            if(jsonPrimitive.isString()) {
+            if (jsonPrimitive.isString()) {
                 valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsString(), propertyKey);
-            } else if(jsonPrimitive.isNumber()) {
+            } else if (jsonPrimitive.isNumber()) {
                 String numberAsText = jsonPrimitive.getAsNumber().toString();
                 valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(convertToNumber(numberAsText), propertyKey);
-            } else if(jsonPrimitive.isBoolean()) {
+            } else if (jsonPrimitive.isBoolean()) {
                 valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsBoolean(), propertyKey);
             }
         }
@@ -101,7 +100,7 @@ public class JsonObjectHelper {
         ArrayJsonType arrayJsonType = new ArrayJsonType();
         JsonArray asJsonArray = parsedJson.getAsJsonArray();
         int index = 0;
-        for(JsonElement element : asJsonArray) {
+        for (JsonElement element : asJsonArray) {
             arrayJsonType.addElement(index, convertToAbstractJsonType(element, propertyKey), null);
             index++;
         }
@@ -109,12 +108,12 @@ public class JsonObjectHelper {
     }
 
     public static boolean isValidJsonObjectOrArray(String propertyValue) {
-        if(hasJsonObjectSignature(propertyValue) || hasJsonArraySignature(propertyValue)) {
+        if (hasJsonObjectSignature(propertyValue) || hasJsonArraySignature(propertyValue)) {
             JsonParser jp = new JsonParser();
             try {
                 jp.parse(propertyValue);
                 return true;
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 return false;
             }
         }
