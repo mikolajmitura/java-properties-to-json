@@ -4,7 +4,7 @@
 
     <groupId>pl.jalokim.propertiestojson</groupId>
     <artifactId>java-properties-to-json</artifactId>
-    <version>5.2.1-SNAPSHOT</version>
+    <version>${main-version}.${minor-version}</version>
     <packaging>jar</packaging>
 
     <name>Java properties to Json</name>
@@ -12,6 +12,9 @@
     <url>https://github.com/mikolajmitura/java-properties-to-json</url>
 
     <properties>
+        <main-version>5.2</main-version>
+        <minor-version>1-SNAPSHOT</minor-version>
+
         <spock.version>1.1-groovy-2.4-rc-4</spock.version>
         <java-utils.version>1.1.1</java-utils.version>
 
