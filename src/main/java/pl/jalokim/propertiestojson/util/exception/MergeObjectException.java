@@ -8,6 +8,8 @@ import pl.jalokim.propertiestojson.path.PathMetadata;
 
 public class MergeObjectException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     public MergeObjectException(AbstractJsonType oldJsonElement, AbstractJsonType elementToAdd, PathMetadata currentPathMetadata) {
         this(oldJsonElement.toStringJson(), elementToAdd.toStringJson(), currentPathMetadata);
     }

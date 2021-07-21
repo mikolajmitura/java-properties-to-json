@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static pl.jalokim.utils.reflection.InvokableReflectionUtils.invokeMethod;
 import static pl.jalokim.utils.reflection.InvokableReflectionUtils.setValueForField;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import java.util.Optional;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
@@ -13,6 +14,7 @@ import pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeC
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
 
 @SuppressWarnings("unchecked")
+@SuppressFBWarnings("UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR")
 public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJsonTypeResolver<Object>
     implements TextToConcreteObjectResolver<Object>, ObjectToJsonTypeConverter<Object> {
 
@@ -20,7 +22,7 @@ public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJso
 
     public PrimitiveJsonTypeResolverToNewApiAdapter(PrimitiveJsonTypeResolver<?> oldImplementation) {
         this.oldImplementation = (PrimitiveJsonTypeResolver<Object>) oldImplementation;
-        setValueForField(this, "canResolveClass", resolveTypeOfResolver());
+        setValueForField(this, "typeWhichCanBeResolved", resolveTypeOfResolver());
     }
 
     @Override // from PrimitiveJsonTypeResolver and ObjectToJsonTypeConverter
@@ -55,7 +57,6 @@ public final class PrimitiveJsonTypeResolverToNewApiAdapter extends PrimitiveJso
         String propertyKey) {
         return oldImplementation.returnConcreteJsonType(primitiveJsonTypesResolver, convertedValue, propertyKey);
     }
-
 
     @Override // from TextToConcreteObjectResolver and PrimitiveJsonTypeResolver
     public Optional<Object> returnConvertedValueForClearedText(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,

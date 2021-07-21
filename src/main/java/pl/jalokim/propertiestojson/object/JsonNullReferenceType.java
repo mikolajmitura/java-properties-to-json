@@ -9,6 +9,7 @@ import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObj
  * ObjectToJsonTypeConverter#convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver, Object, String)} and can be returned by {@link
  * TextToConcreteObjectResolver#returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver, String, String)}
  */
+@SuppressWarnings("PMD.UnusedImports")
 public final class JsonNullReferenceType extends AbstractJsonType {
 
     public static final JsonNullReferenceType NULL_OBJECT = new JsonNullReferenceType();

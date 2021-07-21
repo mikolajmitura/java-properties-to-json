@@ -18,6 +18,7 @@ import pl.jalokim.propertiestojson.resolvers.primitives.object.SuperObjectToJson
  * @see <a href="https://github.com/mikolajmitura/java-properties-to-json/blob/v5.1.0/src/test/java/pl/jalokim/propertiestojson/resolvers/primitives/custom/LocalDateToJsonTypeConverterTest.java">LocalDateTimeResolverTest</a>
  * @see <a href="https://github.com/mikolajmitura/java-properties-to-json/blob/v5.1.0/src/test/java/pl/jalokim/propertiestojson/resolvers/primitives/custom/LocalDateConvertersTest.java">LocalDateTimeResolverTest</a>
  */
+@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class LocalDateToJsonTypeConverter extends AbstractObjectToJsonTypeConverter<LocalDate> {
 
     private final boolean asTimestampInUTC;

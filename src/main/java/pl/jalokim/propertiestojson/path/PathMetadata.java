@@ -8,7 +8,6 @@ import pl.jalokim.propertiestojson.PropertyArrayHelper;
 import pl.jalokim.propertiestojson.exception.NotLeafValueException;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
 
-
 @Data
 public class PathMetadata {
 
@@ -91,9 +90,9 @@ public class PathMetadata {
 
     @Override
     public String toString() {
-        return "field='" + fieldName + '\'' +
-            ", rawValue=" + rawValue +
-            ", fullPath='" + getCurrentFullPath() + '}';
+        return "field='" + fieldName + '\''
+            + ", rawValue=" + rawValue
+            + ", fullPath='" + getCurrentFullPath() + '}';
     }
 
     public boolean isArrayField() {

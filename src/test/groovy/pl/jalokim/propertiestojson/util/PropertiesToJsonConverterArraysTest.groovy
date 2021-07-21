@@ -55,7 +55,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
             "arrayWitObjects[1][1].somefield.nextField1",
             "arrayWitObjects[1][1].somefield.nextField2",
         )
-        converter.setPropertyKeysOrderResolver(keyOrderResolver)
+        converter.propertyKeysOrderResolver = keyOrderResolver
 
         def json = converter.convertPropertiesFromFileToJson("src/test/resources/arrays/multi_dim_array_in_path_object_values.properties")
         print(json)
@@ -196,7 +196,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
             "object.test[2][2]",
             "object.test[2][2].field2")
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("object.test[2][2]", "{\"field1\":\"field_text\"}")
         properties.put("object.test[2][2].field2", "2")
 
@@ -216,7 +216,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
             "object.test[2]",
             "object.test[2].field2")
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("object.test[2]", "{\"field1\":\"field_text\"}")
         properties.put("object.test[2].field2", "2")
 
@@ -236,7 +236,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
             "object.test[2][2]",
             "object.test[2][2][3]")
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("object.test[2][2]", "[0, 1, 2]")
         properties.put("object.test[2][2][3]", "true")
 
@@ -255,7 +255,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
             "object.test[2][2][3]",
             "object.test[2][2]")
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("object.test[2][2]", "[0, 1, 2]")
         properties.put("object.test[2][2][3]", "true")
 
@@ -307,7 +307,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
     }
 
     private Map<String, String> getOverrideArraysProperties() {
-        Map<String, String> map = new HashMap<>()
+        Map<String, String> map = [:]
         map.put("object.test[7]", "asdf7")
         map.put("object.test[6]", "asdf6")
         map.put("object.test[9]", "asdf9")
@@ -324,7 +324,7 @@ class PropertiesToJsonConverterArraysTest extends Specification {
             new ObjectFromTextJsonTypeResolver(),
             new StringJsonTypeResolver())
 
-        Map<String, String> map = new HashMap<>()
+        Map<String, String> map = [:]
         map.put("field", "true")
         map.put("number", "9")
         map.put("object.array", "[true, \"test\", 12, 12.0]")

@@ -23,7 +23,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder().build()
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("someObject.number", "123")
         properties.put("someObject.bool", "true")
         properties.put("someObject.text", "text")
@@ -50,7 +50,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder().build()
-        Map<String, Object> properties = new HashMap<>()
+        Map<String, Object> properties = [:]
         properties.put("someObject.number", 123)
         properties.put("someObject.bool", true)
         properties.put("someObject.text", "text")
@@ -81,7 +81,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .skipNulls()
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("someObject.number", "123")
         properties.put("someObject.bool", "true")
         properties.put("someObject.text", "text")
@@ -112,7 +112,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .skipNulls()
             .build()
 
-        Map<String, Object> properties = new HashMap<>()
+        Map<String, Object> properties = [:]
         properties.put("someObject.number", 123)
         properties.put("someObject.bool", true)
         properties.put("someObject.text", "text")
@@ -145,7 +145,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .defaultAndCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("someObject.number", "123")
         properties.put("someObject.skip.number", "123")
         properties.put("someObject.bool", "true")
@@ -177,7 +177,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .defaultAndCustomTextToObjectResolvers(new NotTrimText())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("someObject.number", "123")
         properties.put("someObject.bool", "true")
         properties.put("someObject.boolAsText", "# true ")
@@ -210,7 +210,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .defaultAndCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("someObject.number", "123")
         properties.put("someObject.skip.number", "123")
         properties.put("someObject.bool", "true")
@@ -245,7 +245,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("someObject.skip.number", "123")
         properties.put("someObject.boolAsText", "# true ")
         properties.put("someObject.text", "# text ")
@@ -268,16 +268,16 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("someObject.skip.number", "123")
         properties.put("someObject.number", "123")
 
         converter.convertToJson(properties)
         then:
         ParsePropertiesException ex = thrown()
-        ex.message == "Cannot find valid JSON type resolver for class: 'class java.math.BigInteger'. \n" +
-            " for property: someObject.number, and object value: 123 \n" +
-            "Please consider add sufficient resolver to your resolvers."
+        ex.message == String.format("Cannot find valid JSON type resolver for class: 'class java.math.BigInteger'. %n" +
+            " for property: someObject.number, and object value: 123 %n" +
+            "Please consider add sufficient resolver to your resolvers.")
     }
 
     def "default builder without defaults, only added resolvers, 2 steps"() {
@@ -288,7 +288,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter(), new NumberToJsonTypeConverter())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("someObject.number", "124")
         properties.put("someObject.skip.number", "123")
         properties.put("someObject.bool", "true")
@@ -325,7 +325,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .defaultAndCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter(), new NumberToJsonTypeConverter())
             .build()
 
-        Map<String, Object> properties = new HashMap<>()
+        Map<String, Object> properties = [:]
         properties.put("someObject.number", 124)
         properties.put("someObject.skip.number", 123)
         properties.put("someObject.bool", true)
@@ -359,7 +359,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .onlyCustomObjectToJsonTypeConverters(new SkipableNumberJsonTypeConverter(), new NumberToJsonTypeConverter())
             .build()
 
-        Map<String, Object> properties = new HashMap<>()
+        Map<String, Object> properties = [:]
         properties.put("someObject.number", 124)
         properties.put("someObject.skip.number", 123)
         properties.put("someObject.boolAsText", "# true ")
@@ -386,7 +386,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .overrideNullToJsonConverter(new OwnNullToJsonTypeConverter())
             .build()
 
-        Map<String, Object> properties = new HashMap<>()
+        Map<String, Object> properties = [:]
         properties.put("someObject.another", null)
         properties.put("someObject.null", null)
         properties.put("someObject.skip.null", null)
@@ -408,7 +408,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .overrideTextToJsonNullResolver(new OwnTextToJsonNullReferenceResolver())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("someObject.nullAsText", "null")
         properties.put("someObject.asTextToo", "null")
         properties.put("someObject.asNull", "undefined")
@@ -430,7 +430,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
             .overrideTextToEmptyStringResolver(new OwnTextToEmptyStringResolverr())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("someObject.emptyAsNull", "")
         properties.put("someObject.asNullToo", "  ")
         properties.put("someObject.asText", "undefined")
@@ -444,6 +444,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
     }
 
     private static class SkipableNumberJsonTypeConverter extends NumberToJsonTypeConverter {
+
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
             Number convertedValue,
@@ -474,6 +475,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
     }
 
     private static class OwnNullToJsonTypeConverter extends NullToJsonTypeConverter {
+
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
             JsonNullReferenceType convertedValue,
@@ -491,7 +493,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
             String propertyValue,
             String propertyKey) {
-            if (propertyValue == null || propertyValue.equals("undefined")) {
+            if (propertyValue == null || propertyValue == "undefined") {
                 return Optional.of(NULL_OBJECT)
             }
             return Optional.empty()
@@ -504,7 +506,7 @@ class PropertiesToJsonConverterBuilderTest extends Specification {
         Optional<Object> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
             String propertyValue,
             String propertyKey) {
-            if (propertyValue == null || propertyValue.equals("")) {
+            if (propertyValue == null || propertyValue == "") {
                 return Optional.of(NULL_OBJECT)
             }
             return Optional.empty()

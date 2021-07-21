@@ -3,7 +3,7 @@ package pl.jalokim.propertiestojson.path;
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 
-public class PathMetadataBuilder {
+public final class PathMetadataBuilder {
 
     private PathMetadataBuilder() {
     }
@@ -27,11 +27,11 @@ public class PathMetadataBuilder {
     }
 
     @VisibleForTesting
-    protected static List<String> getPropertyParts(String property) {
+    static List<String> getPropertyParts(String property) {
         char[] chars = property.toCharArray();
         ParserContext parserContext = new ParserContext();
-        for (char aChar : chars) {
-            parserContext.parseNextChar(aChar);
+        for (char currentChar : chars) {
+            parserContext.parseNextChar(currentChar);
         }
         return parserContext.getPropertiesParts();
     }

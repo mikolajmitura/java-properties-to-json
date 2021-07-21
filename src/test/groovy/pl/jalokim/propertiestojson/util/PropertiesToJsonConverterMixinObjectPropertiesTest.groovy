@@ -19,7 +19,7 @@ class PropertiesToJsonConverterMixinObjectPropertiesTest extends Specification {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         PropertyKeysOrderResolverForTest propertiesResolver = new PropertyKeysOrderResolverForTest()
         propertiesResolver.setUpMockKeys(MAN_ADDRESS_CITY_PATH, MAN_ADDRESS_PATH)
-        converter.setPropertyKeysOrderResolver(propertiesResolver)
+        converter.propertyKeysOrderResolver = propertiesResolver
         String json = converter.convertToJson(getProperties())
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
@@ -27,7 +27,6 @@ class PropertiesToJsonConverterMixinObjectPropertiesTest extends Specification {
         jsonObject.man.address.city == CITY_VALUE
         jsonObject.man.address.barCode == "01-103"
         jsonObject.man.address.street == "12"
-
     }
 
     def throwWhenCannotOverrideArrayElementByObjectType() {
@@ -43,7 +42,7 @@ class PropertiesToJsonConverterMixinObjectPropertiesTest extends Specification {
             "some.someArray[0].someObject.anotherField"
         )
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("some.someArray[0].field", "simpleText")
         properties.put("some.someArray[0]", "{\"objectField\": {\"nextField\": 2},\n\"someSimpleField\": \"text\"\n}")
         properties.put("some.someArray[0].objectField", "{\"nextField_3\": 3,\n  \"someSimpleField_T\": true}")
@@ -78,7 +77,7 @@ class PropertiesToJsonConverterMixinObjectPropertiesTest extends Specification {
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
         PropertyKeysOrderResolverForTest propertiesResolver = new PropertyKeysOrderResolverForTest()
         propertiesResolver.setUpMockKeys(MAN_ADDRESS_PATH, MAN_ADDRESS_CITY_PATH)
-        converter.setPropertyKeysOrderResolver(propertiesResolver)
+        converter.propertyKeysOrderResolver = propertiesResolver
         String json = converter.convertToJson(getProperties())
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
@@ -89,7 +88,7 @@ class PropertiesToJsonConverterMixinObjectPropertiesTest extends Specification {
     }
 
     private Map<String, String> getProperties() {
-        Map<String, String> map = new HashMap<>()
+        Map<String, String> map = [:]
         map.put(MAN_ADDRESS_CITY_PATH, CITY_VALUE)
         map.put(MAN_ADDRESS_PATH, "{\"barCode\":\"01-103\", \"street\": \"12\"}")
         map

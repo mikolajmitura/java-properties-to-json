@@ -6,7 +6,7 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public abstract class AbstractObjectToJsonTypeConverter<T> implements ObjectToJsonTypeConverter<T> {
 
-    protected final Class<?> canResolveClass = resolveTypeOfResolver();
+    protected final Class<?> classesWhichCanResolved = resolveTypeOfResolver();
 
     /**
      * Inform about that certain converter can convert from generic type.
@@ -15,6 +15,6 @@ public abstract class AbstractObjectToJsonTypeConverter<T> implements ObjectToJs
      */
     @Override
     public List<Class<?>> getClassesWhichCanResolve() {
-        return Collections.singletonList(canResolveClass);
+        return Collections.singletonList(classesWhichCanResolved);
     }
 }

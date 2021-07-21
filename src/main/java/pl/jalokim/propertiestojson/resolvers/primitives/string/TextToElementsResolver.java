@@ -30,6 +30,7 @@ public class TextToElementsResolver implements TextToConcreteObjectResolver<List
     }
 
     @Override
+    @SuppressWarnings("PMD.AvoidReassigningParameters")
     public Optional<List<?>> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, String propertyValue, String propertyKey) {
         if (isSimpleArray(propertyValue) && !isValidJsonObjectOrArray(propertyValue)) {
 

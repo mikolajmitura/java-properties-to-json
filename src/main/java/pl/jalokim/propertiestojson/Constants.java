@@ -1,6 +1,6 @@
 package pl.jalokim.propertiestojson;
 
-public class Constants {
+public final class Constants {
 
     public static final String NORMAL_DOT = ".";
     public static final String REGEX_DOT = "\\.";

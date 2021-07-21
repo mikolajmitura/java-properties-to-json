@@ -15,7 +15,8 @@ import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
 public class ObjectJsonType extends AbstractJsonType implements MergableObject<ObjectJsonType> {
 
-    private Map<String, AbstractJsonType> fields = new LinkedHashMap<>();
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
+    private final Map<String, AbstractJsonType> fields = new LinkedHashMap<>();
 
     public void addField(final String field, final AbstractJsonType object, PathMetadata currentPathMetaData) {
         if (object instanceof SkipJsonField) {
@@ -23,7 +24,9 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
         }
 
         AbstractJsonType oldFieldValue = fields.get(field);
-        if (oldFieldValue != null) {
+        if (oldFieldValue == null) {
+            fields.put(field, object);
+        } else {
             if (oldFieldValue instanceof MergableObject && object instanceof MergableObject) {
                 mergeObjectIfPossible(oldFieldValue, object, currentPathMetaData);
             } else {
@@ -31,8 +34,6 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
                     oldFieldValue,
                     currentPathMetaData.getOriginalPropertyKey());
             }
-        } else {
-            fields.put(field, object);
         }
     }
 
@@ -57,7 +58,7 @@ public class ObjectJsonType extends AbstractJsonType implements MergableObject<O
             AbstractJsonType object = entry.getValue();
             String lastSign = index == lastIndex ? EMPTY_STRING : NEW_LINE_SIGN;
             result.append(StringToJsonStringWrapper.wrap(entry.getKey()))
-                .append(":")
+                .append(':')
                 .append(object.toStringJson())
                 .append(lastSign);
             index++;

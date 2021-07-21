@@ -21,7 +21,6 @@ public class TextToLocalDateResolver implements TextToConcreteObjectResolver<Loc
         this(DATE_FORMAT);
     }
 
-
     public TextToLocalDateResolver(String formatOfDate) {
         formatter = DateTimeFormatter.ofPattern(formatOfDate);
     }

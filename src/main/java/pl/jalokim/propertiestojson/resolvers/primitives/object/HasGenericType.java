@@ -20,9 +20,10 @@ public interface HasGenericType<T> {
                 currentClass = currentClass.getSuperclass();
             }
         }
-        throw new ParsePropertiesException("Cannot find generic type for resolver: " + getClass() + " You can resolve it by one of below:"
-            + "\n 1. override method resolveTypeOfResolver() for provide explicit class type " +
-            "\n 2. add generic type during extension of PrimitiveJsonTypeResolver "
+        throw new ParsePropertiesException("Cannot find generic type for resolver: " + getClass()
+            + " You can resolve it by one of below:"
+            + "\n 1. override method resolveTypeOfResolver() for provide explicit class type "
+            + "\n 2. add generic type during extension of PrimitiveJsonTypeResolver "
             + "'class " + getClass().getSimpleName() + " extends PrimitiveJsonTypeResolver<GIVEN_TYPE>'");
     }
 }

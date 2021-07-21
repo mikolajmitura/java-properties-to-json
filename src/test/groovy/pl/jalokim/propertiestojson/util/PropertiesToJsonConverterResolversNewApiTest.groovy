@@ -34,7 +34,6 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         jsonObject.some.object.number == 12
     }
 
-
     def "from one to object resolver create 3 types of bean, 3 converters for them"() {
         def jsonSlurper = new JsonSlurper()
         when:
@@ -45,7 +44,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         List<TextToConcreteObjectResolver> toObjectsResolvers = [new DatesOrTimeResolver()]
 
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter(toObjectsResolvers, toJsonResolvers)
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("some.object.datetime", "123")
         properties.put("some.object.date", "123")
         properties.put("some.object.time", "123")
@@ -170,7 +169,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
             .defaultAndCustomTextToObjectResolvers(new SkipObjectResolver())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("some.object.array.skip.field.first", "12")
         properties.put("some.anotherObject.skip.field.first", "12")
         properties.put("some.object.normalNumber", "12")
@@ -205,7 +204,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
             .defaultAndCustomObjectToJsonTypeConverters(new SkipableJsonTypeConverter(), new NumberToStringJsonTypeConverter(), new NumberToJsonTypeConverter())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("some.object.numberAsText", "12")
         properties.put("some.object.normalNumber", "12")
         properties.put("some.object2.skip.field", "13")
@@ -233,7 +232,7 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
             .defaultAndCustomObjectToJsonTypeConverters(new SkipableJsonTypeConverter(), new NumberToStringJsonTypeConverter(), new NumberToJsonTypeConverter())
             .build()
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("some.object.numberAsText", "12")
         properties.put("some.object.normalNumber", "12")
         properties.put("some.object2.skip.field", "13")
@@ -249,8 +248,8 @@ class PropertiesToJsonConverterResolversNewApiTest extends Specification {
         JsonCheckerUtil.leafOfPathIsNotPresent("some.object2", json)
     }
 
-
     private static class SkipableJsonTypeConverter extends NumberToJsonTypeConverter {
+
         @Override
         Optional<AbstractJsonType> convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
             Number convertedValue,

@@ -29,6 +29,7 @@ import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToObjectResol
 /**
  * Builder class for PropertiesToJsonConverter
  */
+@SuppressWarnings({"PMD.RedundantFieldInitializer", "PMD.AvoidFieldNameMatchingMethodName"})
 public class PropertiesToJsonConverterBuilder {
 
     static final List<TextToConcreteObjectResolver<?>> TO_OBJECT_RESOLVERS = defaultResolvers();
