@@ -21,7 +21,6 @@ public class ObjectFromTextJsonTypeResolver extends PrimitiveJsonTypeDelegatorRe
         super(new TextToObjectResolver(), new SuperObjectToJsonTypeConverter());
     }
 
-
     /**
      * It convert to implementation of AbstractJsonType through use of json for conversion from java object to raw json, then raw json convert to
      * com.google.gson.JsonElement, and this JsonElement to instance of AbstractJsonType (json object, array json, or simple text json)

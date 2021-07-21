@@ -1,6 +1,7 @@
 package pl.jalokim.propertiestojson.helper;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -10,6 +11,8 @@ import java.util.function.BiConsumer;
  * methods.
  */
 public class PropertiesWithInsertOrder extends Properties {
+
+    private static final long serialVersionUID = 1L;
 
     private final Set<Object> orderedKeys = new LinkedHashSet<>();
 
@@ -42,5 +45,25 @@ public class PropertiesWithInsertOrder extends Properties {
     @Override
     public synchronized Set<Object> keySet() {
         return orderedKeys;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PropertiesWithInsertOrder)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        PropertiesWithInsertOrder that = (PropertiesWithInsertOrder) o;
+        return Objects.equals(orderedKeys, that.orderedKeys);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), orderedKeys);
     }
 }

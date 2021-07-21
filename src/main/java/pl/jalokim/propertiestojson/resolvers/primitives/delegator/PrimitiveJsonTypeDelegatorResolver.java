@@ -2,6 +2,7 @@ package pl.jalokim.propertiestojson.resolvers.primitives.delegator;
 
 import static pl.jalokim.utils.reflection.InvokableReflectionUtils.setValueForField;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import java.util.Optional;
 import pl.jalokim.propertiestojson.object.AbstractJsonType;
@@ -11,16 +12,18 @@ import pl.jalokim.propertiestojson.resolvers.primitives.object.AbstractObjectToJ
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
 
 @SuppressWarnings("unchecked")
+@SuppressFBWarnings("UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR")
 public class PrimitiveJsonTypeDelegatorResolver<T> extends PrimitiveJsonTypeResolver<T> {
 
     private final TextToConcreteObjectResolver toObjectResolver;
     private final AbstractObjectToJsonTypeConverter toJsonResolver;
 
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public PrimitiveJsonTypeDelegatorResolver(TextToConcreteObjectResolver toObjectResolver,
         AbstractObjectToJsonTypeConverter toJsonResolver) {
         this.toObjectResolver = toObjectResolver;
         this.toJsonResolver = toJsonResolver;
-        setValueForField(this, "canResolveClass", resolveTypeOfResolver());
+        setValueForField(this, "typeWhichCanBeResolved", resolveTypeOfResolver());
     }
 
     @Override

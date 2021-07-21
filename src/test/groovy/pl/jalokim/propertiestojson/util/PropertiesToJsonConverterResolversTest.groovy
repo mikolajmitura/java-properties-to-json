@@ -176,10 +176,9 @@ class PropertiesToJsonConverterResolversTest extends Specification {
         println(json)
         then:
         Exception ex = thrown()
-        ex.message == "Cannot find valid JSON type resolver for class: 'class java.math.BigDecimal'. \n" +
-            "Please consider add sufficient resolver to your resolvers."
+        ex.message == String.format("Cannot find valid JSON type resolver for class: 'class java.math.BigDecimal'. %n" +
+            "Please consider add sufficient resolver to your resolvers.")
     }
-
 
     private Properties createProperties() {
         Properties properties = new Properties()
@@ -218,7 +217,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
     }
 
     private Map<String, String> createStringValueMap() {
-        Map<String, String> map = new HashMap<>()
+        Map<String, String> map = [:]
         map.put("man.stringNumber", "123")
         map.put("man.doubleValue", "1.132")
         map.put("man.text", "text")
@@ -298,7 +297,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
             new BooleanJsonTypeResolver()
         )
 
-        Map<String, Object> properties = new HashMap<>()
+        Map<String, Object> properties = [:]
         properties.put("object.number", 12)
         properties.put("object.boolean", true)
         properties.put("object.booleanAsText", "true")
@@ -324,7 +323,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
             new BooleanJsonTypeResolver()
         )
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("object.number", "12")
         properties.put("object.boolean", "true")
         properties.put("object.booleanAsText", "true")
@@ -386,10 +385,7 @@ class PropertiesToJsonConverterResolversTest extends Specification {
             new NumberToJsonTypeConverter()
         ]
 
-        PropertiesToJsonConverter converter = new PropertiesToJsonConverter(
-            new ArrayList<>(),
-            objectToJsonResolvers
-        )
+        PropertiesToJsonConverter converter = new PropertiesToJsonConverter([], objectToJsonResolvers)
         Properties properties = new Properties()
         properties.put("test.test", 12)
 

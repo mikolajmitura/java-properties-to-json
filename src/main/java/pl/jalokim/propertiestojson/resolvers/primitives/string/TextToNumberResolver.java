@@ -15,6 +15,7 @@ public class TextToNumberResolver implements TextToConcreteObjectResolver<Number
         return null;
     }
 
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     private static Number convertToNumberFromText(String propertyValue) {
 
         try {

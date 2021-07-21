@@ -19,6 +19,7 @@ public class HierarchyClassResolver {
         this.resolverClasses = typesWhichCanResolve;
     }
 
+    @SuppressWarnings("PMD.NPathComplexity")
     public Class<?> searchResolverClass(Object instance) {
         if (instance == null) {
             return null;
@@ -123,8 +124,8 @@ public class HierarchyClassResolver {
         return new ArrayList<>(Arrays.asList(type.getInterfaces()));
     }
 
-
     @Data
+    @SuppressWarnings("PMD.RedundantFieldInitializer")
     private static class SearchContext {
 
         final List<Class<?>> foundClasses = new ArrayList<>();

@@ -1,6 +1,5 @@
 package pl.jalokim.propertiestojson.object;
 
-
 import static pl.jalokim.propertiestojson.Constants.ARRAY_END_SIGN;
 import static pl.jalokim.propertiestojson.Constants.ARRAY_START_SIGN;
 import static pl.jalokim.propertiestojson.Constants.EMPTY_STRING;
@@ -19,7 +18,6 @@ import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
-
 public class ArrayJsonType extends AbstractJsonType implements MergableObject<ArrayJsonType> {
 
     public static final int INIT_SIZE = 100;
@@ -29,6 +27,7 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
     public ArrayJsonType() {
     }
 
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public ArrayJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, Collection<?> elements, PathMetadata currentPathMetadata, String propertyKey) {
         Iterator<?> iterator = elements.iterator();
         int index = 0;
@@ -67,14 +66,14 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
         rewriteArrayWhenIsFull(index);
         AbstractJsonType oldObject = elements[index];
 
-        if (oldObject != null) {
+        if (oldObject == null) {
+            elements[index] = elementToAdd;
+        } else {
             if (oldObject instanceof MergableObject && elementToAdd instanceof MergableObject) {
                 mergeObjectIfPossible(oldObject, elementToAdd, currentPathMetadata);
             } else {
                 throw new CannotOverrideFieldException(currentPathMetadata.getCurrentFullPath(), oldObject, currentPathMetadata.getOriginalPropertyKey());
             }
-        } else {
-            elements[index] = elementToAdd;
         }
     }
 
@@ -166,10 +165,10 @@ public class ArrayJsonType extends AbstractJsonType implements MergableObject<Ar
 
         for (int i = 0; i < maxIndex + 1; i++) {
             AbstractJsonType element = elements[i];
-            if (element != null) {
-                elementsList.add(element);
-            } else {
+            if (element == null) {
                 elementsList.add(NULL_OBJECT);
+            } else {
+                elementsList.add(element);
             }
         }
         return elementsList;

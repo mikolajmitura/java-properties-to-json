@@ -10,7 +10,7 @@ class JsonObjectsTraverseResolverTest extends Specification {
     def "all given field after test has expected result"(String arrayFieldName, boolean expected) {
         when:
         PathMetadata pathMetadata = new PathMetadata()
-        pathMetadata.setFieldName(arrayFieldName)
+        pathMetadata.fieldName = arrayFieldName
         boolean result = pathMetadata.isArrayField()
         then:
         result == expected
@@ -29,6 +29,5 @@ class JsonObjectsTraverseResolverTest extends Specification {
         "array_[12name"          | false
         "array]name"             | false
         "array[name]" | false
-
     }
 }

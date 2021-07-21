@@ -13,9 +13,9 @@ public class JsonObjectsTraverseResolver {
 
     private final Map<AlgorithmType, JsonTypeResolver> algorithms;
     private final PrimitiveJsonTypesResolver primitiveJsonTypesResolver;
-    private Map<String, Object> properties;
-    private String propertyKey;
-    private PathMetadata rootPathMetaData;
+    private final Map<String, Object> properties;
+    private final String propertyKey;
+    private final PathMetadata rootPathMetaData;
     private ObjectJsonType currentObjectJsonType;
 
     public JsonObjectsTraverseResolver(Map<AlgorithmType, JsonTypeResolver> algorithms,
@@ -62,7 +62,6 @@ public class JsonObjectsTraverseResolver {
         }
         return AlgorithmType.OBJECT;
     }
-
 
     private boolean isPrimitiveField(PathMetadata currentPathMetaData) {
         return currentPathMetaData.isLeaf();

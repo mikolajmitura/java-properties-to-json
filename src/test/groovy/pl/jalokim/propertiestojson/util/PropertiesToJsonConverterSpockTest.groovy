@@ -4,6 +4,7 @@ import groovy.json.JsonSlurper
 import spock.lang.Specification
 
 class PropertiesToJsonConverterSpockTest extends Specification {
+
     def "not split all by dot"() {
         given:
 

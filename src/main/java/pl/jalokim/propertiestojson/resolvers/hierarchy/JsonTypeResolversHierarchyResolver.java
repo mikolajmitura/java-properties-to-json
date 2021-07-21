@@ -26,17 +26,18 @@ import pl.jalokim.propertiestojson.util.exception.ParsePropertiesException;
  */
 public class JsonTypeResolversHierarchyResolver {
 
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     private final Map<Class<?>, List<ObjectToJsonTypeConverter<?>>> resolversByType = new HashMap<>();
     private final HierarchyClassResolver hierarchyClassResolver;
 
     public JsonTypeResolversHierarchyResolver(List<ObjectToJsonTypeConverter<?>> resolvers) {
         for (ObjectToJsonTypeConverter<?> resolver : resolvers) {
-            for (Class<?> canResolveType : resolver.getClassesWhichCanResolve()) {
-                List<ObjectToJsonTypeConverter<?>> resolversByClass = resolversByType.get(canResolveType);
+            for (Class<?> typeWhichCanBeResolved : resolver.getClassesWhichCanResolve()) {
+                List<ObjectToJsonTypeConverter<?>> resolversByClass = resolversByType.get(typeWhichCanBeResolved);
                 if (resolversByClass == null) {
                     List<ObjectToJsonTypeConverter<?>> newResolvers = new ArrayList<>();
                     newResolvers.add(resolver);
-                    resolversByType.put(canResolveType, newResolvers);
+                    resolversByType.put(typeWhichCanBeResolved, newResolvers);
                 } else {
                     resolversByClass.add(resolver);
                 }
@@ -64,8 +65,8 @@ public class JsonTypeResolversHierarchyResolver {
         }
 
         if (!resolvers.isEmpty()) {
-            if (instanceClass != String.class && resolvers.size() > 1 &&
-                resolvers.stream().anyMatch(resolver -> resolver instanceof PrimitiveJsonTypeResolverToNewApiAdapter)) {
+            if (instanceClass != String.class && resolvers.size() > 1
+                && resolvers.stream().anyMatch(resolver -> resolver instanceof PrimitiveJsonTypeResolverToNewApiAdapter)) {
                 List<Class<?>> resolversClasses = resolvers.stream()
                     .map(resolver -> {
                         if (resolver instanceof PrimitiveJsonTypeResolverToNewApiAdapter) {

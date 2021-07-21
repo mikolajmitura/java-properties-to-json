@@ -9,7 +9,7 @@ import pl.jalokim.propertiestojson.object.PrimitiveJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.util.exception.CannotOverrideFieldException;
 
-public class JsonObjectFieldsValidator {
+public final class JsonObjectFieldsValidator {
 
     private JsonObjectFieldsValidator() {
     }

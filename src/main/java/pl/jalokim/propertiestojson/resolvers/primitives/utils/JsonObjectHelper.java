@@ -30,11 +30,11 @@ import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToBooleanReso
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver;
 import pl.jalokim.propertiestojson.resolvers.primitives.string.TextToNumberResolver;
 
-public class JsonObjectHelper {
+public final class JsonObjectHelper {
 
-    private static final PrimitiveJsonTypesResolver primitiveJsonTypesResolver;
-    private static final JsonParser jp = new JsonParser();
-    private static final Gson gson = new Gson();
+    private static final PrimitiveJsonTypesResolver PRIMITIVE_JSON_TYPES_RESOLVER;
+    private static final JsonParser JSON_PARSER = new JsonParser();
+    private static final Gson GSON = new Gson();
 
     static {
         List<ObjectToJsonTypeConverter<?>> toJsonResolvers = new ArrayList<>();
@@ -46,18 +46,18 @@ public class JsonObjectHelper {
         toObjectsResolvers.add(new TextToNumberResolver());
         toObjectsResolvers.add(new TextToBooleanResolver());
         toObjectsResolvers.add(TO_STRING_RESOLVER);
-        primitiveJsonTypesResolver = new PrimitiveJsonTypesResolver(toObjectsResolvers, toJsonResolvers, false, NULL_TO_JSON_RESOLVER);
+        PRIMITIVE_JSON_TYPES_RESOLVER = new PrimitiveJsonTypesResolver(toObjectsResolvers, toJsonResolvers, false, NULL_TO_JSON_RESOLVER);
     }
 
     private JsonObjectHelper() {
     }
 
     public static String toJson(Object object) {
-        return gson.toJson(object);
+        return GSON.toJson(object);
     }
 
     public static JsonElement toJsonElement(String json) {
-        return jp.parse(json);
+        return JSON_PARSER.parse(json);
     }
 
     public static ObjectJsonType createObjectJsonType(JsonElement parsedJson, String propertyKey) {
@@ -85,12 +85,12 @@ public class JsonObjectHelper {
         if (someField.isJsonPrimitive()) {
             JsonPrimitive jsonPrimitive = someField.getAsJsonPrimitive();
             if (jsonPrimitive.isString()) {
-                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsString(), propertyKey);
+                valueOfNextField = PRIMITIVE_JSON_TYPES_RESOLVER.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsString(), propertyKey);
             } else if (jsonPrimitive.isNumber()) {
                 String numberAsText = jsonPrimitive.getAsNumber().toString();
-                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(convertToNumber(numberAsText), propertyKey);
+                valueOfNextField = PRIMITIVE_JSON_TYPES_RESOLVER.resolvePrimitiveTypeAndReturn(convertToNumber(numberAsText), propertyKey);
             } else if (jsonPrimitive.isBoolean()) {
-                valueOfNextField = primitiveJsonTypesResolver.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsBoolean(), propertyKey);
+                valueOfNextField = PRIMITIVE_JSON_TYPES_RESOLVER.resolvePrimitiveTypeAndReturn(jsonPrimitive.getAsBoolean(), propertyKey);
             }
         }
         return valueOfNextField;

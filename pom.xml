@@ -2,52 +2,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>pl.jalokim.parentpom</groupId>
+        <artifactId>java-parent-pom</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
     <groupId>pl.jalokim.propertiestojson</groupId>
     <artifactId>java-properties-to-json</artifactId>
     <version>${main-version}.${minor-version}</version>
     <packaging>jar</packaging>
 
-    <name>Java properties to Json</name>
-    <description>Library used to convert from java properties to json</description>
-    <url>https://github.com/mikolajmitura/java-properties-to-json</url>
-
     <properties>
         <main-version>5.2</main-version>
         <minor-version>1-SNAPSHOT</minor-version>
 
-        <spock.version>1.1-groovy-2.4-rc-4</spock.version>
-        <java-utils.version>1.1.1</java-utils.version>
+        <!-- module info required to override from parent pom-->
+        <java.version>1.8</java.version>
+        <release.project.name>Java properties to Json</release.project.name>
+        <release.project.description>Library used to convert from java properties to json</release.project.description>
+        <release.project.repository-name>java-utils</release.project.repository-name>
+        <archunit.package.to.verify>java-properties-to-json</archunit.package.to.verify>
+        <coveralls.repo.token>2cWt0w37Yh0llv0dv4uZOMNBq5LIh9qZA</coveralls.repo.token>
 
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <!--Git Flow-->
-        <noDeploy>true</noDeploy> <!--https://ecosystem.atlassian.net/browse/MJF-145-->
-        <gitUsername />
-        <gitPassword />
+        <java-utils.version>3.0.1</java-utils.version>
     </properties>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>Mikołaj Mitura</name>
-            <email>mikolio1@o2.pl</email>
-            <organizationUrl>https://github.com/mikolajmitura/java-properties-to-json</organizationUrl>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:git://github.com/mikolajmitura/java-properties-to-json.git</connection>
-        <developerConnection>scm:git:ssh://github.com/mikolajmitura/java-properties-to-json.git</developerConnection>
-        <url>https://github.com/mikolajmitura/java-properties-to-json</url>
-    </scm>
 
     <dependencies>
         <dependency>
@@ -58,7 +38,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>28.1-jre</version>
+            <version>29.0-jre </version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -73,216 +53,10 @@
 
         <!-- tests -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>2.6.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>2.4.10</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spockframework</groupId>
-            <artifactId>spock-core</artifactId>
-            <version>${spock.version}</version>
-            <scope>test</scope>
+            <groupId>pl.jalokim.utils</groupId>
+            <artifactId>test-utils</artifactId>
+            <version>${java-utils.version}</version>
         </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>1.0-m5.1</version>
-                <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <pushFeatures>false</pushFeatures>
-                    <pushReleases>false</pushReleases>
-                    <pushHotfixes>false</pushHotfixes>
-                    <noDeploy>${noDeploy}</noDeploy>
-                    <keepBranch>false</keepBranch>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <scmCommentPrefix>[gitflow]</scmCommentPrefix>
-                    <flowInitContext>
-                        <masterBranchName>master</masterBranchName>
-                        <developBranchName>develop</developBranchName>
-                        <featureBranchPrefix>feature-</featureBranchPrefix>
-                        <releaseBranchPrefix>release-</releaseBranchPrefix>
-                        <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-                        <versionTagPrefix>v</versionTagPrefix>
-                    </flowInitContext>
-                    <username>${gitUsername}</username>
-                    <password>${gitPassword}</password>
-                </configuration>
-            </plugin>
-
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
-                <configuration>
-                    <!-- workaround due to jdk bug -->
-                    <source>8</source>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.gmavenplus</groupId>
-                <artifactId>gmavenplus-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <sources>
-                        <source>
-                            <directory>${project.basedir}/src/main/java</directory>
-                            <includes>
-                                <include>**/*.groovy</include>
-                            </includes>
-                        </source>
-                    </sources>
-                    <testSources>
-                        <testSource>
-                            <directory>${project.basedir}/src/test/java</directory>
-                            <includes>
-                                <include>**/*.groovy</include>
-                            </includes>
-                        </testSource>
-                    </testSources>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                        <version>2.4.4</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <!-- attached to Maven test phase -->
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.3.0</version>
-                <configuration>
-                    <repoToken>2cWt0w37Yh0llv0dv4uZOMNBq5LIh9qZA</repoToken>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <!--mvn clean deploy -Prelease-->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.7</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-
-        </profile>
-    </profiles>
-
 
 </project>

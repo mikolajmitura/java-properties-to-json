@@ -9,7 +9,7 @@ import pl.jalokim.propertiestojson.resolvers.PrimitiveJsonTypesResolver;
 import pl.jalokim.propertiestojson.resolvers.hierarchy.JsonTypeResolversHierarchyResolver;
 
 /**
- * You can extends {@link AbstractObjectToJsonTypeConverter} which have implemented {@link AbstractObjectToJsonTypeConverter#canResolveClass}
+ * You can extends {@link AbstractObjectToJsonTypeConverter} which have implemented {@link AbstractObjectToJsonTypeConverter#classesWhichCanResolved}
  *
  * @param <T> Generic type of converter.
  */

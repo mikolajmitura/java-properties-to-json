@@ -21,7 +21,7 @@ class PropertiesToJsonConverterEmptyPropertiesTest extends Specification {
         def jsonSlurper = new JsonSlurper()
         when:
         PropertiesToJsonConverter converter = new PropertiesToJsonConverter()
-        Map<String, String> map = new HashMap<>()
+        Map<String, String> map = [:]
         map.put("man.nullValue", null)
         map.put("man.nullToo", "null")
         map.put("man.empty", "")

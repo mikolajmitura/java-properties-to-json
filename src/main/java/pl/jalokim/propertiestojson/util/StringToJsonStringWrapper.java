@@ -1,6 +1,6 @@
 package pl.jalokim.propertiestojson.util;
 
-public class StringToJsonStringWrapper {
+public final class StringToJsonStringWrapper {
 
     private static final String JSON_STRING_SCHEMA = "\"%s\"";
 

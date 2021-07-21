@@ -5,6 +5,8 @@ import pl.jalokim.propertiestojson.object.AbstractJsonType;
 
 public class CannotOverrideFieldException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     private static final String CANNOT_OVERRIDE_VALUE = "Cannot override value at path: '%s', current value is: '%s', problematic property key: '%s'";
 
     public CannotOverrideFieldException(String currentPath, AbstractJsonType currentValue, String propertyKey) {

@@ -15,7 +15,7 @@ import pl.jalokim.propertiestojson.resolvers.primitives.object.HasGenericType;
 @Deprecated
 public abstract class PrimitiveJsonTypeResolver<T> implements HasGenericType<T> {
 
-    protected final Class<?> canResolveClass = resolveTypeOfResolver();
+    protected final Class<?> typeWhichCanBeResolved = resolveTypeOfResolver();
 
     @InvokedFromAdapter
     @InvokedFromDelegator
@@ -46,7 +46,6 @@ public abstract class PrimitiveJsonTypeResolver<T> implements HasGenericType<T> 
     @InvokedFromAdapter
     public abstract AbstractJsonType returnConcreteJsonType(PrimitiveJsonTypesResolver primitiveJsonTypesResolver, T convertedValue, String propertyKey);
 
-
     @InvokedFromAdapter
     @InvokedFromDelegator
     public Optional<T> returnConvertedValueForClearedText(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
@@ -74,6 +73,6 @@ public abstract class PrimitiveJsonTypeResolver<T> implements HasGenericType<T> 
     @InvokedFromAdapter
     @InvokedFromDelegator
     public List<Class<?>> getClassesWhichCanResolve() {
-        return Collections.singletonList(canResolveClass);
+        return Collections.singletonList(typeWhichCanBeResolved);
     }
 }

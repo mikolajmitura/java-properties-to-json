@@ -36,7 +36,7 @@ public class ElementsToJsonTypeConverter extends AbstractObjectToJsonTypeConvert
     }
 
     public boolean hasElements(Class<?> classToTest) {
-        return canResolveClass.isAssignableFrom(classToTest) || classToTest.isArray();
+        return classesWhichCanResolved.isAssignableFrom(classToTest) || classToTest.isArray();
     }
 
     @Override

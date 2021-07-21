@@ -23,7 +23,7 @@ class OwnJsonTypeResolverTest extends Specification {
             new BooleanJsonTypeResolver()
         )
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("object.ownBean", "package.OwnBean:text_value,2019")
         properties.put("object.booleanAsTest", "true")
         properties.put("object.number", "12")
@@ -68,7 +68,7 @@ class OwnJsonTypeResolverTest extends Specification {
             new OwnBeanPrimitiveJsonTypeResolver()
         )
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("deprecated.one", "12")
 
         converter.convertToJson(properties)
@@ -119,6 +119,7 @@ class OwnJsonTypeResolverTest extends Specification {
     }
 
     private static class OwnBean {
+
         private final String textField
         private final LocalDate localDate
 
@@ -156,9 +157,9 @@ class OwnJsonTypeResolverTest extends Specification {
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
-        jsonObject.object.sec1 == "hash1:#1:hash2:#2" + ":MAIN_HASH: " + SecureResolver.HASH
-        jsonObject.object.sec2 == "hash:" + secHash + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
-        jsonObject.object.sec3 == "hash3:#3" + ":MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.sec1 == "hash1:#1:hash2:#2:MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.sec2 == "hash:" + secHash + "#1:MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.sec3 == "hash3:#3:MAIN_HASH: " + SecureResolver.HASH
         jsonObject.object.boolean1 == true
         jsonObject.object.numberAsText == "12"
         assertInvocations(tested, "resolveTypeOfResolver", 3)
@@ -178,7 +179,7 @@ class OwnJsonTypeResolverTest extends Specification {
             new BooleanJsonTypeResolver()
         )
 
-        Map<String, String> properties = new HashMap<>()
+        Map<String, String> properties = [:]
         properties.put("object.sec_1", "sec_hash: _^ _^ _ ")
         properties.put("object.sec_2", "sec_hash: _^1_^2_ ")
         properties.put("object.boolean1", "true")
@@ -188,8 +189,8 @@ class OwnJsonTypeResolverTest extends Specification {
         println(json)
         def jsonObject = jsonSlurper.parseText(json)
         then:
-        jsonObject.object.sec_1 == "hash:" + " _^ _^ _ " + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
-        jsonObject.object.sec_2 == "hash:" + " _^1_^2_ " + "#1" + ":MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.sec_1 == "hash: _^ _^ _ #1:MAIN_HASH: " + SecureResolver.HASH
+        jsonObject.object.sec_2 == "hash: _^1_^2_ #1:MAIN_HASH: " + SecureResolver.HASH
         jsonObject.object.boolean1 == true
         jsonObject.object.numberAsText == "12"
         assertInvocations(tested, "resolveTypeOfResolver", 3)
@@ -208,12 +209,12 @@ class OwnJsonTypeResolverTest extends Specification {
     private static class SecureResolver extends PrimitiveJsonTypeResolver {
 
         static final String HASH = "sfgskdjg09384"
-        static final Map<SecureResolver, AtomicInteger> resolveTypeOfResolverMap = new HashMap<>()
-        private Map<String, AtomicInteger> invocationMap = invocationMap()
+        static final Map<SecureResolver, AtomicInteger> RESOLVE_TYPE_OF_RESOLVER_MAP = [:]
+        private Map<String, AtomicInteger> invocationMap = createInvocationMap()
 
-        Map<String, AtomicInteger> invocationMap() {
-            Map<String, AtomicInteger> invocationMap = new HashMap<>()
-            invocationMap.put("resolveTypeOfResolver", resolveTypeOfResolverMap.get(this))
+        Map<String, AtomicInteger> createInvocationMap() {
+            Map<String, AtomicInteger> invocationMap = [:]
+            invocationMap.put("resolveTypeOfResolver", RESOLVE_TYPE_OF_RESOLVER_MAP.get(this))
             invocationMap.put("returnJsonType", new AtomicInteger())
             invocationMap.put("returnConcreteValueWhenCanBeResolved", new AtomicInteger())
             invocationMap.put("returnConvertedValueForClearedText", new AtomicInteger())
@@ -224,8 +225,8 @@ class OwnJsonTypeResolverTest extends Specification {
 
         @Override
         Class<?> resolveTypeOfResolver() {
-            resolveTypeOfResolverMap.putIfAbsent(this, new AtomicInteger())
-            resolveTypeOfResolverMap.get(this).incrementAndGet()
+            RESOLVE_TYPE_OF_RESOLVER_MAP.putIfAbsent(this, new AtomicInteger())
+            RESOLVE_TYPE_OF_RESOLVER_MAP.get(this).incrementAndGet()
             return Object.class
         }
 
@@ -270,7 +271,6 @@ class OwnJsonTypeResolverTest extends Specification {
             return returnConcreteValueWhenCanBeResolved(primitiveJsonTypesResolver, propertyValue, propertyKey)
         }
 
-
         @Override
         List<Class<?>> getClassesWhichCanResolve() {
             invocationMap.get("getClassesWhichCanResolve").incrementAndGet()
@@ -279,6 +279,7 @@ class OwnJsonTypeResolverTest extends Specification {
     }
 
     private static class SecureBean1 {
+
         private final String hash1
         private final String hash2
 
@@ -287,7 +288,6 @@ class OwnJsonTypeResolverTest extends Specification {
             this.hash2 = hash2
         }
 
-
         @Override
         String toString() {
             return "hash1:#1:hash2:#2"
@@ -295,6 +295,7 @@ class OwnJsonTypeResolverTest extends Specification {
     }
 
     private static class SecureBean2 {
+
         private final String hash
 
         SecureBean2(String hash) {
@@ -308,6 +309,7 @@ class OwnJsonTypeResolverTest extends Specification {
     }
 
     private static class SecureBean3 {
+
         private final String hash3
 
         SecureBean3(String hash3) {

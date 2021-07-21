@@ -1,13 +1,13 @@
 package pl.jalokim.propertiestojson.resolvers;
 
-
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
-import pl.jalokim.propertiestojson.object.AbstractJsonType;
 import pl.jalokim.propertiestojson.object.ArrayJsonType;
 import pl.jalokim.propertiestojson.object.ObjectJsonType;
 import pl.jalokim.propertiestojson.path.PathMetadata;
 import pl.jalokim.propertiestojson.resolvers.transfer.DataForResolve;
 
+@SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public abstract class JsonTypeResolver {
 
     protected Map<String, Object> properties;
@@ -15,8 +15,7 @@ public abstract class JsonTypeResolver {
     protected ObjectJsonType currentObjectJsonType;
 
     protected ArrayJsonType getArrayJsonWhenIsValid(PathMetadata currentPathMetaData) {
-        AbstractJsonType jsonType = currentObjectJsonType.getField(currentPathMetaData.getFieldName());
-        return (ArrayJsonType) jsonType;
+        return (ArrayJsonType) currentObjectJsonType.getField(currentPathMetaData.getFieldName());
     }
 
     public abstract ObjectJsonType traverse(PathMetadata currentPathMetaData);

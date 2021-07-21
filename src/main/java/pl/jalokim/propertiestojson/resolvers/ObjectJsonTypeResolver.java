@@ -7,7 +7,6 @@ import pl.jalokim.propertiestojson.path.PathMetadata;
 
 public class ObjectJsonTypeResolver extends JsonTypeResolver {
 
-
     @Override
     public ObjectJsonType traverse(PathMetadata currentPathMetaData) {
         fetchJsonObjectOrCreate(currentPathMetaData);
