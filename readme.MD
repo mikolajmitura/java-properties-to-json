@@ -1,7 +1,7 @@
 Java Properties to JSON
 ---------------------------------------------
 
-[![Build Status](https://travis-ci.com/mikolajmitura/java-properties-to-json.svg?branch=develop)](https://travis-ci.org/github/mikolajmitura/java-properties-to-json)
+[![Build Status](https://travis-ci.com/mikolajmitura/java-properties-to-json.svg?branch=develop)](https://travis-ci.com/github/mikolajmitura/java-properties-to-json)
 [![Coverage Status](https://coveralls.io/repos/github/mikolajmitura/java-properties-to-json/badge.svg?branch=develop)](https://coveralls.io/github/mikolajmitura/java-properties-to-json?branch=develop)
 
 From 5 version is not backward compatible!
