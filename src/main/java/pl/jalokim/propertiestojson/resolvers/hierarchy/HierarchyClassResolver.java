@@ -19,7 +19,7 @@ public class HierarchyClassResolver {
         this.resolverClasses = typesWhichCanResolve;
     }
 
-    @SuppressWarnings("PMD.NPathComplexity")
+    @SuppressWarnings({"PMD.NPathComplexity", "PMD.CognitiveComplexity"})
     public Class<?> searchResolverClass(Object instance) {
         if (instance == null) {
             return null;

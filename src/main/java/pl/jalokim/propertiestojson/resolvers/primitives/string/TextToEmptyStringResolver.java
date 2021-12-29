@@ -12,7 +12,7 @@ public class TextToEmptyStringResolver implements TextToConcreteObjectResolver<S
     public Optional<String> returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver primitiveJsonTypesResolver,
         String propertyValue,
         String propertyKey) {
-        String text = propertyValue.equals(EMPTY_VALUE) ? EMPTY_VALUE : null;
+        String text = EMPTY_VALUE.equals(propertyValue) ? EMPTY_VALUE : null;
         return Optional.ofNullable(text);
     }
 }

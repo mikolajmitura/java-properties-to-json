@@ -5,7 +5,7 @@
     <parent>
         <groupId>pl.jalokim.parentpom</groupId>
         <artifactId>java-parent-pom</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.2</version>
     </parent>
 
     <groupId>pl.jalokim.propertiestojson</groupId>
@@ -24,8 +24,7 @@
         <release.project.repository-name>java-utils</release.project.repository-name>
         <archunit.package.to.verify>java-properties-to-json</archunit.package.to.verify>
         <coveralls.repo.token>2cWt0w37Yh0llv0dv4uZOMNBq5LIh9qZA</coveralls.repo.token>
-
-        <java-utils.version>3.0.1</java-utils.version>
+        <java-utils.version>3.1.0</java-utils.version>
     </properties>
 
 
@@ -33,17 +32,18 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.5</version>
+            <version>2.8.9</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>30.0-jre</version>
+            <version>31.0.1-jre</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.8</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>pl.jalokim.utils</groupId>
@@ -56,6 +56,7 @@
             <groupId>pl.jalokim.utils</groupId>
             <artifactId>test-utils</artifactId>
             <version>${java-utils.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

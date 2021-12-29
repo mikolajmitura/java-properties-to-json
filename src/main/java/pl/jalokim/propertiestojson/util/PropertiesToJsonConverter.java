@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -313,8 +312,7 @@ public final class PropertiesToJsonConverter {
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
     public String convertPropertiesFromFileToJson(File file) {
-        try {
-            InputStream targetStream = Files.newInputStream(file.toPath());
+        try (InputStream targetStream = Files.newInputStream(file.toPath())) {
             return convertToJson(targetStream);
         } catch (IOException e) {
             throw new ReadInputException(e);
@@ -345,8 +343,7 @@ public final class PropertiesToJsonConverter {
      * @throws ParsePropertiesException when structure of properties is not compatible with json structure
      */
     public String convertPropertiesFromFileToJson(File file, String... includeDomainKeys) {
-        try {
-            InputStream targetStream = Files.newInputStream(file.toPath());
+        try (InputStream targetStream = Files.newInputStream(file.toPath())) {
             return convertToJson(targetStream, includeDomainKeys);
         } catch (IOException e) {
             throw new ReadInputException(e);

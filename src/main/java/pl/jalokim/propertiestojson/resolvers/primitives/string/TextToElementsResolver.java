@@ -41,8 +41,7 @@ public class TextToElementsResolver implements TextToConcreteObjectResolver<List
                 String[] elements = propertyValue.split(arrayElementSeparator);
                 List<String> clearedElements = new ArrayList<>();
                 for (String element : elements) {
-                    element = element.trim();
-                    clearedElements.add(element);
+                    clearedElements.add(element.trim());
                 }
                 propertyValue = join(arrayElementSeparator, clearedElements);
             }

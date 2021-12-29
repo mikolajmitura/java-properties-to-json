@@ -50,6 +50,7 @@ public class JsonTypeResolversHierarchyResolver {
         hierarchyClassResolver = new HierarchyClassResolver(typesWhichCanResolve);
     }
 
+    @SuppressWarnings("PMD.CognitiveComplexity")
     public AbstractJsonType returnConcreteJsonTypeObject(PrimitiveJsonTypesResolver mainResolver,
         Object instance,
         String propertyKey) {
