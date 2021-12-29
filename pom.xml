@@ -15,7 +15,7 @@
 
     <properties>
         <main-version>5.2</main-version>
-        <minor-version>2</minor-version>
+        <minor-version>3-SNAPSHOT</minor-version>
 
         <!-- module info required to override from parent pom-->
         <java.version>1.8</java.version>
