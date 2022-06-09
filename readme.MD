@@ -173,7 +173,7 @@ import pl.jalokim.propertiestojson.util.PropertiesToJsonConverterBuilder;
         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder().build();
         String json = converter.convertFromValuesAsObjectMap(properties, true);
 ```
-json will be:
+json will be (someBoolean1 and someBoolean2 are boolean type):
 ```json
 {
   "root": {
@@ -190,7 +190,7 @@ but when flag tryConvertStringValuesToOtherObjects will be false
 ```java
  String json = converter.convertFromValuesAsObjectMap(properties, false);
 ```
-then result json will be looks like:
+then result json will be looks like  (someBoolean1 and someBoolean2 are not boolean type, are just string):
 ```json
 {
   "root": {
