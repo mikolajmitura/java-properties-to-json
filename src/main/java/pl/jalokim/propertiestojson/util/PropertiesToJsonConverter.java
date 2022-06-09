@@ -428,6 +428,107 @@ public final class PropertiesToJsonConverter {
     }
 
     /**
+     * It generates Json from given Java Properties instance. If property value will be string then will try convert it to another object (only when parameter
+     * <b>tryConvertStringValuesToOtherObjects</b> is equals to true). It is recommended to use that method when your properties doesn't provide concrete types
+     * of object only when provide values as String type.
+     *
+     * <h3>Example: when given properties object:</h3>
+     *
+     * <pre class="code">
+     *         Properties properties = new Properties();
+     *         properties.put("root.name", "some-name");
+     *         properties.put("root.surname", "some-surname");
+     *         properties.put("root.someBoolean1", "false");
+     *         properties.put("someBoolean2", "true");
+     *         properties.put("someNumber", 3.0);
+     * </pre>
+     *
+     * when <b>tryConvertStringValuesToOtherObjects</b> is <b>true</b>
+     *
+     * <pre class="code">
+     *         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
+     *             .build();
+     *
+     *         String json = converter.convertToJson(properties, true);
+     * </pre>
+     *
+     * then returns below json:
+     * <pre class="code">
+     * {
+     *   "root": {
+     *     "someBoolean1": false,
+     *     "name": "some-name",
+     *     "surname": "some-surname"
+     *   },
+     *   "someNumber": 3.0,
+     *   "someBoolean2": true
+     * }
+     * </pre>
+     * <p>values someBoolean1, someBoolean2 converted to json boolean and someNumber is number json due to fact that was stored as double in properties values
+     *
+     *
+     * <p>when <b>tryConvertStringValuesToOtherObjects</b> is <b>false</b>
+     *
+     * <pre class="code">
+     *         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
+     *             .build();
+     *
+     *         String json = converter.convertToJson(properties, false);
+     * </pre>
+     *
+     * then returns below json:
+     * <pre class="code">
+     *{
+     *   "root": {
+     *     "someBoolean1": "false",
+     *     "name": "some-name",
+     *     "surname": "some-surname"
+     *   },
+     *   "someNumber": 3.0,
+     *   "someBoolean2": "true"
+     * }
+     * </pre>
+     * <p>values someBoolean1, someBoolean2 stayed as json string value and someNumber still is number json due
+     * to fact that was stored as double in properties values
+     *
+     * <p>Every property value (when is type of String and parameter tryConvertStringValuesToOtherObjects is equals to true) will tries resolve to concrete
+     * object by given resolvers... It will try convert to some object (number, boolean, list etc, depends on generic type of given
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver})
+     * from string value through method:
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver#returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver
+     * primitiveJsonTypesResolver, String propertyValue, String propertyKey)} The order of resolvers is important because on that depends on which resolver as
+     * first will convert from string to some given object...
+     * When property value is not type of String then will pass through that value to second phase described below.
+     * <p>
+     * Next will looks for sufficient converter, firstly will looks for exactly match class type, if not then will looks for closets parent class or parent
+     * interface. If will find resolver for parent class or parent interface at the same level, then will get parent super class as first. If will find only
+     * closets super interfaces (at the same level) then will throw exception... after successful found resolver it converts from given object to some instance
+     * which extends AbstractJsonType through method
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter#convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver
+     * primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
+     *
+     * @param properties Java Properties
+     * @param tryConvertStringValuesToOtherObjects when is true then property values are String then will be converted to other objects. When false then just
+     * works like {@link #convertToJson(Properties)}
+     * @return simple String with json
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public String convertToJson(Properties properties, boolean tryConvertStringValuesToOtherObjects) {
+        if (tryConvertStringValuesToOtherObjects) {
+            Properties innerProperties = new PropertiesWithInsertOrder();
+            for (String property : getAllKeysFromProperties(propertiesToMap(properties))) {
+                Object propertyValue = properties.get(property);
+                if (propertyValue instanceof String) {
+                    propertyValue = primitiveResolvers.getResolvedObject((String) propertyValue, property);
+                }
+                innerProperties.put(property, propertyValue);
+            }
+            return convertToJson(innerProperties);
+        }
+        return convertToJson(properties);
+    }
+
+    /**
      * It generates Json from given Java Properties instance and will converts only included keys or parts of property keys provided by second parameter. If
      * property value will be string then will not try convert it to another type.
      * <p>
@@ -471,7 +572,6 @@ public final class PropertiesToJsonConverter {
 
     public String convertToJson(Map<String, String> properties) {
         return convertFromValuesAsObjectMap(stringValueMapToObjectValueMap(properties));
-
     }
 
     /**
@@ -522,6 +622,107 @@ public final class PropertiesToJsonConverter {
             addFieldsToJsonObject(properties, coreObjectJsonType, propertyKey);
         }
         return prettifyOfJson(coreObjectJsonType.toStringJson());
+    }
+
+    /**
+     * It generates Json from given Map&lt;String,Object&gt; instance. If property value will be string then will try convert it to another object (only
+     * when parameter <b>tryConvertStringValuesToOtherObjects</b> is equals to true). It is recommended to use that method when your properties doesn't provide
+     * concrete types of object only when provide values as String type.
+     *
+     * <h3>Example: when given properties object:</h3>
+     *
+     * <pre class="code">
+     *         Map&lt;String, Object&gt; properties = new HashMap&lt;&gt;();
+     *         properties.put("root.name", "some-name");
+     *         properties.put("root.surname", "some-surname");
+     *         properties.put("root.someBoolean1", "false");
+     *         properties.put("someBoolean2", "true");
+     *         properties.put("someNumber", 3.0);
+     * </pre>
+     *
+     * when <b>tryConvertStringValuesToOtherObjects</b> is <b>true</b>
+     *
+     * <pre class="code">
+     *         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
+     *             .build();
+     *
+     *         String json = converter.convertFromValuesAsObjectMap(properties, true);
+     * </pre>
+     *
+     * then returns below json:
+     * <pre class="code">
+     * {
+     *   "root": {
+     *     "someBoolean1": false,
+     *     "name": "some-name",
+     *     "surname": "some-surname"
+     *   },
+     *   "someNumber": 3.0,
+     *   "someBoolean2": true
+     * }
+     * </pre>
+     * <p>values someBoolean1, someBoolean2 converted to json boolean and someNumber is number json due to fact that was stored as double in properties values
+     *
+     *
+     * <p>when <b>tryConvertStringValuesToOtherObjects</b> is <b>false</b>
+     *
+     * <pre class="code">
+     *         PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder()
+     *             .build();
+     *
+     *         String json = converter.convertFromValuesAsObjectMap(properties, false);
+     * </pre>
+     *
+     * then returns below json:
+     * <pre class="code">
+     *{
+     *   "root": {
+     *     "someBoolean1": "false",
+     *     "name": "some-name",
+     *     "surname": "some-surname"
+     *   },
+     *   "someNumber": 3.0,
+     *   "someBoolean2": "true"
+     * }
+     * </pre>
+     * <p>values someBoolean1, someBoolean2 stayed as json string value and someNumber still is number json due
+     * to fact that was stored as double in properties values
+     *
+     * <p>Every property value (when is type of String and parameter tryConvertStringValuesToOtherObjects is equals to true) will tries resolve to concrete
+     * object by given resolvers... It will try convert to some object (number, boolean, list etc, depends on generic type of given
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver})
+     * from string value through method:
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.string.TextToConcreteObjectResolver#returnObjectWhenCanBeResolved(PrimitiveJsonTypesResolver
+     * primitiveJsonTypesResolver, String propertyValue, String propertyKey)} The order of resolvers is important because on that depends on which resolver as
+     * first will convert from string to some given object...
+     * When property value is not type of String then will pass through that value to second phase described below.
+     * <p>
+     * Next will looks for sufficient converter, firstly will looks for exactly match class type, if not then will looks for closets parent class or parent
+     * interface. If will find resolver for parent class or parent interface at the same level, then will get parent super class as first. If will find only
+     * closets super interfaces (at the same level) then will throw exception... after successful found resolver it converts from given object to some instance
+     * which extends AbstractJsonType through method
+     * {@link pl.jalokim.propertiestojson.resolvers.primitives.object.ObjectToJsonTypeConverter#convertToJsonTypeOrEmpty(PrimitiveJsonTypesResolver
+     * primitiveJsonTypesResolver, Object propertyValue, String propertyKey)}
+     *
+     * @param properties Java Map with properties
+     * @param tryConvertStringValuesToOtherObjects when is true then property values are String then will be converted to other objects. When false then just
+     * works like {@link #convertFromValuesAsObjectMap(Map)}
+     * @return simple String with json
+     * @throws ParsePropertiesException when structure of properties is not compatible with json structure
+     */
+    public String convertFromValuesAsObjectMap(Map<String, Object> properties, boolean tryConvertStringValuesToOtherObjects) {
+        if (tryConvertStringValuesToOtherObjects) {
+            Properties innerProperties = new PropertiesWithInsertOrder();
+            for (String property : getAllKeysFromProperties(properties)) {
+                Object propertyValue = properties.get(property);
+                if (propertyValue instanceof String) {
+                    propertyValue = primitiveResolvers.getResolvedObject((String) propertyValue, property);
+                }
+                innerProperties.put(property, propertyValue);
+            }
+            return convertToJson(innerProperties);
+        }
+        return convertFromValuesAsObjectMap(properties);
     }
 
     /**

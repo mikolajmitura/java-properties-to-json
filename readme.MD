@@ -11,9 +11,11 @@ But if you used only simple uses cases, migration (from 4.0) should pass without
 How to generate JSON from Java properties?
 
 You can generate Json from:
-- from Java properties (java.util.Properties)
-- from Map<String,String> (import java.util.Map)
-- from Map<String,Object> (import java.util.Map)
+- from Java properties (java.util.Properties) but objects values which are String will be converted as json string.
+  For try convert String values to other json objects use flag tryConvertStringValuesToOtherObjects 
+- from Map<String,Object> (java.util.Map) but objects values which are String will be converted as json string
+  For try convert String values to other json objects use flag tryConvertStringValuesToOtherObjects
+- from Map<String,String> (java.util.Map)
 - from InputStream with properties (java.io.InputStream)
 - from File with properties (java.io.File)
 - from given localization of properties file
@@ -27,7 +29,7 @@ Maven dependency
     <dependency>
         <groupId>pl.jalokim.propertiestojson</groupId>
         <artifactId>java-properties-to-json</artifactId>
-        <version>5.2.2</version>
+        <version>5.3.0</version>
     </dependency>
 ```
 
@@ -150,6 +152,59 @@ Will result:
     "type": "SOMETYPE"
   }
 }
+```
+
+Simple Examples with usage tryConvertStringValuesToOtherObjects flag
+--------------------------------------------- 
+
+code snippet:
+```java
+import pl.jalokim.propertiestojson.util.PropertiesToJsonConverter;
+import pl.jalokim.propertiestojson.util.PropertiesToJsonConverterBuilder;
+...
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("root.name", "some-name");
+        properties.put("root.surname", "some-surname");
+        properties.put("root.someBoolean1", "false");
+        properties.put("someBoolean2", "true");
+        properties.put("someNumber", 3.0);
+
+        PropertiesToJsonConverter converter = PropertiesToJsonConverterBuilder.builder().build();
+        String json = converter.convertFromValuesAsObjectMap(properties, true);
+```
+json will be:
+```json
+{
+  "root": {
+    "someBoolean1": false,
+    "name": "some-name",
+    "surname": "some-surname"
+  },
+  "someNumber": 3.0,
+  "someBoolean2": true
+}
+```
+
+but when flag tryConvertStringValuesToOtherObjects will be false 
+```java
+ String json = converter.convertFromValuesAsObjectMap(properties, false);
+```
+then result json will be looks like:
+```json
+{
+  "root": {
+    "someBoolean1": "false",
+    "name": "some-name",
+    "surname": "some-surname"
+  },
+  "someNumber": 3.0,
+  "someBoolean2": "true"
+}
+```
+the same case is with java.util.Properties but via method 
+```java
+public String convertToJson(Properties properties, boolean tryConvertStringValuesToOtherObjects)
 ```
 
 Requirements
@@ -716,7 +771,7 @@ Will result
   "some": {
     "value": "2.0"
   }
-}``
+}
 ```
 
 Example how to use PropertiesToJsonConverterBuilder
